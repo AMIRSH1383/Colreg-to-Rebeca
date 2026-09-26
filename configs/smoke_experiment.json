@@ -1,0 +1,48 @@
+{
+  "version": "1.0.0",
+  "name": "Smoke Test Configuration",
+  "description": "Minimal fast-validation configuration for Rules 22-23 only",
+  "mode": "full",
+  "sources": [
+    "legata/Rule-22-Equipment-Range.legata",
+    "legata/Rule-23-Lights-Shapes.legata"
+  ],
+  "deliverables": {
+    "agent": true,
+    "workflow_skill": true,
+    "rebeca_modeling_skill": true,
+    "rmc_scripts": true,
+    "install_scripts": true,
+    "scoring_pipeline": true,
+    "test_suite": true,
+    "documentation": true
+  },
+  "rmc_config": {
+    "jar_url": "https://github.com/rebeca-lang/org.rebecalang.rmc/releases/latest",
+    "destination_dir": ".agents/rmc",
+    "default_timeout_seconds": 120,
+    "jvm_opts": ["-Xmx2g", "-Xms512m"]
+  },
+  "install_target": {
+    "root": ".claude",
+    "mode": "all"
+  },
+  "hooks": {
+    "enabled": true
+  },
+  "scoring": {
+    "enabled": true,
+    "weights": {
+      "syntax": 1,
+      "completeness": 3,
+      "actor_coverage": 2,
+      "no_hallucination": 1,
+      "logic_correctness": 2
+    }
+  },
+  "reporting": {
+    "enabled": true,
+    "formats": ["json", "markdown"],
+    "output_dir": "reports/"
+  }
+}

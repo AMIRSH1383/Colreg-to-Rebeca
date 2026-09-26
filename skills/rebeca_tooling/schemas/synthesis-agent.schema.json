@@ -1,0 +1,170 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "synthesis-agent contract",
+  "description": "Input and output schemas for the synthesis-agent (Step04). Applies concept mapping patches surgically to existing .rebeca and .property files.",
+
+  "definitions": {
+    "ErrorEnvelope": {
+      "type": "object",
+      "required": ["status", "phase", "agent", "message"],
+      "additionalProperties": false,
+      "properties": {
+        "status":  { "type": "string", "const": "error" },
+        "phase":   { "type": "string", "const": "step04" },
+        "agent":   { "type": "string", "const": "synthesis_agent" },
+        "message": { "type": "string", "minLength": 1 }
+      }
+    },
+
+    "ActorEntry": {
+      "type": "object",
+      "required": ["legata_actor", "rebeca_class", "rebeca_instance"],
+      "additionalProperties": false,
+      "properties": {
+        "legata_actor":    { "type": "string" },
+        "rebeca_class":    { "type": "string" },
+        "rebeca_instance": { "type": "string" }
+      }
+    },
+
+    "VariableEntry": {
+      "type": "object",
+      "required": ["legata_concept", "rebeca_class", "rebeca_statevar", "rebeca_type", "rebeca_init_value", "is_new"],
+      "additionalProperties": true,
+      "properties": {
+        "legata_concept":    { "type": "string" },
+        "legata_var":        { "type": "string" },
+        "legata_value":      { "type": "string" },
+        "rebeca_class":      { "type": "string" },
+        "rebeca_statevar":   { "type": "string" },
+        "rebeca_type":       { "type": "string", "enum": ["boolean", "int"] },
+        "rebeca_init_value": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+        "is_new":            { "type": "boolean" },
+        "bounds": {
+          "type": "object",
+          "properties": {
+            "min": { "type": "integer" },
+            "max": { "type": "integer" }
+          }
+        }
+      }
+    },
+
+    "AbstractionSummary": {
+      "type": "object",
+      "required": ["naming_contract", "actor_map", "variable_map"],
+      "additionalProperties": true,
+      "properties": {
+        "naming_contract": { "type": "object" },
+        "actor_map":       { "type": "array", "items": { "$ref": "#/definitions/ActorEntry" } },
+        "variable_map":    { "type": "array", "items": { "$ref": "#/definitions/VariableEntry" } }
+      }
+    },
+
+    "StateVarPatch": {
+      "type": "object",
+      "required": ["reactiveclass", "add_statevars"],
+      "additionalProperties": false,
+      "properties": {
+        "reactiveclass": { "type": "string" },
+        "add_statevars": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["type", "name", "init"],
+            "additionalProperties": false,
+            "properties": {
+              "type": { "type": "string", "enum": ["boolean", "int"] },
+              "name": { "type": "string" },
+              "init": { "type": "string" }
+            }
+          }
+        }
+      }
+    },
+
+    "QueueSizePatch": {
+      "type": "object",
+      "required": ["reactiveclass", "queue_size"],
+      "additionalProperties": false,
+      "properties": {
+        "reactiveclass": { "type": "string" },
+        "queue_size": { "type": "integer", "minimum": 1 }
+      }
+    },
+
+    "DefinePatch": {
+      "type": "object",
+      "required": ["ap", "expr"],
+      "additionalProperties": false,
+      "properties": {
+        "ap":   { "type": "string" },
+        "expr": { "type": "string" }
+      }
+    },
+
+    "ConceptMapping": {
+      "type": "object",
+      "required": ["statevar_patches", "queue_size_patches", "define_patches", "assertion_lines"],
+      "additionalProperties": false,
+      "properties": {
+        "statevar_patches": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/StateVarPatch" }
+        },
+        "queue_size_patches": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/QueueSizePatch" }
+        },
+        "define_patches": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/DefinePatch" }
+        },
+        "assertion_lines": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "minItems": 1
+        }
+      }
+    },
+
+    "PatchedFiles": {
+      "type": "object",
+      "required": ["model_path", "property_path"],
+      "additionalProperties": false,
+      "properties": {
+        "model_path":    { "type": "string", "description": "Path to patched .rebeca file" },
+        "property_path": { "type": "string", "description": "Path to patched .property file" }
+      }
+    }
+  },
+
+  "input": {
+    "type": "object",
+    "required": ["rule_id", "abstraction_summary", "concept_mapping", "output_dir"],
+    "additionalProperties": false,
+    "properties": {
+      "rule_id":              { "type": "string", "minLength": 1 },
+      "abstraction_summary":  { "$ref": "#/definitions/AbstractionSummary" },
+      "concept_mapping":      { "$ref": "#/definitions/ConceptMapping" },
+      "legata_text":          { "type": "string" },
+      "output_dir":           { "type": "string", "minLength": 1 }
+    }
+  },
+
+  "output": {
+    "oneOf": [
+      {
+        "type": "object",
+        "required": ["status", "rule_id", "patched_files"],
+        "additionalProperties": false,
+        "properties": {
+          "status":         { "type": "string", "const": "ok" },
+          "rule_id":        { "type": "string" },
+          "patched_files":  { "$ref": "#/definitions/PatchedFiles" }
+        }
+      },
+      { "$ref": "#/definitions/ErrorEnvelope" }
+    ]
+  }
+}

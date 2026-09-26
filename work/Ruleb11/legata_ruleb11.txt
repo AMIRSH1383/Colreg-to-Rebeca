@@ -1,0 +1,23 @@
+// This clause is from the Legata article (case study), in appendix B.1
+
+# Description: Istanbul Strait protocols
+# File: strait.legata
+define: {
+OS: OwnShip # Convenience macro definitions
+}
+# (3) Check if the sea current exceeds 4 kn, then large
+# vessels, deep-draught vessels and hazardous cargocarrying
+# vessels with a speed of 10 kn or less cannot
+# enter the strait.
+
+clause['Istanbul.Strait.Rule3.LargeVessel']:{
+    : {
+        condition: { 
+        :(OS.Length > meters(150)) and (OS.Undercurrent > kn(4))
+	    :(OS.Draught > meters(10)) and (OS.Undercurrent > kn(4))
+        }
+        assure: { 
+            :OS.Velocity > kn(10)
+        }
+    }
+}

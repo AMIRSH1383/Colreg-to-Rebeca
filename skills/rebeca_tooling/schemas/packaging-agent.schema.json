@@ -1,0 +1,63 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "packaging-agent",
+  "description": "Step07: Collect pipeline artifacts, build manifest, emit installation report",
+  "definitions": {
+    "ErrorEnvelope": {
+      "type": "object",
+      "required": ["status", "phase", "agent", "message"],
+      "properties": {
+        "status":  { "type": "string", "enum": ["error"] },
+        "phase":   { "type": "string", "enum": ["step07"] },
+        "agent":   { "type": "string", "enum": ["packaging-agent"] },
+        "message": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "ArtifactEntry": {
+      "type": "object",
+      "required": ["artifact_id", "source_path", "dest_path", "artifact_type", "status"],
+      "properties": {
+        "artifact_id":   { "type": "string" },
+        "source_path":   { "type": "string" },
+        "dest_path":     { "type": ["string", "null"] },
+        "artifact_type": { "type": "string", "enum": ["model", "property", "log", "snapshot", "other"] },
+        "status":        { "type": "string", "enum": ["installed", "skipped", "failed"] },
+        "reason":        { "type": ["string", "null"] }
+      },
+      "additionalProperties": false
+    }
+  },
+  "input": {
+    "type": "object",
+    "required": ["rule_id", "model_path", "property_path", "rmc_output_dir", "dest_dir"],
+    "properties": {
+      "rule_id":        { "type": "string", "minLength": 1 },
+      "model_path":     { "type": "string", "minLength": 1 },
+      "property_path":  { "type": "string", "minLength": 1 },
+      "rmc_output_dir": { "type": "string", "minLength": 1 },
+      "dest_dir":       { "type": "string", "minLength": 1 },
+      "snapshot_path":  { "type": "string" },
+      "dry_run":        { "type": "boolean", "default": false }
+    },
+    "additionalProperties": false
+  },
+  "output": {
+    "oneOf": [
+      {
+        "type": "object",
+        "required": ["status", "rule_id", "generated_files", "installation_report"],
+        "properties": {
+          "status":              { "type": "string", "enum": ["ok"] },
+          "rule_id":             { "type": "string" },
+          "dest_dir":            { "type": "string" },
+          "dry_run":             { "type": "boolean" },
+          "generated_files":     { "type": "array", "items": { "type": "string" } },
+          "installation_report": { "type": "array", "items": { "$ref": "#/definitions/ArtifactEntry" } }
+        },
+        "additionalProperties": false
+      },
+      { "$ref": "#/definitions/ErrorEnvelope" }
+    ]
+  }
+}

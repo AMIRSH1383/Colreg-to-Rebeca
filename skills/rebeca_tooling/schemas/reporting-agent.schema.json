@@ -1,0 +1,88 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "reporting-agent",
+  "description": "Step08: Consume per-rule scorecards, produce report.json + report.md via ReportGenerator",
+  "definitions": {
+    "ErrorEnvelope": {
+      "type": "object",
+      "required": ["status", "phase", "agent", "message"],
+      "properties": {
+        "status":  { "type": "string", "enum": ["error"] },
+        "phase":   { "type": "string", "enum": ["step08"] },
+        "agent":   { "type": "string", "enum": ["reporting-agent"] },
+        "message": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "ScoreBreakdown": {
+      "type": "object",
+      "properties": {
+        "syntax":                 { "type": "number" },
+        "semantic_alignment":     { "type": "number" },
+        "verification_outcome":   { "type": "number" },
+        "hallucination_penalty":  { "type": "number" }
+      }
+    },
+    "Scorecard": {
+      "type": "object",
+      "required": ["rule_id", "score_total", "status"],
+      "properties": {
+        "rule_id":           { "type": "string" },
+        "input_status":      { "type": "string" },
+        "score_breakdown":   { "$ref": "#/definitions/ScoreBreakdown" },
+        "score_total":       { "type": "number", "minimum": 0, "maximum": 100 },
+        "status":            { "type": "string", "enum": ["Pass", "Fail", "Blocked", "Conditional", "Unknown"] },
+        "confidence":        { "type": "number" },
+        "mapping_path":      { "type": "string" },
+        "failure_reasons":   { "type": "array", "items": { "type": "string" } },
+        "remediation_hints": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "Summary": {
+      "type": "object",
+      "required": ["total_rules", "rules_passed", "rules_failed", "score_mean", "score_min", "score_max", "success_rate"],
+      "properties": {
+        "total_rules":                { "type": "integer", "minimum": 0 },
+        "rules_passed":               { "type": "integer", "minimum": 0 },
+        "rules_failed":               { "type": "integer", "minimum": 0 },
+        "score_mean":                 { "type": "number" },
+        "score_min":                  { "type": "number" },
+        "score_max":                  { "type": "number" },
+        "success_rate":               { "type": "number" },
+        "fallback_usage_count":       { "type": "integer" },
+        "blocked_rules_count":        { "type": "integer" }
+      },
+      "additionalProperties": true
+    }
+  },
+  "input": {
+    "type": "object",
+    "required": ["scorecards", "output_dir"],
+    "properties": {
+      "scorecards": {
+        "oneOf": [
+          { "type": "array", "items": { "$ref": "#/definitions/Scorecard" }, "minItems": 1 },
+          { "type": "string", "description": "Inline JSON array string or @/path/to/file" }
+        ]
+      },
+      "output_dir": { "type": "string", "minLength": 1 }
+    },
+    "additionalProperties": false
+  },
+  "output": {
+    "oneOf": [
+      {
+        "type": "object",
+        "required": ["status", "report_path", "report_md_path", "summary"],
+        "properties": {
+          "status":         { "type": "string", "enum": ["ok"] },
+          "report_path":    { "type": "string" },
+          "report_md_path": { "type": "string" },
+          "summary":        { "$ref": "#/definitions/Summary" }
+        },
+        "additionalProperties": false
+      },
+      { "$ref": "#/definitions/ErrorEnvelope" }
+    ]
+  }
+}

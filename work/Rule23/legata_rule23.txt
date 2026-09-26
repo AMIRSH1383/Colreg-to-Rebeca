@@ -1,0 +1,68 @@
+define: {
+    OS: OwnShip
+}
+
+condition: { 
+    :OS.Operation has 'Vessel.Operation.UNDERWAY'
+}
+
+# Power-driven Vessels underway
+# (The new paragraph (c) shall enter into force on 29 November
+# 2003, as amended by Resolution A.919(22))
+# (a) A power-driven vessel underway shall exhibit:
+# (i) a masthead light forward;
+# (ii) a second masthead light abaft of and higher than the forward one; except that
+# a vessel of less than 50 meters in length shall not be obliged to exhibit such
+# light but may do so;
+# (iii) sidelights;
+# (iv) a sternlight.
+clause['COLREG.Rule23.a']:{
+    : {
+        condition: { 
+            :OS.Type is Vessel.Type.PowerDriven
+        }
+		exclude:{
+            :OS.Length < meters(12)		# Rule23.d.i
+		}
+        assure: { 
+            :OS.Signal.ON has 'Light.Masthead.Forward.1x'
+            :OS.Signal.ON has 'Light.Masthead.Abaft'
+            :OS.Signal.ON has 'Light.Sidelight'
+            :OS.Signal.ON has 'Light.Sternlight'
+        }
+    }
+}
+
+clause['COLREG.Rule23.a.ii']:{
+    : {
+        condition: { 
+            :OS.Type is Vessel.Type.PowerDriven
+        }
+		exclude:{
+            :OS.Length < meters(50)
+		}
+        assure: { 
+            :OS.Signal.ON has 'Light.Masthead.Abaft'
+        }
+    }
+}
+
+
+# (d)
+# (i) A power-driven vessel of less than 12 meters in length may in lieu of the lights
+# prescribed in paragraph (a) of this Rule exhibit an all-round white light and
+# sidelights:
+clause['COLREG.Rule23.d.i']:{
+    : {
+        condition: { 
+            :OS.Type is Vessel.Type.PowerDriven
+        }
+		exclude:{
+            :OS.Length > meters(12)
+		}
+        assure: { 
+            :OS.Signal.ON has 'Light.Allround.White'
+            :OS.Signal.ON has 'Light.Sidelight'
+        }
+    }
+}

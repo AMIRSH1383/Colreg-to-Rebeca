@@ -1,0 +1,17 @@
+// This rule is from figure 6.2.2 in the Legata article (Case study)
+
+define: {
+    OS: OwnShip
+}
+
+
+clause['IstanbulStrait.Clause.1']:{
+	condition: {
+		: [OwnShip, Map.Sea@TrafficZone].Distance
+			in Area.Near.ProximityRange
+	}
+	assure: {
+		: OS.Visibility.Range > kn(.5)
+	}
+}
+

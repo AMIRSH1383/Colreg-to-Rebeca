@@ -1,0 +1,45 @@
+// Good: Well-structured Rebeca model
+
+reactiveclass Ship(10) {
+  statevars {
+    int ship_length;
+    int masthead_light_range;
+    int sidelight_range;
+    boolean masthead_light_on;
+    boolean sidelight_on;
+    int vessel_type;  // 0=Sailing, 1=PowerDriven
+  }
+  
+  Ship(int length, int type) {
+    ship_length = length;
+    vessel_type = type;
+    masthead_light_on = false;
+    sidelight_on = false;
+    masthead_light_range = 0;
+    sidelight_range = 0;
+  }
+  
+  msgsrv setLights(int masthead_range, int sidelight_range) {
+    masthead_light_range = masthead_range;
+    sidelight_range = sidelight_range;
+    masthead_light_on = true;
+    sidelight_on = true;
+  }
+  
+  msgsrv turnOffLights() {
+    masthead_light_on = false;
+    sidelight_on = false;
+  }
+}
+
+reactiveclass MapServer(1) {
+  knownrebecs {
+    Ship ship1;
+    Ship ship2;
+  }
+  
+  MapServer() {
+    ship1 = new Ship(50, 1);  // 50m PowerDriven vessel
+    ship2 = new Ship(8, 0);   // 8m Sailing vessel
+  }
+}

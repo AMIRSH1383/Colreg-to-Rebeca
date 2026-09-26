@@ -1,0 +1,96 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "synthesis-agent-legacy-alias",
+  "description": "Legacy alias for synthesis-agent candidate-generation contract. All outputs tagged is_candidate=true, mapping_path=synthesis-agent for mandatory Step06 verification.",
+  "definitions": {
+    "ErrorEnvelope": {
+      "type": "object",
+      "required": ["status", "phase", "agent", "message"],
+      "properties": {
+        "status":  { "type": "string", "enum": ["error"] },
+        "phase":   { "type": "string", "enum": ["step05"] },
+        "agent":   { "type": "string", "enum": ["synthesis-agent"] },
+        "message": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "CandidateArtifact": {
+      "type": "object",
+      "required": ["artifact_id", "strategy", "model_path", "property_path", "model_content", "property_content", "mapping_path", "is_candidate", "confidence", "assumptions"],
+      "properties": {
+        "artifact_id":       { "type": "string" },
+        "strategy":          { "type": "string", "enum": ["base", "temporal"] },
+        "model_path":        { "type": "string" },
+        "property_path":     { "type": "string" },
+        "model_content":     { "type": "string" },
+        "property_content":  { "type": "string" },
+        "mapping_path":      { "type": "string", "enum": ["synthesis-agent"] },
+        "is_candidate":      { "type": "boolean", "enum": [true] },
+        "confidence":        { "type": "string", "enum": ["high", "medium", "low"] },
+        "assumptions":       { "type": "array", "items": { "type": "string" } }
+      },
+      "additionalProperties": false
+    },
+    "ActorEntry": {
+      "type": "object",
+      "required": ["rebeca_class", "rebeca_instance"],
+      "properties": {
+        "legata_actor":    { "type": "string" },
+        "rebeca_class":    { "type": "string" },
+        "rebeca_instance": { "type": "string" }
+      }
+    },
+    "VariableEntry": {
+      "type": "object",
+      "required": ["rebeca_name", "rebeca_type", "define_alias", "source"],
+      "properties": {
+        "legata_concept": { "type": "string" },
+        "rebeca_name":    { "type": "string" },
+        "rebeca_type":    { "type": "string", "enum": ["boolean", "int"] },
+        "define_alias":   { "type": "string" },
+        "source":         { "type": "string", "enum": ["condition", "exclusion", "assurance"] },
+        "bounds":         { "type": "object" }
+      }
+    },
+    "AbstractionSummary": {
+      "type": "object",
+      "required": ["actor_map", "variable_map"],
+      "properties": {
+        "actor_map":       { "type": "array", "items": { "$ref": "#/definitions/ActorEntry" } },
+        "variable_map":    { "type": "array", "items": { "$ref": "#/definitions/VariableEntry" } },
+        "naming_contract": { "type": "object" }
+      }
+    }
+  },
+  "input": {
+    "type": "object",
+    "required": ["rule_id", "abstraction_summary", "output_dir"],
+    "properties": {
+      "rule_id":             { "type": "string", "minLength": 1 },
+      "abstraction_summary": { "$ref": "#/definitions/AbstractionSummary" },
+      "legata_text":         { "type": "string", "default": "" },
+      "output_dir":          { "type": "string", "minLength": 1 }
+    },
+    "additionalProperties": false
+  },
+  "output": {
+    "oneOf": [
+      {
+        "type": "object",
+        "required": ["status", "rule_id", "candidate_artifacts"],
+        "properties": {
+          "status":              { "type": "string", "enum": ["ok"] },
+          "rule_id":             { "type": "string" },
+          "candidate_artifacts": {
+            "type": "array",
+            "items": { "$ref": "#/definitions/CandidateArtifact" },
+            "minItems": 1
+          },
+          "open_assumptions": { "type": "array", "items": { "type": "string" } }
+        },
+        "additionalProperties": false
+      },
+      { "$ref": "#/definitions/ErrorEnvelope" }
+    ]
+  }
+}

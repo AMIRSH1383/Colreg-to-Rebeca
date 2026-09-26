@@ -1,0 +1,41 @@
+{
+  "version": "2.14",
+  "description": "Default RMC configuration and runtime settings",
+  "download": {
+    "source": "https://github.com/rebeca-lang/org.rebecalang.rmc/releases",
+    "tag": "2.14",
+    "asset_pattern": "rmc-{tag}.jar",
+    "checksum_validation": true,
+    "retry_attempts": 3,
+    "retry_delay_seconds": 2
+  },
+  "execution": {
+    "timing_mode": "TIMED_REBECA",
+    "default_timeout_seconds": 120,
+    "jvm_heap_min": "512m",
+    "jvm_heap_max": "2g",
+    "jvm_opts": [
+      "-Xmx2g",
+      "-Xms512m",
+      "-XX:+UseG1GC",
+      "-XX:MaxGCPauseMillis=200"
+    ]
+  },
+  "paths": {
+    "rmc_jar": ".agents/rmc/rmc.jar",
+    "model_dir": "src/models",
+    "property_dir": "src/properties",
+    "output_dir": "verification_output"
+  },
+  "verification": {
+    "strategy": "exhaustive",
+    "counterexample_limit": 1000,
+    "property_timeout_multiplier": 1.5
+  },
+  "max_refinement_attempts": {
+    "step04": 3,
+    "step05": 3,
+    "step06": 2,
+    "default": 2
+  }
+}

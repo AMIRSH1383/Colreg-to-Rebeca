@@ -1,0 +1,27 @@
+// Good: Well-structured Rebeca property
+
+property {
+  define {
+    // Guard conditions
+    ship1_longer_50m = (s1.ship_length > 50);
+    ship1_is_power = (s1.vessel_type == 1);
+    
+    // Light conditions
+    ship1_lights_ok = (s1.masthead_light_on && s1.sidelight_on);
+    ship1_range_ok = (s1.masthead_light_range >= 6 && s1.sidelight_range >= 3);
+    
+    // Multi-ship
+    ship2_lights_ok = (s2.masthead_light_on && s2.sidelight_on);
+  }
+  
+  Assertion {
+    Rule22: !ship1_longer_50m || (ship1_lights_ok && ship1_range_ok);
+    Rule23: !ship1_is_power || ship1_lights_ok;
+    MultiShip: ship1_lights_ok && ship2_lights_ok;
+  }
+  
+  LTL {
+    Safety: G((ship1_longer_50m) -> (ship1_lights_ok));
+    Liveness: G(F(ship1_lights_ok));
+  }
+}

@@ -1,0 +1,127 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "abstraction-agent contract",
+  "description": "Input and output schemas for the abstraction-agent (Step03).",
+
+  "definitions": {
+    "ErrorEnvelope": {
+      "type": "object",
+      "required": ["status", "phase", "agent", "message"],
+      "additionalProperties": false,
+      "properties": {
+        "status":  { "type": "string", "const": "error" },
+        "phase":   { "type": "string", "const": "step03" },
+        "agent":   { "type": "string", "const": "abstraction-agent" },
+        "message": { "type": "string", "minLength": 1 }
+      }
+    },
+
+    "NamingContract": {
+      "type": "object",
+      "description": "Deterministic naming rules applied to all generated symbols.",
+      "required": [
+        "reactive_class_style",
+        "state_var_style",
+        "instance_style",
+        "define_alias_style",
+        "assertion_name_style"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "reactive_class_style":  { "type": "string", "const": "PascalCase" },
+        "state_var_style":       { "type": "string", "const": "camelCase" },
+        "instance_style":        { "type": "string", "const": "lowerCamelCase" },
+        "define_alias_style":    { "type": "string", "const": "camelCase" },
+        "assertion_name_style":  { "type": "string", "const": "PascalCase" }
+      }
+    },
+
+    "ActorEntry": {
+      "type": "object",
+      "required": ["legata_actor", "rebeca_class", "rebeca_instance"],
+      "additionalProperties": false,
+      "properties": {
+        "legata_actor":    { "type": "string" },
+        "rebeca_class":    { "type": "string", "description": "PascalCase reactive class name" },
+        "rebeca_instance": { "type": "string", "description": "lowerCamelCase instance name" }
+      }
+    },
+
+    "VariableEntry": {
+      "type": "object",
+      "required": ["legata_concept", "rebeca_class", "rebeca_statevar", "rebeca_type", "rebeca_init_value", "is_new"],
+      "additionalProperties": false,
+      "properties": {
+        "legata_concept":    { "type": "string", "description": "Raw Legata rule text describing the concept" },
+        "legata_var":        { "type": "string", "description": "Legata-side variable/attribute (e.g. Vessel.Type)" },
+        "legata_value":      { "type": "string", "description": "Specific value or threshold from the Legata rule (e.g. Vessel.Type.PowerDriven, 100)" },
+        "rebeca_class":      { "type": "string", "description": "Concrete reactiveclass this variable was reconciled to (PascalCase)" },
+        "rebeca_statevar":   { "type": "string", "description": "Exact statevar name in the class (existing: as-is; new: camelCase per naming contract)" },
+        "rebeca_type":       { "type": "string", "enum": ["boolean", "int"] },
+        "bounds": {
+          "type": "object",
+          "description": "Integer bounds (omitted for boolean).",
+          "required": ["min", "max"],
+          "additionalProperties": false,
+          "properties": {
+            "min": { "type": "integer" },
+            "max": { "type": "integer" }
+          }
+        },
+        "rebeca_init_value": {
+          "type": "array",
+          "items": { "type": "string" },
+          "minItems": 1,
+          "description": "Always an array. 1 element = deterministic init; 2+ elements = OWA non-deterministic (emits statevar = ?(val1, val2, ...); in constructor)"
+        },
+        "is_new":            { "type": "boolean", "description": "true = statevar must be added to statevars{}; false = already exists in rebeca_class" }
+      }
+    },
+
+    "AbstractionSummary": {
+      "type": "object",
+      "required": ["naming_contract", "actor_map", "variable_map"],
+      "additionalProperties": false,
+      "properties": {
+        "naming_contract": { "$ref": "#/definitions/NamingContract" },
+        "actor_map":       { "type": "array", "items": { "$ref": "#/definitions/ActorEntry" } },
+        "variable_map":    { "type": "array", "items": { "$ref": "#/definitions/VariableEntry" } }
+      }
+    }
+  },
+
+  "input": {
+    "type": "object",
+    "required": ["rule_id", "legata_input"],
+    "additionalProperties": false,
+    "properties": {
+      "rule_id":       { "type": "string", "minLength": 1 },
+      "legata_input":   { "type": "string", "minLength": 1 },
+      "snapshot_path": {
+        "type": "string",
+        "description": "Optional Step01 snapshot JSON; seeded into variable_map when present."
+      },
+      "colreg_text": {
+        "type": "string",
+        "description": "Raw COLREG source text for supplementary actor/condition extraction."
+      }
+    }
+  },
+
+  "output": {
+    "oneOf": [
+      {
+        "type": "object",
+        "required": ["status", "rule_id", "abstraction_summary", "open_assumptions"],
+        "additionalProperties": false,
+        "properties": {
+          "status":              { "type": "string", "const": "ok" },
+          "rule_id":             { "type": "string" },
+          "abstraction_summary": { "$ref": "#/definitions/AbstractionSummary" },
+          "open_assumptions":    { "type": "array", "items": { "type": "string" } }
+        }
+      },
+      { "$ref": "#/definitions/ErrorEnvelope" }
+    ]
+  }
+}

@@ -1,0 +1,45 @@
+{
+  "version": "1.0.0",
+  "mode": "full",
+  "sources": [
+    "manuscript.tex",
+    "sections/**",
+    "legata/**",
+    "docs/001-handbook-of-rebeca/001-handbook-of-rebeca.md"
+  ],
+  "deliverables": {
+    "agent": true,
+    "skill": true,
+    "rmc_scripts": true,
+    "install_scripts": true,
+    "hooks": true,
+    "scoring": true,
+    "reporting": true
+  },
+  "rmc": {
+    "jar_url": "https://github.com/rebeca-lang/org.rebecalang.rmc/releases/latest",
+    "destination_dir": "./rmc",
+    "jvm_opts": ["-Xms256m", "-Xmx2g"],
+    "default_timeout_seconds": 120
+  },
+  "install": {
+    "target_root": "./.claude",
+    "mode": "all"
+  },
+  "hooks": {
+    "enabled": true
+  },
+  "scoring": {
+    "enabled": true,
+    "weights": {
+      "syntax": 1.0,
+      "semantic_alignment": 3.0,
+      "verification_outcome": 2.0,
+      "hallucination_penalty": 1.0
+    }
+  },
+  "reporting": {
+    "compact_json": true,
+    "human_markdown": true
+  }
+}

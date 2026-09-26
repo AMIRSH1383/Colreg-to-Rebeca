@@ -1,0 +1,4 @@
+{
+  "include": ["."],
+  "extraPaths": ["skills/rebeca_tooling/scripts"]
+}
