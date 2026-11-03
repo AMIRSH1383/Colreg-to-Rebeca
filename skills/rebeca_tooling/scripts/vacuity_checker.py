@@ -2,15 +2,10 @@
 """
 Vacuity Checker for Rebeca property verification.
 
-Performs a secondary RMC pass that asserts !Precondition to confirm a property
-is not passing trivially due to an impossible precondition.
-
-Algorithm:
-  1. Extract the first assertion expression from the Assertion block.
-  2. Generate a negated-precondition property: Assertion { VacuityCheck: !Precondition; }
-  3. Run RMC on the original model with the negated property.
-  4. exit_code == 0  → !Precondition verified → original property was VACUOUS.
-  5. exit_code != 0  → counterexample found  → original property is NON-VACUOUS (good).
+Requires an explicit applicability expression from formalization. Checks its
+negation in a separate RMC run, using parsed XML verdicts rather than exit codes.
+Legacy callers without an explicit antecedent receive unknown, not an inferred
+precondition extracted from the entire implication.
 
 Exit codes:
   0: Non-vacuous — property is meaningful
@@ -99,16 +94,10 @@ def build_negated_property(property_content: str, precondition: str) -> str:
     """
     Replace the Assertion block body with a single assertion of !Precondition.
 
-    Simplifies double-negation: if precondition already starts with '!', the
-    negated form becomes the positive expression. Preserves the define block
-    and LTL block unchanged.
+    Parenthesizes the complete explicit antecedent. Preserves the define and
+    temporal property blocks unchanged.
     """
-    if precondition.startswith('!'):
-        # Remove leading '!' and optional surrounding parens
-        inner = precondition[1:].strip()
-        negated = inner[1:-1] if (inner.startswith('(') and inner.endswith(')')) else inner
-    else:
-        negated = f"!({precondition})"
+    negated = f"!({precondition})"
 
     negated_assertion = f"\n    VacuityCheck: {negated};\n  "
     return re.sub(
@@ -128,6 +117,7 @@ def check_vacuity(
     timeout_seconds: int = 120,
     assertion_id: Optional[str] = None,
     rule_id: Optional[str] = None,
+    applicability_expression: Optional[str] = None,
 ) -> Dict[str, Any]:
     """
     Perform a vacuity check on a verified Rebeca property.
@@ -164,6 +154,15 @@ def check_vacuity(
           "explanation":           str
         }
     """
+    # Applicability must come from formalization; an entire implication is not
+    # its antecedent. Retain an explicit unknown for legacy callers.
+    if not applicability_expression:
+        return {'is_vacuous': None, 'precondition_used': None,
+                'assertion_id_used': assertion_id, 'baseline_outcome': None,
+                'secondary_outcome': None, 'comparison_changed': None,
+                'comparison_basis': 'explicit_applicability_required',
+                'secondary_exit_code': 1, 'secondary_output_dir': None,
+                'explanation': 'Supply applicability_expression from validated formalization; the assertion cannot be used as its own antecedent.'}
     prop_path = safe_path(property_file)
     if not prop_path.exists():
         return {
@@ -213,7 +212,7 @@ def check_vacuity(
                 ),
             }
 
-    precondition = extract_precondition(property_content, assertion_id=assertion_id)
+    precondition = applicability_expression
 
     if precondition is None:
         detail = (
@@ -276,18 +275,16 @@ def check_vacuity(
     exit_code = int(secondary_details.get("rmc_exit_code", 1))
     secondary_outcome = secondary_details.get("verification_outcome")
 
-    comparable = baseline_outcome in ("satisfied", "cex") and secondary_outcome in ("satisfied", "cex")
+    comparable = baseline_outcome == 'satisfied' and secondary_outcome in ("satisfied", "cex")
     if comparable:
         comparison_changed = baseline_outcome != secondary_outcome
         # Vacuous means negated-precondition check preserves the same verdict.
         is_vacuous = not comparison_changed
         comparison_basis = "semantic_outcome"
     else:
-        # Legacy fallback: preserve historical behavior when semantic outcome
-        # cannot be derived (timeouts/errors/non-comparable states).
         comparison_changed = None
-        is_vacuous = exit_code == 0
-        comparison_basis = "legacy_secondary_exit"
+        is_vacuous = None
+        comparison_basis = "unknown"
 
     if comparable:
         explanation = (
@@ -298,11 +295,7 @@ def check_vacuity(
                  f"({baseline_outcome} -> {secondary_outcome})."
         )
     else:
-        explanation = (
-            "VACUOUS: The property passes trivially — its precondition is never reachable."
-            if is_vacuous
-            else "NON-VACUOUS: A counterexample exists for !Precondition; the property is meaningful."
-        )
+        explanation = 'Unknown: baseline must be satisfied and applicability check must have a parsed verdict.'
 
     return {
         "is_vacuous": is_vacuous,
@@ -352,6 +345,7 @@ def main() -> None:
              "When omitted, dirs are placed inside --output-dir.",
     )
     parser.add_argument("--output-json", action="store_true", help="Output result as JSON")
+    parser.add_argument('--applicability-expression', help='Explicit antecedent from formalization, never the whole assertion')
     parser.add_argument(
         "--output-file",
         default=None,
@@ -368,6 +362,7 @@ def main() -> None:
         timeout_seconds=args.timeout_seconds,
         assertion_id=args.assertion_id,
         rule_id=args.rule_id,
+        applicability_expression=args.applicability_expression,
     )
 
     if args.output_file:

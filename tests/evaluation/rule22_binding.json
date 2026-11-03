@@ -1,0 +1,17 @@
+{
+  "rule_id": "Rule-22a-range-excerpt",
+  "source": "work/colreg/Rule22_baseline_colreg.txt",
+  "provenance": "Explicit evaluation fixture authored from the supplied excerpt and source variable declarations. Not automatic semantic extraction; needs independent human review.",
+  "class": "Ship",
+  "length_variable": "ship_length",
+  "length_minimum": 50,
+  "assumptions": ["ship_length is measured in metres", "The five range fields use the excerpt's miles without conversion"],
+  "unresolved": ["External Section 8 Annex I intensity requirement is not formalized", "The excerpt does not establish full Rule22 coverage"],
+  "requirements": [
+    {"concept": "masthead", "variable": "masthead_light_range", "minimum": 6, "source_text": "a masthead light, 6 miles"},
+    {"concept": "side", "variable": "side_light_range", "minimum": 3, "source_text": "a sidelight, 3 miles"},
+    {"concept": "stern", "variable": "stern_light_range", "minimum": 3, "source_text": "a sternlight, 3 miles"},
+    {"concept": "towing", "variable": "towing_light_range", "minimum": 3, "source_text": "a towing light, 3 miles"},
+    {"concept": "allround", "variable": "allround_light_range", "minimum": 3, "source_text": "a white, red, green or yellow all-round light, 3 miles"}
+  ]
+}

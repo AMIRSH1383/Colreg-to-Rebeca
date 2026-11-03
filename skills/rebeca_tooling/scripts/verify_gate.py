@@ -16,15 +16,15 @@ _PKG_ROOT = _HERE.parent.parent.parent
 if str(_PKG_ROOT) not in sys.path:
     sys.path.insert(0, str(_PKG_ROOT))
 
-from skills.rebeca_tooling.scripts.run_rmc import run_rmc_detailed
-from skills.rebeca_tooling.scripts.vacuity_checker import check_vacuity
-from skills.rebeca_tooling.scripts.mutation_engine import (
+from run_rmc import run_rmc_detailed
+from vacuity_checker import check_vacuity
+from mutation_engine import (
     MutationEngine,
     run_mutants,
     write_mutation_artifact,
 )
-from skills.rebeca_tooling.scripts.utils import safe_path
-from skills.rebeca_tooling.scripts.output_policy import step_artifact_path
+from utils import safe_path
+from output_policy import step_artifact_path
 
 _MUTATION_SCORE_THRESHOLD = 80.0
 
@@ -46,6 +46,7 @@ def run_verification_gate(
     seed: int = 42,
     skip_vacuity: bool = False,
     skip_mutation: bool = False,
+    applicability_expression: Optional[str] = None,
 ) -> Dict[str, Any]:
     """Run RMC, vacuity, and mutation and return all results in one dict.
 
@@ -71,7 +72,7 @@ def run_verification_gate(
     )
 
     exit_code: int = rmc_result.get("rmc_exit_code", 0)
-    verified: bool = rmc_result.get("rmc_outcome") == "verified"
+    verified: bool = rmc_result.get("verification_outcome") == "satisfied"
 
     payload: Dict[str, Any] = {
         "verified": verified,
@@ -100,6 +101,7 @@ def run_verification_gate(
             timeout_seconds=vacuity_timeout,
             assertion_id=rule_id,
             rule_id=rule_id,
+            applicability_expression=applicability_expression,
         )
         payload["vacuity_status"] = vacuity_result
         is_vacuous = vacuity_result.get("is_vacuous")
@@ -142,7 +144,7 @@ def run_verification_gate(
     # ------------------------------------------------------------------
     payload["passes_gate"] = (
         verified
-        and not is_vacuous
+        and is_vacuous is False
         and (skip_mutation or score >= _MUTATION_SCORE_THRESHOLD)
     )
 
@@ -176,6 +178,7 @@ def main() -> None:
     parser.add_argument("--max-mutants",      type=int, default=50)
     parser.add_argument("--mutation-timeout", type=int, default=600)
     parser.add_argument("--seed",             type=int, default=42)
+    parser.add_argument('--applicability-expression', help='Explicit antecedent for optional vacuity checking')
 
     parser.add_argument("--vacuity",    dest="vacuity", action="store_true",  default=False,
         help="Enable vacuity checking (default: off)")
@@ -208,6 +211,7 @@ def main() -> None:
         seed=args.seed,
         skip_vacuity=skip_vacuity,
         skip_mutation=skip_mutation,
+        applicability_expression=args.applicability_expression,
     )
 
     # Always write the canonical pipeline artifact — no LLM handover needed.

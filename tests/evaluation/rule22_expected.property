@@ -1,0 +1,14 @@
+property {
+  Assertion {
+    Rule22_s1_masthead: (s1.ship_length < 50) || (s1.masthead_light_range >= 6);
+    Rule22_s1_side: (s1.ship_length < 50) || (s1.side_light_range >= 3);
+    Rule22_s1_stern: (s1.ship_length < 50) || (s1.stern_light_range >= 3);
+    Rule22_s1_towing: (s1.ship_length < 50) || (s1.towing_light_range >= 3);
+    Rule22_s1_allround: (s1.ship_length < 50) || (s1.allround_light_range >= 3);
+    Rule22_s2_masthead: (s2.ship_length < 50) || (s2.masthead_light_range >= 6);
+    Rule22_s2_side: (s2.ship_length < 50) || (s2.side_light_range >= 3);
+    Rule22_s2_stern: (s2.ship_length < 50) || (s2.stern_light_range >= 3);
+    Rule22_s2_towing: (s2.ship_length < 50) || (s2.towing_light_range >= 3);
+    Rule22_s2_allround: (s2.ship_length < 50) || (s2.allround_light_range >= 3);
+  }
+}

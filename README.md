@@ -1,5 +1,40 @@
 # RebecAI
 
+Run the two downstream stages separately: [semantic binding and synthesis agents](examples/direct-agents.md).
+
+Milestone 3 adds [source-cited model evidence and strict semantic binding](examples/milestone3/README.md).
+It preserves the previous milestones and does not change the navigation model.
+
+Milestone 2's generic production entry point is
+[`scripts/direct_colreg.py`](scripts/direct_colreg.py): it invokes the configured
+LLM for extraction and does not contain rule-specific answers. See the
+[Milestone 2 commands and critical limitations](examples/milestone2/README.md).
+The Rule 22(a) runner below is retained as a historical regression fixture.
+
+The direct Rule 22(a) milestone is runnable through
+[`scripts/rule22_pipeline.py`](scripts/rule22_pipeline.py). See
+[exact reproduction commands, scope and blockers](examples/rule22a/README.md).
+It uses natural-language input, deterministic binding/synthesis and actual RMC
+XML verdicts, with separate applicability checks and isolated boundary scenarios.
+
+For the direct natural-language COLREG research direction, see
+[the implementation and evaluation plan](FUTURE_WORK_PLAN.md). The initial
+deterministic model inventory is runnable without extra dependencies:
+
+```powershell
+python skills/rebeca_tooling/scripts/extract_rebeca.py "work/Original Model.rebeca" --output work/analysis/original-model.inventory.json
+```
+
+Evaluate extraction accuracy and its use in Rule 22 property generation:
+
+```powershell
+python scripts/evaluate-extractor.py
+python tests/test_extractor_evaluation.py
+```
+
+See [evaluation instructions and limits](tests/evaluation/README.md), including
+the optional real RMC run. Local static scenario checks do not run model checking.
+
 A multi-agent orchestration (MAO) system for transforming maritime safety rules from Legata formal specifications into verifiable Rebeca actor models, automated via the Rebeca Model Checker (RMC).
 
 ## Overview

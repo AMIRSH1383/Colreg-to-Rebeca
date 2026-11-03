@@ -120,7 +120,7 @@ def _extract_xml_signal(root: ET.Element) -> str:
     return "unknown"
 
 
-def parse_rmc_result_file(result_path: str) -> Dict[str, Any]:
+def parse_rmc_result_file(result_path: str, strict: bool = False) -> Dict[str, Any]:
     """Parse model.out/RMC exported result artifact and normalize outcome."""
     try:
         path = safe_path(result_path)
@@ -159,6 +159,27 @@ def parse_rmc_result_file(result_path: str) -> Dict[str, Any]:
         root = tree.getroot()
         result["format"] = "xml"
         result["parsed"] = True
+        if strict:
+            # Only explicit RMC verdicts are evidence, never arbitrary log words.
+            if _local_name(root.tag) != "model-checking-report":
+                result["error"] = "Unexpected RMC report root"
+                return result
+            verdicts = [((node.text or '').strip().lower())
+                        for parent in root if _local_name(parent.tag) == 'checked-property'
+                        for node in parent if _local_name(node.tag) == 'result']
+            result['raw_verdicts'] = verdicts
+            if verdicts and all(v == 'satisfied' for v in verdicts):
+                result['outcome'] = 'satisfied'
+            elif 'assertion failed' in verdicts:
+                result['outcome'] = 'cex'
+            traces = [node for node in root if _local_name(node.tag) == 'counter-example-trace'
+                      and _trace_has_content(node)]
+            result['counterexample_path'] = None
+            if result['outcome'] == 'cex' and traces:
+                trace_path = path.with_suffix('.counterexample.xml')
+                ET.ElementTree(traces[0]).write(trace_path, encoding='utf-8', xml_declaration=True)
+                result['counterexample_path'] = str(trace_path)
+            return result
         result["outcome"] = _extract_xml_signal(root)
         return result
     except ET.ParseError:
@@ -167,6 +188,9 @@ def parse_rmc_result_file(result_path: str) -> Dict[str, Any]:
         result["error"] = str(exc)
         return result
 
+    if strict:
+        result['error'] = 'Expected complete RMC XML; text logs are not verdict evidence'
+        return result
     result["format"] = "text"
     result["parsed"] = True
     result["outcome"] = _normalise_status(text)

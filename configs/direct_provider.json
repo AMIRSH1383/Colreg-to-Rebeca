@@ -1,0 +1,7 @@
+{
+  "provider": "codex_cli",
+  "model": "gpt-6.1-sol",
+  "timeout_seconds": 180,
+  "prices": null,
+  "provenance": "Model copied from existing local Codex configuration; existing ChatGPT CLI authentication; monetary billing not exposed"
+}

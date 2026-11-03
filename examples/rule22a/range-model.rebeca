@@ -1,0 +1,23 @@
+// Isolated experimental model. Length: metres; visibility ranges: nautical miles.
+// No claim that this is a behavioral abstraction of the navigation model.
+reactiveclass Ship(10) {
+  statevars {
+    int ship_length;
+    int masthead_light_range;
+    int side_light_range;
+    int stern_light_range;
+    int towing_light_range;
+    int allround_light_range;
+  }
+  Ship() {
+    ship_length = 50;
+    masthead_light_range = 6;
+    side_light_range = 3;
+    stern_light_range = 3;
+    towing_light_range = 3;
+    allround_light_range = 3;
+    self.check();
+  }
+  msgsrv check() { self.check(); }
+}
+main { Ship s1():(); }

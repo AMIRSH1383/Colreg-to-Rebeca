@@ -232,3 +232,25 @@ CLAUDE.md
 GEMINI.md
 *.pyc
 docs/
+
+# Reproducible local inventories and evaluation outputs (keep research inputs).
+/work/analysis/
+/work/evaluation/
+/work/milestone1/*
+!/work/milestone1/RESULTS.md
+/work/milestone2/*
+!/work/milestone2/RESULTS.md
+/work/milestone3/*
+!/work/milestone3/RESULTS.md
+/work/direct-agents/
+
+# Local dependency bundles and downloaded verification toolchains.
+/.experiment-deps/
+/toolchain/
+/tmp/
+
+# Native RMC compilation artifacts.
+*.o
+*.obj
+*.exe
+model.out

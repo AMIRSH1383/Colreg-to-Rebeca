@@ -1,0 +1,8 @@
+property {
+  define {
+    existingLengthNonnegative = (s1.ship_length >= 0);
+  }
+  Assertion {
+    ExistingLengthNonnegative: existingLengthNonnegative;
+  }
+}

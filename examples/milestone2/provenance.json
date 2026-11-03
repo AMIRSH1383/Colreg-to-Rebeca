@@ -1,0 +1,18 @@
+{
+  "rule19.txt": {
+    "source": "https://www.gov.uk/government/publications/mgn-369-mf-amendment-1-navigation-safety-navigation-practices-relevant-to-restricted-visibility/mgn-369-mf-amendment-1-navigation-safety-navigation-practices-relevant-to-restricted-visibility",
+    "authority": "UK Maritime and Coastguard Agency",
+    "section": "5.1.1 through 5.1.5: quoted Rule19(a-e), excluding surrounding explanatory guidance",
+    "licence": "Crown copyright 2024, Open Government Licence v3.0",
+    "retrieved": "2026-11-01",
+    "normalization": "Removed typographical quotation delimiters; normalized whitespace and subparagraph layout"
+  },
+  "rule22a": {
+    "source": "../rule22a/source.txt",
+    "authority": "Authoritative clause supplied by the user"
+  },
+  "rule22b": {
+    "status": "SOURCE_BLOCKED_PENDING_USER",
+    "reason": "USCG page and handbook returned HTTP403; user will provide authoritative text"
+  }
+}

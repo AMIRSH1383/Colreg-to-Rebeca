@@ -36,10 +36,8 @@ def _write_json_artifact(output_file: Path, payload: Dict[str, Any]) -> None:
 
 
 def _classify_model_outcome(exit_code: Optional[int]) -> str:
-    """Map executable exit code to semantic outcome label."""
-    if exit_code is None:
-        return "unknown"
-    return "satisfied" if exit_code == 0 else "cex"
+    """Exit codes alone cannot establish a semantic verdict."""
+    return "unknown"
 
 
 def run_model_out(
@@ -85,6 +83,8 @@ def run_model_out(
             if not out_file.is_absolute():
                 out_file = exe.parent / out_file
             out_file = safe_path(str(out_file))
+            # Prevent a previous execution's XML being accepted after a failure.
+            out_file.unlink(missing_ok=True)
             cmd.extend(["-o", str(out_file)])
 
         if hashmap_size is not None:
@@ -98,17 +98,14 @@ def run_model_out(
             cmd.extend(["-x", str(statespace_file)])
 
         cmd.extend(list(args or []))
-        proc = subprocess.run(
-            cmd,
-            stdout=subprocess.DEVNULL,
-            stderr=subprocess.DEVNULL,
-            timeout=timeout_seconds,
-            cwd=str(exe.parent),
-        )
+        with (exe.parent / 'model_stdout.log').open('w') as stdout, (exe.parent / 'model_stderr.log').open('w') as stderr:
+            proc = subprocess.run(cmd, stdout=stdout, stderr=stderr,
+                                  timeout=timeout_seconds, cwd=str(exe.parent))
         return {
             "executed": True,
             "exit_code": proc.returncode,
-            "outcome": _classify_model_outcome(proc.returncode),
+            "outcome": (parse_rmc_result_file(str(out_file), strict=True)['outcome']
+                        if export_result else 'unknown'),
             "error": None,
         }
     except subprocess.TimeoutExpired:
@@ -183,6 +180,9 @@ def run_rmc_detailed(
         return details
 
     output_path.mkdir(parents=True, exist_ok=True)
+    if list(output_path.glob('*.cpp')) or (output_path / 'model.out').exists():
+        details['rmc_outcome'] = 'stale_output_directory'
+        return details
 
     # Build Java command
     cmd = ["java"]
@@ -225,8 +225,8 @@ def run_rmc_detailed(
             if result.returncode != 0:
                 print(f"RMC execution failed with exit code {result.returncode}", file=sys.stderr)
                 details["rmc_exit_code"] = result.returncode
-                details["rmc_outcome"] = "cex_or_rmc_failed"
-                details["verification_outcome"] = "cex"
+                details["rmc_outcome"] = "generation_failed"
+                details["verification_outcome"] = "unknown"
                 return details
     except subprocess.TimeoutExpired:
         print(f"Error: RMC verification timed out after {timeout_seconds}s", file=sys.stderr)
@@ -263,7 +263,8 @@ def run_rmc_detailed(
             result = subprocess.run(
                 ["g++"] + [str(f) for f in cpp_files] + ["-w", "-o", str(executable)],
                 stderr=stderr_f,
-                cwd=str(output_path)
+                cwd=str(output_path),
+                timeout=timeout_seconds,
             )
             if result.returncode != 0:
                 print("Error: Phase 2 failed - C++ compilation error", file=sys.stderr)
@@ -273,6 +274,11 @@ def run_rmc_detailed(
                 details["rmc_outcome"] = "cpp_compile_failed"
                 details["verification_outcome"] = "unknown"
                 return details
+    except subprocess.TimeoutExpired:
+        details['rmc_exit_code'] = 3
+        details['rmc_outcome'] = 'compile_timeout'
+        details['verification_outcome'] = 'timeout'
+        return details
     except FileNotFoundError:
         print("Error: g++ compiler not found", file=sys.stderr)
         print("Install g++: Ubuntu/Debian: sudo apt install build-essential", file=sys.stderr)
@@ -298,10 +304,11 @@ def run_rmc_detailed(
     print("✓ Phase 2: C++ compilation succeeded", file=sys.stderr)
     details["cpp_compile_ok"] = True
     details["rmc_exit_code"] = 0
-    details["rmc_outcome"] = "verified"
+    details["rmc_outcome"] = "compiled"
     details["executable_path"] = str(executable)
 
     if run_model_outcome:
+        model_out_export_result = model_out_export_result or 'result.xml'
         model_out_result = run_model_out(
             executable,
             timeout_seconds=model_out_timeout_seconds,
@@ -325,17 +332,19 @@ def run_rmc_detailed(
                 result_file = Path(model_out_export_result)
                 if not result_file.is_absolute():
                     result_file = executable.parent / result_file
-                parsed_result = parse_rmc_result_file(str(result_file))
+                parsed_result = parse_rmc_result_file(str(result_file), strict=True)
             except Exception as exc:
                 parsed_result["error"] = str(exc)
         details["result_artifact"] = parsed_result
 
         model_outcome = model_out_result.get("outcome")
         artifact_outcome = parsed_result.get("outcome")
-        if artifact_outcome in ("satisfied", "cex"):
+        if model_out_result.get('executed') and artifact_outcome in ("satisfied", "cex"):
             details["verification_outcome"] = artifact_outcome
-        elif model_outcome in ("satisfied", "cex"):
-            details["verification_outcome"] = model_outcome
+            details['rmc_outcome'] = 'verified' if artifact_outcome == 'satisfied' else 'violated'
+        elif model_outcome == 'timeout':
+            details['verification_outcome'] = 'timeout'
+            details['rmc_outcome'] = 'execution_timeout'
         else:
             details["verification_outcome"] = "unknown"
     else:

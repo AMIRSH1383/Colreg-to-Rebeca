@@ -1,0 +1,102 @@
+{
+  "version": 1,
+  "models": [
+    {
+      "sha256": "80d2dfafb4d8e4dddc001c104644aa73394928d3e012b3a1a9388ad33174bea2",
+      "source": "examples/rule22a/range-model.rebeca",
+      "fields": [
+        {
+          "class": "Ship",
+          "variable": "ship_length",
+          "unit": "metres",
+          "description": null,
+          "provenance": "Explicit experimental unit interpretation of the model fields; no regulatory thresholds or concept aliases supplied"
+        },
+        {
+          "class": "Ship",
+          "variable": "masthead_light_range",
+          "unit": "nautical_miles",
+          "description": null,
+          "provenance": "Explicit experimental unit interpretation of the model fields; no regulatory thresholds or concept aliases supplied"
+        },
+        {
+          "class": "Ship",
+          "variable": "side_light_range",
+          "unit": "nautical_miles",
+          "description": null,
+          "provenance": "Explicit experimental unit interpretation of the model fields; no regulatory thresholds or concept aliases supplied"
+        },
+        {
+          "class": "Ship",
+          "variable": "stern_light_range",
+          "unit": "nautical_miles",
+          "description": null,
+          "provenance": "Explicit experimental unit interpretation of the model fields; no regulatory thresholds or concept aliases supplied"
+        },
+        {
+          "class": "Ship",
+          "variable": "towing_light_range",
+          "unit": "nautical_miles",
+          "description": null,
+          "provenance": "Explicit experimental unit interpretation of the model fields; no regulatory thresholds or concept aliases supplied"
+        },
+        {
+          "class": "Ship",
+          "variable": "allround_light_range",
+          "unit": "nautical_miles",
+          "description": null,
+          "provenance": "Explicit experimental unit interpretation of the model fields; no regulatory thresholds or concept aliases supplied"
+        }
+      ]
+    },
+    {
+      "sha256": "be31a8c28b08facfa9f322f2a29fd77572de1c55c3e928688742906133b09149",
+      "source": "work/Original Model.rebeca",
+      "fields": [
+        {
+          "class": "Ship",
+          "variable": "ship_length",
+          "unit": "metres",
+          "description": null,
+          "provenance": "Explicit experimental unit interpretation of the model fields; no regulatory thresholds or concept aliases supplied"
+        },
+        {
+          "class": "Ship",
+          "variable": "masthead_light_range",
+          "unit": "nautical_miles",
+          "description": null,
+          "provenance": "Explicit experimental unit interpretation of the model fields; no regulatory thresholds or concept aliases supplied"
+        },
+        {
+          "class": "Ship",
+          "variable": "side_light_range",
+          "unit": "nautical_miles",
+          "description": null,
+          "provenance": "Explicit experimental unit interpretation of the model fields; no regulatory thresholds or concept aliases supplied"
+        },
+        {
+          "class": "Ship",
+          "variable": "stern_light_range",
+          "unit": "nautical_miles",
+          "description": null,
+          "provenance": "Explicit experimental unit interpretation of the model fields; no regulatory thresholds or concept aliases supplied"
+        },
+        {
+          "class": "Ship",
+          "variable": "towing_light_range",
+          "unit": "nautical_miles",
+          "description": null,
+          "provenance": "Explicit experimental unit interpretation of the model fields; no regulatory thresholds or concept aliases supplied"
+        },
+        {
+          "class": "Ship",
+          "variable": "allround_light_range",
+          "unit": "nautical_miles",
+          "description": null,
+          "provenance": "Explicit experimental unit interpretation of the model fields; no regulatory thresholds or concept aliases supplied"
+        }
+      ]
+    }
+  ],
+  "mappings": []
+}

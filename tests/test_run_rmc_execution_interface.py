@@ -20,7 +20,7 @@ def test_run_model_out_passes_args(monkeypatch) -> None:
 
     monkeypatch.setattr(run_rmc_module.subprocess, "run", _run_stub)
 
-    with tempfile.TemporaryDirectory(dir=Path.home()) as td:
+    with tempfile.TemporaryDirectory(dir=Path(__file__).resolve().parents[1]) as td:
         exe = Path(td) / "model.out"
         exe.write_text("#!/bin/sh\nexit 0\n", encoding="utf-8")
 
@@ -47,7 +47,7 @@ def test_run_model_out_supports_rmc_flags(monkeypatch) -> None:
 
     monkeypatch.setattr(run_rmc_module.subprocess, "run", _run_stub)
 
-    with tempfile.TemporaryDirectory(dir=Path.home()) as td:
+    with tempfile.TemporaryDirectory(dir=Path(__file__).resolve().parents[1]) as td:
         base = Path(td)
         exe = base / "model.out"
         exe.write_text("#!/bin/sh\nexit 0\n", encoding="utf-8")
@@ -70,7 +70,7 @@ def test_run_model_out_supports_rmc_flags(monkeypatch) -> None:
 
 
 def test_run_model_out_rejects_small_hashmap_size() -> None:
-    with tempfile.TemporaryDirectory(dir=Path.home()) as td:
+    with tempfile.TemporaryDirectory(dir=Path(__file__).resolve().parents[1]) as td:
         exe = Path(td) / "model.out"
         exe.write_text("#!/bin/sh\nexit 0\n", encoding="utf-8")
 
@@ -116,7 +116,7 @@ def test_run_rmc_detailed_forwards_model_out_args(monkeypatch) -> None:
     monkeypatch.setattr(run_rmc_module.subprocess, "run", _subprocess_stub)
     monkeypatch.setattr(run_rmc_module, "run_model_out", _model_out_stub)
 
-    with tempfile.TemporaryDirectory(dir=Path.home()) as td:
+    with tempfile.TemporaryDirectory(dir=Path(__file__).resolve().parents[1]) as td:
         base = Path(td)
         jar = base / "rmc.jar"
         model = base / "m.rebeca"
@@ -137,7 +137,7 @@ def test_run_rmc_detailed_forwards_model_out_args(monkeypatch) -> None:
         )
 
     assert details["rmc_exit_code"] == 0
-    assert details["verification_outcome"] == "satisfied"
+    assert details["verification_outcome"] == "unknown"  # No result artifact was emitted.
     assert calls["model_out_args"] == ["--steps", "10"]
 
 
@@ -180,7 +180,7 @@ def test_run_rmc_detailed_forwards_model_out_named_flags(monkeypatch) -> None:
     monkeypatch.setattr(run_rmc_module.subprocess, "run", _subprocess_stub)
     monkeypatch.setattr(run_rmc_module, "run_model_out", _model_out_stub)
 
-    with tempfile.TemporaryDirectory(dir=Path.home()) as td:
+    with tempfile.TemporaryDirectory(dir=Path(__file__).resolve().parents[1]) as td:
         base = Path(td)
         jar = base / "rmc.jar"
         model = base / "m.rebeca"
@@ -204,14 +204,14 @@ def test_run_rmc_detailed_forwards_model_out_named_flags(monkeypatch) -> None:
         )
 
     assert details["rmc_exit_code"] == 0
-    assert details["verification_outcome"] == "satisfied"
+    assert details["verification_outcome"] == "unknown"  # A mocked exit outcome is insufficient.
     assert calls["model_out_args"] == ["--steps", "10"]
     assert calls["export_result"] == "res.txt"
     assert calls["hashmap_size"] == 21
     assert calls["export_statespace"] == "states.txt"
 
 
-def test_run_rmc_detailed_uses_result_artifact_when_model_out_unknown(monkeypatch) -> None:
+def test_run_rmc_detailed_rejects_result_when_execution_did_not_complete(monkeypatch) -> None:
     class _Proc:
         def __init__(self, returncode: int):
             self.returncode = returncode
@@ -235,7 +235,7 @@ def test_run_rmc_detailed_uses_result_artifact_when_model_out_unknown(monkeypatc
             "error": "simulated unknown outcome",
         }
 
-    def _parse_stub(result_path):
+    def _parse_stub(result_path, **kwargs):
         return {
             "path": result_path,
             "exists": True,
@@ -249,7 +249,7 @@ def test_run_rmc_detailed_uses_result_artifact_when_model_out_unknown(monkeypatc
     monkeypatch.setattr(run_rmc_module, "run_model_out", _model_out_stub)
     monkeypatch.setattr(run_rmc_module, "parse_rmc_result_file", _parse_stub)
 
-    with tempfile.TemporaryDirectory(dir=Path.home()) as td:
+    with tempfile.TemporaryDirectory(dir=Path(__file__).resolve().parents[1]) as td:
         base = Path(td)
         jar = base / "rmc.jar"
         model = base / "m.rebeca"
@@ -270,7 +270,7 @@ def test_run_rmc_detailed_uses_result_artifact_when_model_out_unknown(monkeypatc
         )
 
     assert details["rmc_exit_code"] == 0
-    assert details["verification_outcome"] == "cex"
+    assert details["verification_outcome"] == "unknown"
     assert details["result_artifact"]["parsed"] is True
     assert details["result_artifact"]["outcome"] == "cex"
 
@@ -299,7 +299,7 @@ def test_run_rmc_detailed_prefers_result_artifact_over_model_out_exit_outcome(mo
             "error": None,
         }
 
-    def _parse_stub(result_path):
+    def _parse_stub(result_path, **kwargs):
         return {
             "path": result_path,
             "exists": True,
@@ -313,7 +313,7 @@ def test_run_rmc_detailed_prefers_result_artifact_over_model_out_exit_outcome(mo
     monkeypatch.setattr(run_rmc_module, "run_model_out", _model_out_stub)
     monkeypatch.setattr(run_rmc_module, "parse_rmc_result_file", _parse_stub)
 
-    with tempfile.TemporaryDirectory(dir=Path.home()) as td:
+    with tempfile.TemporaryDirectory(dir=Path(__file__).resolve().parents[1]) as td:
         base = Path(td)
         jar = base / "rmc.jar"
         model = base / "m.rebeca"
