@@ -1,0 +1,9 @@
+Executing RMC...
+Command: java -jar /workspace/.tools/rmc/rmc-2.14.jar -s /workspace/Colreg-to-Rebeca/skills/rebeca_handbook/examples/syntax_examples.rebeca -p /workspace/Colreg-to-Rebeca/skills/rebeca_handbook/examples/property_examples.property -o /tmp/colreg-gate-cli-smoke/rmc -e TIMED_REBECA -x
+✓ Phase 1: RMC generated C++ source files
+Phase 2: Compiling C++ files with g++...
+✓ Phase 2: C++ compilation succeeded
+✓ RMC workflow complete (parse + compile)
+✓ semantic verification outcome: satisfied (exit=0)
+Output directory: /tmp/colreg-gate-cli-smoke/rmc
+Executable: /tmp/colreg-gate-cli-smoke/rmc/model.out

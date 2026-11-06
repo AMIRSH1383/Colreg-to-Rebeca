@@ -1,0 +1,77 @@
+{
+  "status": "ok",
+  "rule_id": "Rule-19",
+  "extraction": {
+    "entities": [
+      {
+        "id": "vessel",
+        "name": "vessel",
+        "type": "participant",
+        "source_text": "vessels"
+      },
+      {
+        "id": "power_driven_vessel",
+        "name": "power-driven vessel",
+        "type": "participant",
+        "source_text": "power-driven vessel"
+      }
+    ],
+    "statements": [
+      {
+        "id": "stmt01",
+        "role": "scope",
+        "source_text": "This Rule applies to vessels not in sight of one another when navigating in or near an area of restricted visibility.",
+        "subjects": ["vessel"],
+        "concept": "restricted_visibility_scope",
+        "predicate": "The rule applies to vessels not in sight of one another when navigating in or near an area of restricted visibility.",
+        "operator": null,
+        "value": null,
+        "unit": null,
+        "applies_when": []
+      },
+      {
+        "id": "stmt02",
+        "role": "obligation",
+        "source_text": "Every vessel shall proceed at a safe speed adapted to the prevailing circumstances and conditions of restricted visibility.",
+        "subjects": ["vessel"],
+        "concept": "safe_speed",
+        "predicate": "Every vessel shall proceed at a safe speed adapted to the prevailing circumstances and conditions of restricted visibility.",
+        "operator": null,
+        "value": null,
+        "unit": null,
+        "applies_when": ["stmt01"]
+      },
+      {
+        "id": "stmt03",
+        "role": "obligation",
+        "source_text": "A power-driven vessel shall have engines ready for immediate manoeuvre.",
+        "subjects": ["power_driven_vessel"],
+        "concept": "engine_readiness",
+        "predicate": "A power-driven vessel shall have engines ready for immediate manoeuvre.",
+        "operator": null,
+        "value": null,
+        "unit": null,
+        "applies_when": ["stmt01"]
+      }
+    ],
+    "references": []
+  },
+  "open_assumptions": [
+    {
+      "source_text": "not in sight of one another",
+      "reason": "The text does not specify criteria for determining whether vessels are in sight of one another."
+    },
+    {
+      "source_text": "in or near an area of restricted visibility",
+      "reason": "The text supplies no visibility threshold defining restricted visibility or distance defining near such an area."
+    },
+    {
+      "source_text": "a safe speed adapted to the prevailing circumstances and conditions of restricted visibility",
+      "reason": "Safe speed and its adaptation depend on circumstances and conditions whose criteria and thresholds are not supplied."
+    },
+    {
+      "source_text": "engines ready for immediate manoeuvre",
+      "reason": "The text does not specify readiness criteria or a time limit for immediate manoeuvre."
+    }
+  ]
+}

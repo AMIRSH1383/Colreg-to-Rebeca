@@ -1,0 +1,33 @@
+Python 3.12.14
+openjdk version "21.0.12.1" 2026-08-18
+OpenJDK Runtime Environment (build 21.0.12.1+1-1-deb13u1-Debian)
+OpenJDK 64-Bit Server VM (build 21.0.12.1+1-1-deb13u1-Debian, mixed mode, sharing)
+g++ (Debian 14.2.0-19) 14.2.0
+Copyright (C) 2024 Free Software Foundation, Inc.
+This is free software; see the source for copying conditions.  There is NO
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+Requirement already satisfied: ast_serialize==0.13.1 in /workspace/.venvs/colreg/lib/python3.12/site-packages (from -r /workspace/colreg-dev-requirements.txt (line 1)) (0.13.1)
+Requirement already satisfied: attrs==26.1.0 in /workspace/.venvs/colreg/lib/python3.12/site-packages (from -r /workspace/colreg-dev-requirements.txt (line 2)) (26.1.0)
+Requirement already satisfied: flake8==7.5.0 in /workspace/.venvs/colreg/lib/python3.12/site-packages (from -r /workspace/colreg-dev-requirements.txt (line 3)) (7.5.0)
+Requirement already satisfied: iniconfig==2.3.1 in /workspace/.venvs/colreg/lib/python3.12/site-packages (from -r /workspace/colreg-dev-requirements.txt (line 4)) (2.3.1)
+Requirement already satisfied: jsonschema==4.26.0 in /workspace/.venvs/colreg/lib/python3.12/site-packages (from -r /workspace/colreg-dev-requirements.txt (line 5)) (4.26.0)
+Requirement already satisfied: jsonschema-specifications==2025.9.1 in /workspace/.venvs/colreg/lib/python3.12/site-packages (from -r /workspace/colreg-dev-requirements.txt (line 6)) (2025.9.1)
+Requirement already satisfied: librt==0.16.0 in /workspace/.venvs/colreg/lib/python3.12/site-packages (from -r /workspace/colreg-dev-requirements.txt (line 7)) (0.16.0)
+Requirement already satisfied: mccabe==0.7.0 in /workspace/.venvs/colreg/lib/python3.12/site-packages (from -r /workspace/colreg-dev-requirements.txt (line 8)) (0.7.0)
+Requirement already satisfied: mypy==2.4.1 in /workspace/.venvs/colreg/lib/python3.12/site-packages (from -r /workspace/colreg-dev-requirements.txt (line 9)) (2.4.1)
+Requirement already satisfied: mypy_extensions==1.2.0 in /workspace/.venvs/colreg/lib/python3.12/site-packages (from -r /workspace/colreg-dev-requirements.txt (line 10)) (1.2.0)
+Requirement already satisfied: packaging==26.3 in /workspace/.venvs/colreg/lib/python3.12/site-packages (from -r /workspace/colreg-dev-requirements.txt (line 11)) (26.3)
+Requirement already satisfied: pathspec==1.1.1 in /workspace/.venvs/colreg/lib/python3.12/site-packages (from -r /workspace/colreg-dev-requirements.txt (line 12)) (1.1.1)
+Requirement already satisfied: pluggy==1.7.0 in /workspace/.venvs/colreg/lib/python3.12/site-packages (from -r /workspace/colreg-dev-requirements.txt (line 13)) (1.7.0)
+Requirement already satisfied: pycodestyle==2.15.0 in /workspace/.venvs/colreg/lib/python3.12/site-packages (from -r /workspace/colreg-dev-requirements.txt (line 14)) (2.15.0)
+Requirement already satisfied: pyflakes==4.1.0 in /workspace/.venvs/colreg/lib/python3.12/site-packages (from -r /workspace/colreg-dev-requirements.txt (line 15)) (4.1.0)
+Requirement already satisfied: Pygments==2.21.0 in /workspace/.venvs/colreg/lib/python3.12/site-packages (from -r /workspace/colreg-dev-requirements.txt (line 16)) (2.21.0)
+Requirement already satisfied: pytest==9.2.0 in /workspace/.venvs/colreg/lib/python3.12/site-packages (from -r /workspace/colreg-dev-requirements.txt (line 17)) (9.2.0)
+Requirement already satisfied: referencing==0.37.0 in /workspace/.venvs/colreg/lib/python3.12/site-packages (from -r /workspace/colreg-dev-requirements.txt (line 18)) (0.37.0)
+Requirement already satisfied: rpds-py==2026.9.1 in /workspace/.venvs/colreg/lib/python3.12/site-packages (from -r /workspace/colreg-dev-requirements.txt (line 19)) (2026.9.1)
+Requirement already satisfied: typing_extensions==4.16.0 in /workspace/.venvs/colreg/lib/python3.12/site-packages (from -r /workspace/colreg-dev-requirements.txt (line 20)) (4.16.0)
+
+[notice] A new release of pip is available: 25.0.1 -> 26.3
+[notice] To update, run: python -m pip install --upgrade pip
+/workspace/.tools/rmc/rmc-2.14.jar: OK

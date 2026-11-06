@@ -10,7 +10,7 @@ from rmc_result_parser import parse_rmc_result_file
 
 def test_parse_xml_status_satisfied() -> None:
     xml = """<result><verification status=\"satisfied\" /></result>"""
-    with tempfile.TemporaryDirectory(dir=Path.home()) as td:
+    with tempfile.TemporaryDirectory(dir=tempfile.gettempdir()) as td:
         p = Path(td) / "result.xml"
         p.write_text(xml, encoding="utf-8")
         parsed = parse_rmc_result_file(str(p))
@@ -22,7 +22,7 @@ def test_parse_xml_status_satisfied() -> None:
 
 def test_parse_xml_holds_false_is_cex() -> None:
     xml = """<result><property holds=\"false\" /></result>"""
-    with tempfile.TemporaryDirectory(dir=Path.home()) as td:
+    with tempfile.TemporaryDirectory(dir=tempfile.gettempdir()) as td:
         p = Path(td) / "result.xml"
         p.write_text(xml, encoding="utf-8")
         parsed = parse_rmc_result_file(str(p))
@@ -40,7 +40,7 @@ def test_parse_xml_result_satisfied_with_empty_counterexample_trace() -> None:
             <counter-example-trace />
         </analysis>
         """
-        with tempfile.TemporaryDirectory(dir=Path.home()) as td:
+        with tempfile.TemporaryDirectory(dir=tempfile.gettempdir()) as td:
                 p = Path(td) / "result.xml"
                 p.write_text(xml, encoding="utf-8")
                 parsed = parse_rmc_result_file(str(p))
@@ -59,7 +59,7 @@ def test_parse_xml_nonempty_counterexample_trace_is_cex() -> None:
             </counter-example-trace>
         </analysis>
         """
-        with tempfile.TemporaryDirectory(dir=Path.home()) as td:
+        with tempfile.TemporaryDirectory(dir=tempfile.gettempdir()) as td:
                 p = Path(td) / "result.xml"
                 p.write_text(xml, encoding="utf-8")
                 parsed = parse_rmc_result_file(str(p))
@@ -70,7 +70,7 @@ def test_parse_xml_nonempty_counterexample_trace_is_cex() -> None:
 
 
 def test_parse_text_counterexample_is_cex() -> None:
-    with tempfile.TemporaryDirectory(dir=Path.home()) as td:
+    with tempfile.TemporaryDirectory(dir=tempfile.gettempdir()) as td:
         p = Path(td) / "result.txt"
         p.write_text("Counterexample found", encoding="utf-8")
         parsed = parse_rmc_result_file(str(p))
@@ -81,10 +81,28 @@ def test_parse_text_counterexample_is_cex() -> None:
 
 
 def test_missing_file_returns_error() -> None:
-    with tempfile.TemporaryDirectory(dir=Path.home()) as td:
+    with tempfile.TemporaryDirectory(dir=tempfile.gettempdir()) as td:
         p = Path(td) / "missing.xml"
         parsed = parse_rmc_result_file(str(p))
 
     assert parsed["exists"] is False
     assert parsed["parsed"] is False
     assert "not found" in str(parsed["error"]).lower()
+
+
+def test_malformed_xml_is_not_a_success(tmp_path):
+    path = tmp_path / 'broken.xml'
+    path.write_text('<result>satisfied')
+    assert parse_rmc_result_file(str(path))['outcome'] == 'unknown'
+
+
+def test_negative_verdict_precedes_positive_verdict(tmp_path):
+    path = tmp_path / 'mixed.xml'
+    path.write_text('<results><result>satisfied</result><result>violated</result></results>')
+    assert parse_rmc_result_file(str(path))['outcome'] == 'cex'
+
+
+def test_not_verified_is_not_positive(tmp_path):
+    path = tmp_path / 'result.txt'
+    path.write_text('property not verified')
+    assert parse_rmc_result_file(str(path))['outcome'] != 'satisfied'

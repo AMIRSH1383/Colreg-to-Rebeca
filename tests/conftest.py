@@ -1,9 +1,10 @@
 """
-Shared pytest fixtures and path setup for the RebecAI test suite.
+Shared pytest fixtures and path setup for the COLREG-to-Rebeca test suite.
 """
 import sys
 import tempfile
 from pathlib import Path
+import shutil
 
 _ROOT = Path(__file__).parent.parent
 _SCRIPTS = _ROOT / "skills" / "rebeca_tooling" / "scripts"
@@ -20,7 +21,9 @@ import pytest
 # Real rmc.jar — used by tests that invoke run_rmc for real
 # ---------------------------------------------------------------------------
 
-RMC_JAR = Path.home() / ".rebeca" / "rmc.jar"
+from rmc_resolver import resolve_rmc_jar
+RMC_JAR = resolve_rmc_jar()
+RMC_READY = bool(RMC_JAR and shutil.which("java") and shutil.which("g++"))
 
 
 def pytest_configure(config):
@@ -30,7 +33,7 @@ def pytest_configure(config):
 
 
 def pytest_collection_modifyitems(config, items):
-    if not RMC_JAR.exists():
+    if not RMC_READY:
         skip = pytest.mark.skip(reason=f"rmc.jar not found at {RMC_JAR}")
         for item in items:
             if item.get_closest_marker("requires_rmc"):
@@ -40,7 +43,7 @@ def pytest_collection_modifyitems(config, items):
 @pytest.fixture(scope="session")
 def rmc_jar() -> str:
     """Path to the real rmc.jar. Session-scoped — resolved once per run."""
-    if not RMC_JAR.exists():
+    if not RMC_READY:
         pytest.skip(f"rmc.jar not found at {RMC_JAR}")
     return str(RMC_JAR)
 
@@ -58,9 +61,10 @@ reactiveclass Ship(10) {
   Ship() {
     length = 60;
     hasLight = true;
+    self.tick();
   }
   msgsrv tick() {
-    length = length + 1;
+    self.tick() after(1);
   }
 }
 main {
@@ -83,8 +87,8 @@ property {
 
 @pytest.fixture(scope="session")
 def model_dir(tmp_path_factory):
-    """Session-scoped dir with a known-good .rebeca + .property pair under ~."""
-    d = Path(tempfile.mkdtemp(dir=Path.home()))
+    """Session-scoped dir with a known-good .rebeca + .property pair in a temporary directory."""
+    d = Path(tempfile.mkdtemp(dir=tempfile.gettempdir()))
     (d / "model.rebeca").write_text(GOOD_MODEL, encoding="utf-8")
     (d / "model.property").write_text(GOOD_PROPERTY, encoding="utf-8")
     yield d
@@ -108,9 +112,9 @@ def property_file(model_dir) -> str:
 
 @pytest.fixture
 def home_tmp():
-    """Temp directory inside Path.home() so safe_path() allows it."""
+    """Temporary directory (legacy fixture name retained)."""
     import shutil
-    d = tempfile.mkdtemp(dir=Path.home())
+    d = tempfile.mkdtemp(dir=tempfile.gettempdir())
     yield Path(d)
     shutil.rmtree(d, ignore_errors=True)
 

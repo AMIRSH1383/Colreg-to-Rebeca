@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Cross-platform syntax checker for .rebeca and .property files.
+Heuristic syntax checker (not a full Rebeca parser) for .rebeca and .property files.
 Checks for forbidden patterns per the Rebeca language handbook.
 
 Forbidden patterns (outside comments):
@@ -17,8 +17,8 @@ import sys
 from pathlib import Path
 
 # Patterns to detect in code (not comments)
-FORBIDDEN_IMPLICATION = re.compile(r'(?<![=!<>])->|==>')
-FORBIDDEN_CHAINED_ASSIGN = re.compile(r'\w+\s*=\s*\(\s*\w+\s*=')
+FORBIDDEN_IMPLICATION = re.compile(r'->|=>')
+FORBIDDEN_CHAINED_ASSIGN = re.compile(r'\w+\s*=(?!=)\s*\(\s*\w+\s*=(?!=)')
 
 def strip_comments(text: str) -> str:
     """Remove // line comments and /* ... */ block comments."""
@@ -37,15 +37,21 @@ def check_file(path: str) -> list:
 
     # Build a comment-stripped version for pattern matching
     stripped = strip_comments(raw)
+    # Implication is legal in LTL; this lightweight check does not parse Rebeca.
+    implication_text = re.sub(
+        r'\bLTL\s*\{[^}]*\}',
+        lambda m: ''.join('\n' if c == '\n' else ' ' for c in m.group()),
+        stripped, flags=re.DOTALL,
+    )
 
     # Check line by line (using original for display, stripped for detection)
     raw_lines = raw.splitlines()
     stripped_lines = stripped.splitlines()
 
     for i, (raw_line, stripped_line) in enumerate(zip(raw_lines, stripped_lines), 1):
-        if FORBIDDEN_IMPLICATION.search(stripped_line):
+        if FORBIDDEN_IMPLICATION.search(implication_text.splitlines()[i - 1]):
             violations.append(
-                f"Line {i}: forbidden implication operator (-> or ==>): {raw_line.strip()}"
+                f"Line {i}: forbidden implication operator (-> or =>): {raw_line.strip()}"
             )
         if FORBIDDEN_CHAINED_ASSIGN.search(stripped_line):
             violations.append(

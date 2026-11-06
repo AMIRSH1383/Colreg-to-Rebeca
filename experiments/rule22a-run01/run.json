@@ -1,0 +1,12 @@
+{
+  "rule_id": "Rule-22a",
+  "colreg_input": "/workspace/Colreg-to-Rebeca/work/colreg/Rule22_baseline_colreg.txt",
+  "agent_instruction": "/workspace/Colreg-to-Rebeca/agents/colreg_extractor.md",
+  "schema": "/workspace/Colreg-to-Rebeca/schemas/colreg-extractor.schema.json",
+  "output_file": "/workspace/colreg-runs/rule22a-run01/extraction.json",
+  "repository_commit": "cd5e5d4e844013e4031a3d0291dbdc76d93f2864",
+  "execution": "Single isolated Codex subagent invocation; repository instruction loaded explicitly, not Gemini CLI or an automatic agent registry.",
+  "attempt": 1,
+  "review_policy": "Preserve the first output without correction; schema and source-grounding review occur after generation.",
+  "input_scope": "Only the supplied Rule 22 paragraph (a), not the complete COLREG Rule 22."
+}

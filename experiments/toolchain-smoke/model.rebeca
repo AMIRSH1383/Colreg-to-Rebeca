@@ -1,0 +1,16 @@
+reactiveclass Ship(10) {
+  statevars {
+    int length;
+    boolean hasLight;
+  }
+  Ship() {
+    length = 60;
+    hasLight = true;
+  }
+  msgsrv tick() {
+    length = length + 1;
+  }
+}
+main {
+  Ship s1():();
+}

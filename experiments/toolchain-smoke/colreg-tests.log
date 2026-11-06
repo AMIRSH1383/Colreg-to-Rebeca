@@ -1,0 +1,14 @@
+........................................................................ [ 55%]
+.........................................................                [100%]
+=============================== warnings summary ===============================
+tests/test_mutation_engine_output_file.py::TestWriteMutationErrorArtifact::test_error_file_created
+tests/test_mutation_engine_output_file.py::TestWriteMutationErrorArtifact::test_error_file_suffix
+tests/test_mutation_engine_output_file.py::TestWriteMutationErrorArtifact::test_error_file_is_valid_json
+tests/test_mutation_engine_output_file.py::TestWriteMutationErrorArtifact::test_stdout_preview_truncated
+tests/test_mutation_engine_output_file.py::TestWriteMutationErrorArtifact::test_timestamp_present
+tests/test_mutation_engine_output_file.py::TestWriteMutationErrorArtifact::test_exception_msg_stored
+  /workspace/Colreg-to-Rebeca/skills/rebeca_tooling/scripts/mutation_engine.py:733: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    "timestamp": datetime.datetime.utcnow().isoformat() + "Z",
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+129 passed, 8 deselected, 6 warnings in 9.60s

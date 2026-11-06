@@ -26,7 +26,7 @@ from vacuity_checker import build_negated_property, check_vacuity, extract_preco
 PROPERTY_NON_VACUOUS = """\
 property {
   define {
-    isLong = (s1.x > 5);
+    isLong = (s1.length > 5);
     lightOn = (s1.hasLight == true);
   }
   Assertion {
@@ -41,7 +41,7 @@ property {
 PROPERTY_VACUOUS = """\
 property {
   define {
-    isLong = (s1.x > 5);
+    isLong = (s1.length > 5);
     lightOn = (s1.hasLight == true);
   }
   Assertion {
@@ -62,7 +62,7 @@ property {
 PROPERTY_MULTI_ASSERTION = """\
 property {
     define {
-        isLong = (s1.x > 5);
+        isLong = (s1.length > 5);
         lightOn = (s1.hasLight == true);
     }
     Assertion {
@@ -371,3 +371,19 @@ class TestVacuityCLI:
             cwd=scripts_dir, capture_output=True, text=True,
         )
         assert result.returncode == 1, f"stderr: {result.stderr}"
+
+
+def test_unknown_secondary_is_not_non_vacuous(monkeypatch, tmp_path):
+    jar = tmp_path / 'rmc.jar'; jar.write_text('jar')
+    model = tmp_path / 'model.rebeca'; model.write_text('model')
+    prop = tmp_path / 'model.property'; prop.write_text(PROPERTY_NON_VACUOUS)
+    monkeypatch.setattr(vacmod, 'run_rmc_detailed', lambda **kw: {
+        'rmc_exit_code': 5, 'verification_outcome': 'unknown'})
+    result = check_vacuity(str(jar), str(model), str(prop), str(tmp_path / 'out'))
+    assert result['is_vacuous'] is None
+    assert result['comparison_basis'] == 'unavailable'
+
+
+def test_negation_keeps_entire_disjunction():
+    result = build_negated_property(PROPERTY_NON_VACUOUS, '!isLong || lightOn')
+    assert '!(!isLong || lightOn)' in result

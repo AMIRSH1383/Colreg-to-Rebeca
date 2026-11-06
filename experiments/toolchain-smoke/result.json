@@ -1,0 +1,23 @@
+{
+  "rmc_exit_code": 0,
+  "rmc_outcome": "verified",
+  "cpp_generated": true,
+  "cpp_compile_ok": true,
+  "model_out": {
+    "executed": true,
+    "exit_code": 0,
+    "outcome": "satisfied",
+    "error": null
+  },
+  "verification_outcome": "satisfied",
+  "result_artifact": {
+    "path": null,
+    "exists": false,
+    "parsed": false,
+    "format": "unknown",
+    "outcome": "unknown",
+    "error": null
+  },
+  "output_dir": "/workspace/colreg-smoke/output",
+  "executable_path": "/workspace/colreg-smoke/output/model.out"
+}

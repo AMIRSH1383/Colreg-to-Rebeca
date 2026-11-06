@@ -8,10 +8,14 @@ import subprocess
 import sys
 import tempfile
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import TYPE_CHECKING, Any, Dict, List, Optional
 
-from rmc_result_parser import parse_rmc_result_file
-from utils import safe_path
+if __package__ or TYPE_CHECKING:
+    from .rmc_result_parser import parse_rmc_result_file
+    from .utils import safe_path
+else:  # Direct script execution and legacy sibling imports.
+    from rmc_result_parser import parse_rmc_result_file
+    from utils import safe_path
 
 
 def _write_json_artifact(output_file: Path, payload: Dict[str, Any]) -> None:
@@ -36,8 +40,8 @@ def _write_json_artifact(output_file: Path, payload: Dict[str, Any]) -> None:
 
 
 def _classify_model_outcome(exit_code: Optional[int]) -> str:
-    """Map executable exit code to semantic outcome label."""
-    if exit_code is None:
+    """Legacy process-exit classification; not an authoritative property verdict."""
+    if exit_code is None or exit_code < 0:
         return "unknown"
     return "satisfied" if exit_code == 0 else "cex"
 
@@ -50,7 +54,7 @@ def run_model_out(
     hashmap_size: Optional[int] = None,
     export_statespace: Optional[str] = None,
 ) -> Dict[str, Any]:
-    """Execute compiled `model.out` and capture semantic outcome details."""
+    """Execute compiled `model.out`; outcome here is a legacy exit-code inference."""
     try:
         exe = safe_path(str(executable))
     except SystemExit:
@@ -200,6 +204,10 @@ def run_rmc_detailed(
     print("Executing RMC...", file=sys.stderr)
     print(f"Command: {' '.join(cmd)}", file=sys.stderr)
 
+    for stale in output_path.glob("*.cpp"):
+        stale.unlink()
+    (output_path / "model.out").unlink(missing_ok=True)
+
     # Execute with timeout
     stdout_log = output_path / "rmc_stdout.log"
     stderr_log = output_path / "rmc_stderr.log"
@@ -208,7 +216,7 @@ def run_rmc_detailed(
 
     # Assert all output files are confined within the validated output_path
     for p in (stdout_log, stderr_log, compile_stderr_log, executable):
-        if not str(p.resolve()).startswith(str(output_path)):
+        if not p.resolve().is_relative_to(output_path):
             print(f"Error: output file '{p}' escapes output directory", file=sys.stderr)
             details["rmc_outcome"] = "invalid_outputs"
             return details
@@ -226,7 +234,7 @@ def run_rmc_detailed(
                 print(f"RMC execution failed with exit code {result.returncode}", file=sys.stderr)
                 details["rmc_exit_code"] = result.returncode
                 details["rmc_outcome"] = "cex_or_rmc_failed"
-                details["verification_outcome"] = "cex"
+                details["verification_outcome"] = "unknown"
                 return details
     except subprocess.TimeoutExpired:
         print(f"Error: RMC verification timed out after {timeout_seconds}s", file=sys.stderr)
@@ -242,7 +250,7 @@ def run_rmc_detailed(
     # Phase 1: Check if RMC generated C++ files (parse succeeded)
     cpp_files = [
         f for f in output_path.glob("*.cpp")
-        if str(f.resolve()).startswith(str(output_path))
+        if f.resolve().is_relative_to(output_path)
     ]
     if not cpp_files:
         print("Error: RMC failed to generate C++ files (parse error)", file=sys.stderr)
@@ -302,6 +310,12 @@ def run_rmc_detailed(
     details["executable_path"] = str(executable)
 
     if run_model_outcome:
+        model_out_export_result = model_out_export_result or "model_result.xml"
+        if model_out_export_result:
+            result_path = Path(model_out_export_result)
+            if not result_path.is_absolute():
+                result_path = executable.parent / result_path
+            result_path.unlink(missing_ok=True)
         model_out_result = run_model_out(
             executable,
             timeout_seconds=model_out_timeout_seconds,
@@ -330,12 +344,9 @@ def run_rmc_detailed(
                 parsed_result["error"] = str(exc)
         details["result_artifact"] = parsed_result
 
-        model_outcome = model_out_result.get("outcome")
         artifact_outcome = parsed_result.get("outcome")
         if artifact_outcome in ("satisfied", "cex"):
             details["verification_outcome"] = artifact_outcome
-        elif model_outcome in ("satisfied", "cex"):
-            details["verification_outcome"] = model_outcome
         else:
             details["verification_outcome"] = "unknown"
     else:
@@ -344,7 +355,7 @@ def run_rmc_detailed(
     print("✓ RMC workflow complete (parse + compile)", file=sys.stderr)
     if run_model_outcome and details["model_out"]["executed"]:
         print(
-            f"✓ model.out outcome: {details['model_out']['outcome']} "
+            f"✓ semantic verification outcome: {details['verification_outcome']} "
             f"(exit={details['model_out']['exit_code']})",
             file=sys.stderr,
         )
@@ -383,7 +394,7 @@ def run_rmc(
     return int(details["rmc_exit_code"])
 
 
-def main():
+def main() -> None:
     parser = argparse.ArgumentParser(description="Execute RMC model checker")
     parser.add_argument("--jar", required=True, help="Path to rmc.jar")
     parser.add_argument("--model", required=True, help="Path to .rebeca model file")

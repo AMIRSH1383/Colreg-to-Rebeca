@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Mutation Engine for semantic validation of Legata→Rebeca transformations.
+Mutation Engine for semantic validation of COLREG-to-Rebeca verification.
 
 Applies controlled mutations to .rebeca and .property files to verify semantic
 strength. A well-formed transformation should produce different RMC outcomes
@@ -32,10 +32,14 @@ import tempfile
 import time
 from dataclasses import asdict, dataclass
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, Tuple
 
-from run_rmc import run_rmc_detailed
-from utils import safe_path
+if __package__ or TYPE_CHECKING:
+    from .run_rmc import run_rmc_detailed
+    from .utils import safe_path
+else:  # Direct script execution and legacy sibling imports.
+    from run_rmc import run_rmc_detailed
+    from utils import safe_path
 
 
 @dataclass
@@ -79,7 +83,7 @@ class MutationEngine:
             mutated_body = re.sub(r'([^\n]*=[^\n]*\n)', r'/* \1*/\n', body)
             if mutated_body == body:
                 continue
-            mutated_content = content[: m.start(2)] + mutated_body + content[m.end(2) :]
+            mutated_content = content[: m.start(2)] + mutated_body + content[m.end(2):]
             match_index += 1
             mutations.append(Mutation(
                 mutation_id=f"{rule_id}_m_tb_{match_index:02d}",
@@ -105,7 +109,7 @@ class MutationEngine:
                 continue
             mutated_condition = f"!({inner})"
             mutated_content = (
-                content[: m.start(2)] + mutated_condition + content[m.end(2) :]
+                content[: m.start(2)] + mutated_condition + content[m.end(2):]
             )
             match_index += 1
             mutations.append(Mutation(
@@ -131,7 +135,7 @@ class MutationEngine:
             original_num = int(m.group(2))
             mutated_num = original_num + 1
             mutated_content = (
-                content[: m.start(2)] + str(mutated_num) + content[m.end(2) :]
+                content[: m.start(2)] + str(mutated_num) + content[m.end(2):]
             )
             match_index += 1
             mutations.append(Mutation(
@@ -164,7 +168,7 @@ class MutationEngine:
             original_num = int(m.group(2))
             mutated_num = original_num + 1
             mutated_block = (
-                block_text[: m.start(2)] + str(mutated_num) + block_text[m.end(2) :]
+                block_text[: m.start(2)] + str(mutated_num) + block_text[m.end(2):]
             )
             mutated_content = content[:start] + mutated_block + content[end:]
             match_index += 1
@@ -194,11 +198,11 @@ class MutationEngine:
         for m in pattern.finditer(block_text):
             original_expr = m.group(2)
             # Skip already-negated definitions
-            preceding_char = block_text[m.start(2) - 1 : m.start(2)].strip()
+            preceding_char = block_text[m.start(2) - 1: m.start(2)].strip()
             if preceding_char == '!':
                 continue
             mutated_block = (
-                block_text[: m.start(2)] + f"!{original_expr}" + block_text[m.end(2) :]
+                block_text[: m.start(2)] + f"!{original_expr}" + block_text[m.end(2):]
             )
             mutated_content = content[:start] + mutated_block + content[end:]
             match_index += 1
@@ -231,9 +235,7 @@ class MutationEngine:
             # Toggle: add ! if absent, remove if present
             mutated_expr = expr if existing_negation == '!' else f"!{expr}"
             mutated_block = (
-                block_text[: m.start(2)]
-                + mutated_expr
-                + block_text[m.end(3) :]
+                block_text[: m.start(2)] + mutated_expr + block_text[m.end(3):]
             )
             mutated_content = content[:start] + mutated_block + content[end:]
             match_index += 1
@@ -267,7 +269,7 @@ class MutationEngine:
             if term in ('Assertion', 'LTL', 'define', 'property', 'G', 'F', 'X', 'U'):
                 continue
             mutated_block = (
-                block_text[: m.start()] + f"!{term}" + block_text[m.end() :]
+                block_text[: m.start()] + f"!{term}" + block_text[m.end():]
             )
             mutated_content = content[:start] + mutated_block + content[end:]
             match_index += 1
@@ -297,7 +299,7 @@ class MutationEngine:
             original_op = m.group(1)
             swapped_op = '||' if original_op == '&&' else '&&'
             mutated_block = (
-                block_text[: m.start()] + swapped_op + block_text[m.end() :]
+                block_text[: m.start()] + swapped_op + block_text[m.end():]
             )
             mutated_content = content[:start] + mutated_block + content[end:]
             match_index += 1
@@ -363,20 +365,13 @@ class MutationEngine:
     def mutate_model(self, content: str, rule_id: str) -> List[Mutation]:
         """Apply all .rebeca mutation strategies and return combined list."""
         return (
-            self.transition_bypass(content, rule_id)
-            + self.predicate_flip(content, rule_id)
-            + self.assignment_mutation(content, rule_id)
+            self.transition_bypass(content, rule_id) + self.predicate_flip(content, rule_id) + self.assignment_mutation(content, rule_id)
         )
 
     def mutate_property(self, content: str, rule_id: str) -> List[Mutation]:
         """Apply all .property mutation strategies and return combined list."""
         return (
-            self.comparison_value_mutation(content, rule_id)
-            + self.boolean_predicate_negation(content, rule_id)
-            + self.assertion_negation(content, rule_id)
-            + self.assertion_predicate_inversion(content, rule_id)
-            + self.logical_swap(content, rule_id)
-            + self.variable_swap(content, rule_id)
+            self.comparison_value_mutation(content, rule_id) + self.boolean_predicate_negation(content, rule_id) + self.assertion_negation(content, rule_id) + self.assertion_predicate_inversion(content, rule_id) + self.logical_swap(content, rule_id) + self.variable_swap(content, rule_id)
         )
 
     # ------------------------------------------------------------------ #
@@ -460,6 +455,8 @@ def run_mutants(
         }
     """
     jar_path = safe_path(jar)
+    rmc_model: Optional[str]
+    rmc_prop: Optional[str]
     results: List[Dict[str, Any]] = []
     killed = 0
     survived = 0
@@ -481,7 +478,7 @@ def run_mutants(
     baseline_outcome: Optional[str] = None
     baseline_details: Optional[Dict[str, Any]] = None
     if model_path is not None and property_path is not None:
-        baseline_dir = Path.home() / f".mutation_baseline_{int(time.time() * 1000)}"
+        baseline_dir = Path(tempfile.gettempdir()) / f".mutation_baseline_{int(time.time() * 1000)}"
         baseline_details = run_rmc_detailed(
             jar=str(jar_path),
             model=str(model_path),
@@ -518,7 +515,7 @@ def run_mutants(
             break
 
         # Write the mutant to a temp file in the same directory as the original
-        # so safe_path() constraints are satisfied (within home).
+        # without changing the original input.
         if mut.artifact == "model" and model_path is not None:
             suffix = ".rebeca"
         elif mut.artifact == "property" and property_path is not None:
@@ -536,7 +533,7 @@ def run_mutants(
                 suffix=suffix,
                 delete=False,
                 encoding="utf-8",
-                dir=Path.home(),
+                dir=tempfile.gettempdir(),
             ) as tmp:
                 tmp.write(mut.mutated_content)
                 tmp_path = Path(tmp.name)
@@ -555,7 +552,7 @@ def run_mutants(
                 errors += 1
                 continue
 
-            with tempfile.TemporaryDirectory(dir=Path.home()) as tmp_out:
+            with tempfile.TemporaryDirectory(dir=tempfile.gettempdir()) as tmp_out:
                 detailed = run_rmc_detailed(
                     jar=str(jar_path),
                     model=rmc_model,
@@ -577,7 +574,8 @@ def run_mutants(
             continue
         finally:
             try:
-                tmp_path.unlink(missing_ok=True)
+                if tmp_path is not None:
+                    tmp_path.unlink(missing_ok=True)
             except Exception:
                 pass
 
@@ -662,7 +660,6 @@ def write_mutation_artifact(output_file: Path, payload: Dict[str, Any]) -> None:
                     missing required keys.
         OSError:    on filesystem errors (propagated to caller).
     """
-    required_key_sets = ({"rule_id"}, {"mutants", "total_mutants", "kill_stats"})
     has_rule_id = "rule_id" in payload
     has_content_key = bool({"mutants", "total_mutants", "kill_stats"} & payload.keys())
     if not has_rule_id or not has_content_key:
@@ -730,7 +727,7 @@ def write_mutation_error_artifact(
     payload: Dict[str, Any] = {
         "status": "error",
         "rule_id": rule_id,
-        "timestamp": datetime.datetime.utcnow().isoformat() + "Z",
+        "timestamp": datetime.datetime.now(datetime.timezone.utc).replace(tzinfo=None).isoformat() + "Z",
         "command": command or [],
         "return_code": return_code,
         "stdout_preview": stdout_preview[:2000],
@@ -891,7 +888,7 @@ def main() -> None:
             print(f"  [{m.mutation_id}] {m.strategy} ({m.artifact}): {m.description}")
         if kill_stats is not None:
             print()
-            print(f"Kill-run results:")
+            print("Kill-run results:")
             print(f"  Killed:         {kill_stats['killed']}/{kill_stats['total_run']}")
             print(f"  Survived:       {kill_stats['survived']}")
             print(f"  Errors:         {kill_stats['errors']}")

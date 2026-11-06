@@ -1,0 +1,23 @@
+{
+  "rmc_exit_code": 0,
+  "rmc_outcome": "verified",
+  "cpp_generated": true,
+  "cpp_compile_ok": true,
+  "model_out": {
+    "executed": true,
+    "exit_code": 0,
+    "outcome": "satisfied",
+    "error": null
+  },
+  "verification_outcome": "satisfied",
+  "result_artifact": {
+    "path": "/tmp/colreg-handbook-smoke/model_result.xml",
+    "exists": true,
+    "parsed": true,
+    "format": "xml",
+    "outcome": "satisfied",
+    "error": null
+  },
+  "output_dir": "/tmp/colreg-handbook-smoke",
+  "executable_path": "/tmp/colreg-handbook-smoke/model.out"
+}

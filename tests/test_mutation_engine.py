@@ -398,11 +398,11 @@ class TestBatchMethods:
 
 class TestCLI:
     def test_exit_0_with_valid_files(self):
-        # safe_path() restricts to paths under home dir; use tempfile inside ~
+        # Use an isolated temporary directory.
         import json
         import subprocess
         import tempfile
-        home = Path.home()
+        home = Path(tempfile.gettempdir())
         with tempfile.TemporaryDirectory(dir=home) as td:
             model = Path(td) / "model.rebeca"
             prop = Path(td) / "model.property"
@@ -438,7 +438,7 @@ class TestCLIOutputMode:
     def test_catalog_only_json_has_mode_field(self, monkeypatch, capsys):
         import tempfile
 
-        home = Path.home()
+        home = Path(tempfile.gettempdir())
         with tempfile.TemporaryDirectory(dir=home) as td:
             model = Path(td) / "model.rebeca"
             model.write_text(SAMPLE_MODEL, encoding="utf-8")
@@ -467,7 +467,7 @@ class TestCLIOutputMode:
     def test_kill_run_json_has_mode_field(self, monkeypatch, capsys):
         import tempfile
 
-        home = Path.home()
+        home = Path(tempfile.gettempdir())
         with tempfile.TemporaryDirectory(dir=home) as td:
             model = Path(td) / "model.rebeca"
             model.write_text(SAMPLE_MODEL, encoding="utf-8")
@@ -515,7 +515,7 @@ class TestCLIOutputMode:
     def test_catalog_only_stderr_hint(self, monkeypatch, capsys):
         import tempfile
 
-        home = Path.home()
+        home = Path(tempfile.gettempdir())
         with tempfile.TemporaryDirectory(dir=home) as td:
             model = Path(td) / "model.rebeca"
             model.write_text(SAMPLE_MODEL, encoding="utf-8")
@@ -580,7 +580,7 @@ class TestKillRunGuardrails:
 
         monkeypatch.setattr(mutation_engine_module, "run_rmc_detailed", _run_stub)
 
-        with tempfile.TemporaryDirectory(dir=Path.home()) as td:
+        with tempfile.TemporaryDirectory(dir=tempfile.gettempdir()) as td:
             base = Path(td)
             jar = base / "rmc.jar"
             model = base / "model.rebeca"
@@ -619,7 +619,7 @@ class TestKillRunGuardrails:
 
         monkeypatch.setattr(mutation_engine_module, "run_rmc_detailed", _run_stub)
 
-        with tempfile.TemporaryDirectory(dir=Path.home()) as td:
+        with tempfile.TemporaryDirectory(dir=tempfile.gettempdir()) as td:
             base = Path(td)
             jar = base / "rmc.jar"
             model = base / "model.rebeca"
@@ -668,7 +668,7 @@ class TestKillRunGuardrails:
 
         monkeypatch.setattr(mutation_engine_module, "run_rmc_detailed", _slow_run)
 
-        with tempfile.TemporaryDirectory(dir=Path.home()) as td:
+        with tempfile.TemporaryDirectory(dir=tempfile.gettempdir()) as td:
             base = Path(td)
             jar = base / "rmc.jar"
             model = base / "model.rebeca"
@@ -705,7 +705,7 @@ class TestKillRunGuardrails:
 
         monkeypatch.setattr(mutation_engine_module, "run_rmc_detailed", _slow_run)
 
-        with tempfile.TemporaryDirectory(dir=Path.home()) as td:
+        with tempfile.TemporaryDirectory(dir=tempfile.gettempdir()) as td:
             base = Path(td)
             jar = base / "rmc.jar"
             model = base / "model.rebeca"
@@ -743,7 +743,7 @@ class TestKillRunGuardrails:
 
         monkeypatch.setattr(mutation_engine_module, "run_rmc_detailed", _run_stub)
 
-        with tempfile.TemporaryDirectory(dir=Path.home()) as td:
+        with tempfile.TemporaryDirectory(dir=tempfile.gettempdir()) as td:
             base = Path(td)
             jar = base / "rmc.jar"
             model = base / "model.rebeca"
@@ -781,7 +781,7 @@ class TestKillRunGuardrails:
 
         monkeypatch.setattr(mutation_engine_module, "run_rmc_detailed", _slow_run)
 
-        with tempfile.TemporaryDirectory(dir=Path.home()) as td:
+        with tempfile.TemporaryDirectory(dir=tempfile.gettempdir()) as td:
             base = Path(td)
             jar = base / "rmc.jar"
             model = base / "model.rebeca"

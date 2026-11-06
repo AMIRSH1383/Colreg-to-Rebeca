@@ -1,0 +1,9 @@
+property {
+  define {
+    isLong = (s1.length > 50);
+    lightOn = (s1.hasLight == true);
+  }
+  Assertion {
+    Rule22: !isLong || lightOn;
+  }
+}

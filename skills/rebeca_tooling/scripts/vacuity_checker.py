@@ -9,8 +9,10 @@ Algorithm:
   1. Extract the first assertion expression from the Assertion block.
   2. Generate a negated-precondition property: Assertion { VacuityCheck: !Precondition; }
   3. Run RMC on the original model with the negated property.
-  4. exit_code == 0  → !Precondition verified → original property was VACUOUS.
-  5. exit_code != 0  → counterexample found  → original property is NON-VACUOUS (good).
+  4. Compare semantic outcomes; unavailable results remain unknown.
+
+This legacy heuristic negates an assertion expression, not a parsed logical
+antecedent. It is diagnostic evidence, not a general proof of non-vacuity.
 
 Exit codes:
   0: Non-vacuous — property is meaningful
@@ -28,11 +30,16 @@ import re
 import sys
 import tempfile
 from pathlib import Path
-from typing import Any, Dict, Optional
+from typing import TYPE_CHECKING, Any, Dict, Optional
 
-from output_policy import vacuity_work_dirs
-from run_rmc import run_rmc_detailed
-from utils import safe_path
+if __package__ or TYPE_CHECKING:
+    from .output_policy import vacuity_work_dirs
+    from .run_rmc import run_rmc_detailed
+    from .utils import safe_path
+else:  # Direct script execution and legacy sibling imports.
+    from output_policy import vacuity_work_dirs
+    from run_rmc import run_rmc_detailed
+    from utils import safe_path
 
 
 def _write_json_artifact(output_file: Path, payload: Dict[str, Any]) -> None:
@@ -78,9 +85,7 @@ def extract_precondition(
     if assertion_id is not None:
         # Targeted match: label must equal assertion_id exactly
         pattern = (
-            r'\bAssertion\s*\{[^}]*?\b'
-            + re.escape(assertion_id)
-            + r'\s*:\s*(!?)(.+?);'
+            r'\bAssertion\s*\{[^}]*?\b' + re.escape(assertion_id) + r'\s*:\s*(!?)(.+?);'
         )
         m = re.search(pattern, property_content, re.DOTALL)
     else:
@@ -99,16 +104,12 @@ def build_negated_property(property_content: str, precondition: str) -> str:
     """
     Replace the Assertion block body with a single assertion of !Precondition.
 
-    Simplifies double-negation: if precondition already starts with '!', the
-    negated form becomes the positive expression. Preserves the define block
-    and LTL block unchanged.
+    Negates the complete expression with explicit grouping. Preserves the
+    define block and LTL block unchanged.
     """
-    if precondition.startswith('!'):
-        # Remove leading '!' and optional surrounding parens
-        inner = precondition[1:].strip()
-        negated = inner[1:-1] if (inner.startswith('(') and inner.endswith(')')) else inner
-    else:
-        negated = f"!({precondition})"
+    # Always negate the entire expression. Removing a leading ! from a
+    # disjunction changes meaning (e.g. !A || B is not the negation of A || B).
+    negated = f"!({precondition})"
 
     negated_assertion = f"\n    VacuityCheck: {negated};\n  "
     return re.sub(
@@ -182,7 +183,7 @@ def check_vacuity(
 
     # Warn when multiple assertions exist and no assertion_id was specified —
     # silently defaulting to the first assertion is a common source of vacuity
-    # result mismatches between this tool and score_rule.py.
+    # result mismatches between this tool and downstream reporting.
     if assertion_id is None:
         # Extract the full Assertion block, then collect all label: entries inside it.
         _block = re.search(r'\bAssertion\s*\{([^}]*)\}', property_content, re.DOTALL)
@@ -249,13 +250,13 @@ def check_vacuity(
     )
     baseline_outcome = baseline_details.get("verification_outcome")
 
-    # Write the negated property to a temp file inside ~ so safe_path() allows it.
+    # Write the negated property to a temp file in the system temporary directory.
     # Always clean up afterwards.
     tmp_path: Optional[Path] = None
     try:
         with tempfile.NamedTemporaryFile(
             mode="w", suffix=".property", delete=False, encoding="utf-8",
-            dir=Path.home(),
+            dir=tempfile.gettempdir(),
         ) as tmp:
             tmp.write(negated_content)
             tmp_path = Path(tmp.name)
@@ -283,11 +284,9 @@ def check_vacuity(
         is_vacuous = not comparison_changed
         comparison_basis = "semantic_outcome"
     else:
-        # Legacy fallback: preserve historical behavior when semantic outcome
-        # cannot be derived (timeouts/errors/non-comparable states).
         comparison_changed = None
-        is_vacuous = exit_code == 0
-        comparison_basis = "legacy_secondary_exit"
+        is_vacuous = None
+        comparison_basis = "unavailable"
 
     if comparable:
         explanation = (
@@ -298,11 +297,7 @@ def check_vacuity(
                  f"({baseline_outcome} -> {secondary_outcome})."
         )
     else:
-        explanation = (
-            "VACUOUS: The property passes trivially — its precondition is never reachable."
-            if is_vacuous
-            else "NON-VACUOUS: A counterexample exists for !Precondition; the property is meaningful."
-        )
+        explanation = "UNKNOWN: baseline or secondary semantic verification result unavailable."
 
     return {
         "is_vacuous": is_vacuous,
@@ -375,8 +370,7 @@ def main() -> None:
         _write_json_artifact(output_path, result)
 
     is_ambiguous = (
-        result["is_vacuous"] is None
-        and "Ambiguous" in str(result.get("explanation", ""))
+        result["is_vacuous"] is None and "Ambiguous" in str(result.get("explanation", ""))
     )
 
     if is_ambiguous:

@@ -1,0 +1,37 @@
+{
+  "verified": true,
+  "verification_status": "satisfied",
+  "verification_outcome": "satisfied",
+  "optional_checks": {
+    "vacuity": "disabled",
+    "mutation": "disabled"
+  },
+  "rmc_exit_code": 0,
+  "rmc_details": {
+    "rmc_exit_code": 0,
+    "rmc_outcome": "verified",
+    "cpp_generated": true,
+    "cpp_compile_ok": true,
+    "model_out": {
+      "executed": true,
+      "exit_code": 0,
+      "outcome": "satisfied",
+      "error": null
+    },
+    "verification_outcome": "satisfied",
+    "result_artifact": {
+      "path": "/tmp/colreg-gate-cli-smoke/rmc/model_result.xml",
+      "exists": true,
+      "parsed": true,
+      "format": "xml",
+      "outcome": "satisfied",
+      "error": null
+    },
+    "output_dir": "/tmp/colreg-gate-cli-smoke/rmc",
+    "executable_path": "/tmp/colreg-gate-cli-smoke/rmc/model.out"
+  },
+  "vacuity_status": null,
+  "mutation_score": null,
+  "mutation_details": null,
+  "passes_gate": true
+}

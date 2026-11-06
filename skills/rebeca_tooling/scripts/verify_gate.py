@@ -4,27 +4,21 @@ from __future__ import annotations
 
 import argparse
 import json
-import sys
 from pathlib import Path
-from typing import Any, Dict, Optional
+from typing import TYPE_CHECKING, Any, Dict
 
-# ---------------------------------------------------------------------------
-# Ensure package root is on sys.path when run directly
-# ---------------------------------------------------------------------------
-_HERE = Path(__file__).resolve().parent
-_PKG_ROOT = _HERE.parent.parent.parent
-if str(_PKG_ROOT) not in sys.path:
-    sys.path.insert(0, str(_PKG_ROOT))
-
-from skills.rebeca_tooling.scripts.run_rmc import run_rmc_detailed
-from skills.rebeca_tooling.scripts.vacuity_checker import check_vacuity
-from skills.rebeca_tooling.scripts.mutation_engine import (
-    MutationEngine,
-    run_mutants,
-    write_mutation_artifact,
-)
-from skills.rebeca_tooling.scripts.utils import safe_path
-from skills.rebeca_tooling.scripts.output_policy import step_artifact_path
+if __package__ or TYPE_CHECKING:
+    from .run_rmc import run_rmc_detailed, _write_json_artifact
+    from .vacuity_checker import check_vacuity
+    from .mutation_engine import MutationEngine, run_mutants, write_mutation_artifact
+    from .utils import safe_path
+    from .output_policy import step_artifact_path
+else:
+    from run_rmc import run_rmc_detailed, _write_json_artifact
+    from vacuity_checker import check_vacuity
+    from mutation_engine import MutationEngine, run_mutants, write_mutation_artifact
+    from utils import safe_path
+    from output_policy import step_artifact_path
 
 _MUTATION_SCORE_THRESHOLD = 80.0
 
@@ -49,11 +43,9 @@ def run_verification_gate(
 ) -> Dict[str, Any]:
     """Run RMC, vacuity, and mutation and return all results in one dict.
 
-    All three phases always run when the model is parseable (RMC exit 0).
-    Vacuity result does not gate mutation — the agent gets the full picture
-    in a single call and decides what to fix.
-    Vacuity and mutation are skipped only when RMC itself fails (unparseable
-    model/property), since both depend on a working model.
+    Semantic satisfaction is required for verified/passes_gate. Secondary checks
+    require a compiled model with an available semantic baseline. Disabled,
+    not-run and unknown optional checks are represented separately.
     """
     out = Path(output_dir)
     out.mkdir(parents=True, exist_ok=True)
@@ -70,11 +62,31 @@ def run_verification_gate(
         run_model_outcome=True,
     )
 
-    exit_code: int = rmc_result.get("rmc_exit_code", 0)
-    verified: bool = rmc_result.get("rmc_outcome") == "verified"
+    exit_code: int = rmc_result.get("rmc_exit_code", 1)
+    compiled = exit_code == 0 and rmc_result.get("cpp_compile_ok") is True
+    outcome = rmc_result.get("verification_outcome", "unknown")
+    execution = rmc_result.get("model_out", {})
+    failed_execution = (bool(execution.get("error")) or execution.get("exit_code") != 0 or execution.get("executed") is not True)
+    if not compiled:
+        status = "compilation_failed" if rmc_result.get("rmc_outcome") == "cpp_compile_failed" else "verification_failed"
+    elif failed_execution:
+        status = "execution_failed"
+    elif outcome == "satisfied":
+        status = "satisfied"
+    elif outcome == "cex":
+        status = "violated"
+    else:
+        status = "unknown"
+    verified = status == "satisfied"
 
     payload: Dict[str, Any] = {
         "verified": verified,
+        "verification_status": status,
+        "verification_outcome": outcome,
+        "optional_checks": {
+            "vacuity": "disabled" if skip_vacuity else "not_run",
+            "mutation": "disabled" if skip_mutation else "not_run",
+        },
         "rmc_exit_code": exit_code,
         "rmc_details": rmc_result,
         "vacuity_status": None,
@@ -83,14 +95,15 @@ def run_verification_gate(
         "passes_gate": False,
     }
 
-    if not verified:
-        # Vacuity and mutation require a parseable model — skip both.
+    if not compiled or status in ("unknown", "execution_failed"):
+        # No trustworthy baseline is available for secondary checks.
         return payload
 
     # ------------------------------------------------------------------
     # Phase 1 — Vacuity
     # ------------------------------------------------------------------
-    is_vacuous: Optional[bool] = False
+    vacuity_passed = skip_vacuity
+    mutation_passed = skip_mutation
     if not skip_vacuity:
         vacuity_result = check_vacuity(
             jar=jar,
@@ -103,6 +116,10 @@ def run_verification_gate(
         )
         payload["vacuity_status"] = vacuity_result
         is_vacuous = vacuity_result.get("is_vacuous")
+        vacuity_passed = is_vacuous is False
+        payload["optional_checks"]["vacuity"] = (
+            "unknown" if is_vacuous is None else "passed" if vacuity_passed else "failed"
+        )
 
     # ------------------------------------------------------------------
     # Phase 2 — Mutation (always runs when model is parseable)
@@ -113,8 +130,7 @@ def run_verification_gate(
         prop_content = Path(property_file).read_text(encoding="utf-8")
 
         mutations = (
-            engine.mutate_model(model_content, rule_id)
-            + engine.mutate_property(prop_content, rule_id)
+            engine.mutate_model(model_content, rule_id) + engine.mutate_property(prop_content, rule_id)
         )
 
         kill_stats = run_mutants(
@@ -129,11 +145,16 @@ def run_verification_gate(
         )
 
         mutation_out = out / "mutation_killrun.json"
-        write_mutation_artifact(mutation_out, kill_stats)
+        write_mutation_artifact(mutation_out, {"rule_id": rule_id, "kill_stats": kill_stats})
 
         score: float = kill_stats.get("mutation_score", 0.0)
         payload["mutation_score"] = score
         payload["mutation_details"] = kill_stats
+        comparable = (kill_stats.get("baseline_outcome") == "satisfied" and kill_stats.get("total_run", 0) > 0 and kill_stats.get("errors", 0) == 0 and not kill_stats.get("budget_exceeded", False))
+        mutation_passed = comparable and score >= _MUTATION_SCORE_THRESHOLD
+        payload["optional_checks"]["mutation"] = (
+            "unknown" if not comparable else "passed" if mutation_passed else "failed"
+        )
     else:
         score = 0.0
 
@@ -141,9 +162,7 @@ def run_verification_gate(
     # Gate result
     # ------------------------------------------------------------------
     payload["passes_gate"] = (
-        verified
-        and not is_vacuous
-        and (skip_mutation or score >= _MUTATION_SCORE_THRESHOLD)
+        verified and vacuity_passed and mutation_passed
     )
 
     return payload
@@ -154,45 +173,43 @@ def run_verification_gate(
 # ---------------------------------------------------------------------------
 
 def _write_atomic(path: Path, data: Dict[str, Any]) -> None:
-    tmp = path.with_suffix(".tmp")
-    tmp.write_text(json.dumps(data, indent=2), encoding="utf-8")
-    tmp.replace(path)
+    _write_json_artifact(path, data)
 
 
 def main() -> None:
     parser = argparse.ArgumentParser(
         description="RMC + vacuity + mutation in one call"
     )
-    parser.add_argument("--jar",        required=True, help="Path to rmc.jar")
-    parser.add_argument("--model",      required=True, help="Path to .rebeca file")
-    parser.add_argument("--property",   required=True, help="Path to .property file")
-    parser.add_argument("--rule-id",    required=True, help="Rule identifier (e.g. Rule-22)")
+    parser.add_argument("--jar", required=True, help="Path to rmc.jar")
+    parser.add_argument("--model", required=True, help="Path to .rebeca file")
+    parser.add_argument("--property", required=True, help="Path to .property file")
+    parser.add_argument("--rule-id", required=True, help="Rule identifier (e.g. Rule-22)")
     parser.add_argument("--output-dir", required=True, help="Directory for verification artefacts")
-    parser.add_argument("--base-dir",   default="output", help="Pipeline base dir for artifact_writer (default: output)")
+    parser.add_argument("--base-dir", default="output", help="Pipeline base dir for artifacts (default: output)")
     parser.add_argument("--output-file", metavar="PATH", help="Also write JSON result atomically to PATH")
     parser.add_argument("--output-json", action="store_true", help="Print JSON result to stdout")
-    parser.add_argument("--rmc-timeout",      type=int, default=120)
-    parser.add_argument("--vacuity-timeout",  type=int, default=60)
-    parser.add_argument("--max-mutants",      type=int, default=50)
+    parser.add_argument("--rmc-timeout", type=int, default=120)
+    parser.add_argument("--vacuity-timeout", type=int, default=60)
+    parser.add_argument("--max-mutants", type=int, default=50)
     parser.add_argument("--mutation-timeout", type=int, default=600)
-    parser.add_argument("--seed",             type=int, default=42)
+    parser.add_argument("--seed", type=int, default=42)
 
-    parser.add_argument("--vacuity",    dest="vacuity", action="store_true",  default=False,
-        help="Enable vacuity checking (default: off)")
+    parser.add_argument("--vacuity", dest="vacuity", action="store_true", default=False,
+                        help="Enable vacuity checking (default: off)")
     parser.add_argument("--no-vacuity", dest="vacuity", action="store_false",
-        help="Skip vacuity checking")
-    parser.add_argument("--mutation",    dest="mutation", action="store_true",  default=False,
-        help="Enable mutation-based testing (default: off)")
+                        help="Skip vacuity checking")
+    parser.add_argument("--mutation", dest="mutation", action="store_true", default=False,
+                        help="Enable mutation-based testing (default: off)")
     parser.add_argument("--no-mutation", dest="mutation", action="store_false",
-        help="Skip mutation-based testing")
+                        help="Skip mutation-based testing")
 
     args = parser.parse_args()
 
-    jar   = str(safe_path(args.jar))
+    jar = str(safe_path(args.jar))
     model = str(safe_path(args.model))
-    prop  = str(safe_path(args.property))
+    prop = str(safe_path(args.property))
 
-    skip_vacuity  = not args.vacuity
+    skip_vacuity = not args.vacuity
     skip_mutation = not args.mutation
 
     result = run_verification_gate(
@@ -211,7 +228,7 @@ def main() -> None:
     )
 
     # Always write the canonical pipeline artifact — no LLM handover needed.
-    artifact_path = step_artifact_path(args.rule_id, "step05_verification_gate", Path(args.base_dir))
+    artifact_path = step_artifact_path(args.rule_id, "verification", Path(args.base_dir))
     _write_atomic(artifact_path, result)
 
     if args.output_file:

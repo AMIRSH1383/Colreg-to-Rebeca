@@ -1,0 +1,75 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "verification-agent",
+  "description": "Step06: RMC verification, vacuity check, mutation scoring",
+  "definitions": {
+    "ErrorEnvelope": {
+      "type": "object",
+      "required": ["status", "phase", "agent", "message"],
+      "properties": {
+        "status":  { "type": "string", "enum": ["error"] },
+        "phase":   { "type": "string", "enum": ["step06"] },
+        "agent":   { "type": "string", "enum": ["verification-agent"] },
+        "message": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "VacuityStatus": {
+      "type": "object",
+      "required": ["is_vacuous", "precondition_used", "secondary_exit_code", "secondary_output_dir", "explanation"],
+      "properties": {
+        "is_vacuous":          { "type": "boolean" },
+        "precondition_used":   { "type": "string" },
+        "secondary_exit_code": { "type": "integer" },
+        "secondary_output_dir": { "type": ["string", "null"] },
+        "explanation":         { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "MutationDetail": {
+      "type": "object",
+      "required": ["total", "killed", "survived"],
+      "properties": {
+        "total":    { "type": "integer", "minimum": 0 },
+        "killed":   { "type": "integer", "minimum": 0 },
+        "survived": { "type": "integer", "minimum": 0 }
+      },
+      "additionalProperties": false
+    }
+  },
+  "input": {
+    "type": "object",
+    "required": ["rule_id", "model_path", "property_path", "jar_path", "output_dir"],
+    "properties": {
+      "rule_id":       { "type": "string", "minLength": 1 },
+      "model_path":    { "type": "string", "minLength": 1 },
+      "property_path": { "type": "string", "minLength": 1 },
+      "jar_path":      { "type": "string", "minLength": 1 },
+      "output_dir":    { "type": "string", "minLength": 1 },
+      "timeout":       { "type": "integer", "minimum": 1, "default": 120 }
+    },
+    "additionalProperties": false
+  },
+  "output": {
+    "oneOf": [
+      {
+        "type": "object",
+        "required": ["status", "rule_id", "verified", "rmc_exit_code", "rmc_outcome", "rmc_output_dir", "vacuity_status", "mutation_score", "mutation_detail", "open_assumptions"],
+        "properties": {
+          "status":           { "type": "string", "enum": ["ok"] },
+          "rule_id":          { "type": "string" },
+          "verified":         { "type": "boolean" },
+          "rmc_exit_code":    { "type": "integer" },
+          "rmc_outcome":      { "type": "string", "enum": ["verified", "timeout", "cpp_compile_failed", "parse_failed", "invalid_inputs", "unknown"] },
+          "rmc_output_dir":   { "type": ["string", "null"] },
+          "vacuity_status":   { "$ref": "#/definitions/VacuityStatus" },
+          "mutation_score":   { "type": "number", "minimum": 0.0, "maximum": 100.0 },
+          "mutation_detail":  { "$ref": "#/definitions/MutationDetail" },
+          "open_assumptions": { "type": "array", "items": { "type": "string" } }
+        },
+        "additionalProperties": false
+      },
+      { "$ref": "#/definitions/ErrorEnvelope" }
+    ]
+  }
+}

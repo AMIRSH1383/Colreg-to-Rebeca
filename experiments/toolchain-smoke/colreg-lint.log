@@ -1,0 +1,83 @@
+── mypy --strict /workspace/Colreg-to-Rebeca/skills/rebeca_tooling/scripts ──
+skills/rebeca_tooling/scripts/run_rmc.py:386: error: Function is missing a return type annotation  [no-untyped-def]
+skills/rebeca_tooling/scripts/run_rmc.py:386: note: Use "-> None" if function does not return a value
+skills/rebeca_tooling/scripts/run_rmc.py:484: error: Call to untyped function "main" in typed context  [no-untyped-call]
+skills/rebeca_tooling/scripts/rmc_result_parser.py:39: error: Returning Any from function declared to return "str"  [no-any-return]
+skills/rebeca_tooling/scripts/utils.py:27: error: Missing type arguments for generic type "IO"  [type-arg]
+skills/rebeca_tooling/scripts/mutation_engine.py:549: error: Incompatible types in assignment (expression has type "str | None", variable has type "str")  [assignment]
+skills/rebeca_tooling/scripts/mutation_engine.py:580: error: Item "None" of "Path | None" has no attribute "unlink"  [union-attr]
+skills/rebeca_tooling/scripts/__init__.py:8: error: Function is missing a type annotation  [no-untyped-def]
+skills/rebeca_tooling/scripts/__init__.py:13: error: Call to untyped function "_lazy_import" in typed context  [no-untyped-call]
+skills/rebeca_tooling/scripts/__init__.py:14: error: Call to untyped function "_lazy_import" in typed context  [no-untyped-call]
+skills/rebeca_tooling/scripts/__init__.py:15: error: Call to untyped function "_lazy_import" in typed context  [no-untyped-call]
+skills/rebeca_tooling/scripts/__init__.py:16: error: Call to untyped function "_lazy_import" in typed context  [no-untyped-call]
+skills/rebeca_tooling/scripts/__init__.py:18: error: Call to untyped function "_lazy_import" in typed context  [no-untyped-call]
+skills/rebeca_tooling/scripts/__init__.py:19: error: Call to untyped function "_lazy_import" in typed context  [no-untyped-call]
+skills/rebeca_tooling/scripts/__init__.py:20: error: Call to untyped function "_lazy_import" in typed context  [no-untyped-call]
+skills/rebeca_tooling/scripts/__init__.py:21: error: Call to untyped function "_lazy_import" in typed context  [no-untyped-call]
+skills/rebeca_tooling/scripts/__init__.py:22: error: Call to untyped function "_lazy_import" in typed context  [no-untyped-call]
+skills/rebeca_tooling/scripts/__init__.py:23: error: Call to untyped function "_lazy_import" in typed context  [no-untyped-call]
+mypy: FAIL
+
+── flake8 --select=E,F,W /workspace/Colreg-to-Rebeca/skills/rebeca_tooling/scripts ──
+/workspace/Colreg-to-Rebeca/skills/rebeca_tooling/scripts/__init__.py:8:1: E302 expected 2 blank lines, found 1
+/workspace/Colreg-to-Rebeca/skills/rebeca_tooling/scripts/__init__.py:13:1: E305 expected 2 blank lines after class or function definition, found 1
+/workspace/Colreg-to-Rebeca/skills/rebeca_tooling/scripts/__init__.py:17:1: E402 module level import not at top of file
+/workspace/Colreg-to-Rebeca/skills/rebeca_tooling/scripts/mutation_engine.py:82:86: E203 whitespace before ':'
+/workspace/Colreg-to-Rebeca/skills/rebeca_tooling/scripts/mutation_engine.py:108:77: E203 whitespace before ':'
+/workspace/Colreg-to-Rebeca/skills/rebeca_tooling/scripts/mutation_engine.py:134:76: E203 whitespace before ':'
+/workspace/Colreg-to-Rebeca/skills/rebeca_tooling/scripts/mutation_engine.py:167:82: E203 whitespace before ':'
+/workspace/Colreg-to-Rebeca/skills/rebeca_tooling/scripts/mutation_engine.py:197:55: E203 whitespace before ':'
+/workspace/Colreg-to-Rebeca/skills/rebeca_tooling/scripts/mutation_engine.py:201:85: E203 whitespace before ':'
+/workspace/Colreg-to-Rebeca/skills/rebeca_tooling/scripts/mutation_engine.py:235:17: W503 line break before binary operator
+/workspace/Colreg-to-Rebeca/skills/rebeca_tooling/scripts/mutation_engine.py:236:17: W503 line break before binary operator
+/workspace/Colreg-to-Rebeca/skills/rebeca_tooling/scripts/mutation_engine.py:236:38: E203 whitespace before ':'
+/workspace/Colreg-to-Rebeca/skills/rebeca_tooling/scripts/mutation_engine.py:270:74: E203 whitespace before ':'
+/workspace/Colreg-to-Rebeca/skills/rebeca_tooling/scripts/mutation_engine.py:300:74: E203 whitespace before ':'
+/workspace/Colreg-to-Rebeca/skills/rebeca_tooling/scripts/mutation_engine.py:367:13: W503 line break before binary operator
+/workspace/Colreg-to-Rebeca/skills/rebeca_tooling/scripts/mutation_engine.py:368:13: W503 line break before binary operator
+/workspace/Colreg-to-Rebeca/skills/rebeca_tooling/scripts/mutation_engine.py:375:13: W503 line break before binary operator
+/workspace/Colreg-to-Rebeca/skills/rebeca_tooling/scripts/mutation_engine.py:376:13: W503 line break before binary operator
+/workspace/Colreg-to-Rebeca/skills/rebeca_tooling/scripts/mutation_engine.py:377:13: W503 line break before binary operator
+/workspace/Colreg-to-Rebeca/skills/rebeca_tooling/scripts/mutation_engine.py:378:13: W503 line break before binary operator
+/workspace/Colreg-to-Rebeca/skills/rebeca_tooling/scripts/mutation_engine.py:379:13: W503 line break before binary operator
+/workspace/Colreg-to-Rebeca/skills/rebeca_tooling/scripts/mutation_engine.py:665:5: F841 local variable 'required_key_sets' is assigned to but never used
+/workspace/Colreg-to-Rebeca/skills/rebeca_tooling/scripts/mutation_engine.py:894:19: F541 f-string is missing placeholders
+/workspace/Colreg-to-Rebeca/skills/rebeca_tooling/scripts/transformation_utils.py:6:1: E302 expected 2 blank lines, found 1
+/workspace/Colreg-to-Rebeca/skills/rebeca_tooling/scripts/transformation_utils.py:17:1: E302 expected 2 blank lines, found 1
+/workspace/Colreg-to-Rebeca/skills/rebeca_tooling/scripts/vacuity_checker.py:82:13: W503 line break before binary operator
+/workspace/Colreg-to-Rebeca/skills/rebeca_tooling/scripts/vacuity_checker.py:83:13: W503 line break before binary operator
+/workspace/Colreg-to-Rebeca/skills/rebeca_tooling/scripts/vacuity_checker.py:379:9: W503 line break before binary operator
+/workspace/Colreg-to-Rebeca/skills/rebeca_tooling/scripts/verify_gate.py:19:1: E402 module level import not at top of file
+/workspace/Colreg-to-Rebeca/skills/rebeca_tooling/scripts/verify_gate.py:20:1: E402 module level import not at top of file
+/workspace/Colreg-to-Rebeca/skills/rebeca_tooling/scripts/verify_gate.py:21:1: E402 module level import not at top of file
+/workspace/Colreg-to-Rebeca/skills/rebeca_tooling/scripts/verify_gate.py:26:1: E402 module level import not at top of file
+/workspace/Colreg-to-Rebeca/skills/rebeca_tooling/scripts/verify_gate.py:27:1: E402 module level import not at top of file
+/workspace/Colreg-to-Rebeca/skills/rebeca_tooling/scripts/verify_gate.py:117:13: W503 line break before binary operator
+/workspace/Colreg-to-Rebeca/skills/rebeca_tooling/scripts/verify_gate.py:145:9: W503 line break before binary operator
+/workspace/Colreg-to-Rebeca/skills/rebeca_tooling/scripts/verify_gate.py:146:9: W503 line break before binary operator
+/workspace/Colreg-to-Rebeca/skills/rebeca_tooling/scripts/verify_gate.py:166:33: E241 multiple spaces after ','
+/workspace/Colreg-to-Rebeca/skills/rebeca_tooling/scripts/verify_gate.py:167:35: E241 multiple spaces after ','
+/workspace/Colreg-to-Rebeca/skills/rebeca_tooling/scripts/verify_gate.py:168:38: E241 multiple spaces after ','
+/workspace/Colreg-to-Rebeca/skills/rebeca_tooling/scripts/verify_gate.py:169:37: E241 multiple spaces after ','
+/workspace/Colreg-to-Rebeca/skills/rebeca_tooling/scripts/verify_gate.py:171:38: E241 multiple spaces after ','
+/workspace/Colreg-to-Rebeca/skills/rebeca_tooling/scripts/verify_gate.py:174:41: E241 multiple spaces after ','
+/workspace/Colreg-to-Rebeca/skills/rebeca_tooling/scripts/verify_gate.py:175:45: E241 multiple spaces after ','
+/workspace/Colreg-to-Rebeca/skills/rebeca_tooling/scripts/verify_gate.py:176:41: E241 multiple spaces after ','
+/workspace/Colreg-to-Rebeca/skills/rebeca_tooling/scripts/verify_gate.py:178:34: E241 multiple spaces after ','
+/workspace/Colreg-to-Rebeca/skills/rebeca_tooling/scripts/verify_gate.py:180:37: E241 multiple spaces after ','
+/workspace/Colreg-to-Rebeca/skills/rebeca_tooling/scripts/verify_gate.py:180:77: E241 multiple spaces after ','
+/workspace/Colreg-to-Rebeca/skills/rebeca_tooling/scripts/verify_gate.py:181:9: E128 continuation line under-indented for visual indent
+/workspace/Colreg-to-Rebeca/skills/rebeca_tooling/scripts/verify_gate.py:183:9: E128 continuation line under-indented for visual indent
+/workspace/Colreg-to-Rebeca/skills/rebeca_tooling/scripts/verify_gate.py:184:38: E241 multiple spaces after ','
+/workspace/Colreg-to-Rebeca/skills/rebeca_tooling/scripts/verify_gate.py:184:79: E241 multiple spaces after ','
+/workspace/Colreg-to-Rebeca/skills/rebeca_tooling/scripts/verify_gate.py:185:9: E128 continuation line under-indented for visual indent
+/workspace/Colreg-to-Rebeca/skills/rebeca_tooling/scripts/verify_gate.py:187:9: E128 continuation line under-indented for visual indent
+/workspace/Colreg-to-Rebeca/skills/rebeca_tooling/scripts/verify_gate.py:191:8: E221 multiple spaces before operator
+/workspace/Colreg-to-Rebeca/skills/rebeca_tooling/scripts/verify_gate.py:193:9: E221 multiple spaces before operator
+/workspace/Colreg-to-Rebeca/skills/rebeca_tooling/scripts/verify_gate.py:195:17: E221 multiple spaces before operator
+flake8: FAIL
+
+── Summary ──
+  mypy: ✗ FAIL
+  flake8: ✗ FAIL

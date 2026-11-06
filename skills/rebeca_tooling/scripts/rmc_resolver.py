@@ -35,7 +35,7 @@ def _candidate_jars_with_trace() -> tuple[list[Path], list[str]]:
       1. ``RMC_JAR``
       2. ``RMC_DESTINATION`` + ``rmc.jar``
       3. marker files under ``./.claude`` then ``~/.claude``
-      4. fallback ``~/.claude/rmc/rmc.jar``
+      4. ``~/.rebeca/rmc.jar``, local ``.agents/rmc/rmc.jar``, legacy Claude fallback
     """
     if os.environ.get("RMC_JAR"):
         jar = Path(os.environ["RMC_JAR"]).expanduser()
@@ -65,9 +65,11 @@ def _candidate_jars_with_trace() -> tuple[list[Path], list[str]]:
     if from_markers:
         return from_markers, trace
 
-    fallback = Path.home() / ".claude" / "rmc" / "rmc.jar"
-    trace.append(f"fallback={fallback}")
-    return [fallback], trace
+    fallbacks = [Path.home() / ".rebeca" / "rmc.jar",
+                 Path.cwd() / ".agents" / "rmc" / "rmc.jar",
+                 Path.home() / ".claude" / "rmc" / "rmc.jar"]
+    trace.extend(f"fallback={p}" for p in fallbacks)
+    return fallbacks, trace
 
 
 def resolve_rmc_jar(*, must_exist: bool = True) -> str | None:

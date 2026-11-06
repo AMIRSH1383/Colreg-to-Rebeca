@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
-Canonical output-path policy for the Legata→Rebeca pipeline.
+Canonical output-path policy for the COLREG-to-Rebeca tooling.
 
-All Step04–Step07 code MUST obtain paths exclusively through this module.
+Shared artifact paths; legacy step names remain accepted for compatibility.
 No step may construct output paths by string concatenation or suffix appending.
 
 Directory contract
@@ -145,7 +145,7 @@ def verification_paths(
     """
     Return verification directories for *rule_id* / *run_id*.
 
-    Step06 MUST write each attempt to ``run_dir`` and atomically publish the
+    Verification must write each attempt to ``run_dir`` and atomically publish the
     winner to ``current_dir`` after all attempts complete.
 
     Args:
@@ -206,7 +206,7 @@ def promote_candidate(
     """
     Copy verified candidate files into the canonical final rule directory.
 
-    Only verified candidates should be promoted; call this after Step06
+    Only verified candidates should be promoted; call this after semantic verification
     confirms the verification is non-vacuous and the mutation score is
     sufficient (>= 80).
 
@@ -300,6 +300,7 @@ def step_artifact_path(rule_id: str, step: str, base_dir: Path = Path("output"))
     """
     _validate_rule_id(rule_id)
     allowed = {
+        "verification",
         "step02_abstraction", "step03_mapping", "step04_synthesis",
         "step05_verification_gate", "step06_packaging_manifest", "step07_reporting",
     }

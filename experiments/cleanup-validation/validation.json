@@ -1,0 +1,20 @@
+{
+  "starting_revision": "cd5e5d4e844013e4031a3d0291dbdc76d93f2864",
+  "branch": "cleanup/colreg-migration",
+  "recorded_at_utc": "2026-11-06T13:35:46.956895+00:00",
+  "tests": {
+    "command": "python -m pytest -q",
+    "passed": 176,
+    "failed": 0,
+    "skipped": 0,
+    "unit_tests": 163,
+    "real_toolchain_tests": 13
+  },
+  "mypy": "passed",
+  "flake8": "passed",
+  "gate_cli_json_and_schema": "passed",
+  "preserved_inputs_and_contracts": "SHA-256 verified by test_cleanup_contracts.py",
+  "original_full_model_verification": "NOT RUN: original model preserved, no dedicated companion reference property file",
+  "planned_pipeline_stages": "NOT IMPLEMENTED",
+  "commit_or_push": "Not performed"
+}

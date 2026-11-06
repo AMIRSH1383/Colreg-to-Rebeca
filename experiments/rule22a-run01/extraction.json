@@ -1,0 +1,102 @@
+{
+  "status": "ok",
+  "rule_id": "Rule-22a",
+  "extraction": {
+    "entities": [
+      {
+        "id": "vessel",
+        "name": "vessel",
+        "type": "participant",
+        "source_text": "vessels"
+      }
+    ],
+    "statements": [
+      {
+        "id": "stmt01",
+        "role": "obligation",
+        "source_text": "The lights prescribed in these Rules shall have an intensity as specified in Section 8 Annex I to these Regulation",
+        "subjects": ["vessel"],
+        "concept": "light_intensity",
+        "predicate": "The prescribed lights shall have the intensity specified in Section 8 of Annex I.",
+        "operator": null,
+        "value": null,
+        "unit": null,
+        "applies_when": []
+      },
+      {
+        "id": "stmt02",
+        "role": "scope",
+        "source_text": "In vessels of 50 metres or more in length",
+        "subjects": ["vessel"],
+        "concept": "vessel_length",
+        "predicate": "The following minimum visibility ranges apply to vessels of 50 metres or more in length.",
+        "operator": ">=",
+        "value": 50,
+        "unit": "metres",
+        "applies_when": []
+      },
+      {
+        "id": "stmt03",
+        "role": "obligation",
+        "source_text": "a masthead light, 6 miles",
+        "subjects": ["vessel"],
+        "concept": "masthead_light_visibility_range",
+        "predicate": "A masthead light shall be visible at a minimum range of 6 miles.",
+        "operator": ">=",
+        "value": 6,
+        "unit": "miles",
+        "applies_when": ["stmt02"]
+      },
+      {
+        "id": "stmt04",
+        "role": "obligation",
+        "source_text": "a sidelight, 3 miles",
+        "subjects": ["vessel"],
+        "concept": "sidelight_visibility_range",
+        "predicate": "A sidelight shall be visible at a minimum range of 3 miles.",
+        "operator": ">=",
+        "value": 3,
+        "unit": "miles",
+        "applies_when": ["stmt02"]
+      },
+      {
+        "id": "stmt05",
+        "role": "obligation",
+        "source_text": "a sternlight, 3 miles",
+        "subjects": ["vessel"],
+        "concept": "sternlight_visibility_range",
+        "predicate": "A sternlight shall be visible at a minimum range of 3 miles.",
+        "operator": ">=",
+        "value": 3,
+        "unit": "miles",
+        "applies_when": ["stmt02"]
+      },
+      {
+        "id": "stmt06",
+        "role": "obligation",
+        "source_text": "a towing light, 3 miles",
+        "subjects": ["vessel"],
+        "concept": "towing_light_visibility_range",
+        "predicate": "A towing light shall be visible at a minimum range of 3 miles.",
+        "operator": ">=",
+        "value": 3,
+        "unit": "miles",
+        "applies_when": ["stmt02"]
+      },
+      {
+        "id": "stmt07",
+        "role": "obligation",
+        "source_text": "a white, red, green or yellow all-round light, 3 miles",
+        "subjects": ["vessel"],
+        "concept": "all_round_light_visibility_range",
+        "predicate": "A white, red, green or yellow all-round light shall be visible at a minimum range of 3 miles.",
+        "operator": ">=",
+        "value": 3,
+        "unit": "miles",
+        "applies_when": ["stmt02"]
+      }
+    ],
+    "references": ["Section 8 Annex I"]
+  },
+  "open_assumptions": []
+}

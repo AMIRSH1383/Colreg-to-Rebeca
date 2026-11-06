@@ -1,4 +1,6 @@
 {
-  "include": ["."],
-  "extraPaths": ["skills/rebeca_tooling/scripts"]
+  "include": ["skills", "scripts", "tests"],
+  "exclude": ["archive", "experiments", "output", "**/__pycache__"],
+  "extraPaths": ["skills/rebeca_tooling/scripts", "tests"],
+  "pythonVersion": "3.10"
 }

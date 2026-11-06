@@ -1,0 +1,31 @@
+{
+  "starting_revision": "cd5e5d4e844013e4031a3d0291dbdc76d93f2864",
+  "sha256": {
+    "work/Original Model.rebeca": "cb1bd2ae7a1c9637785c9d7f55d5bc6224299ea3d8d1795b77a6197580a8bc66",
+    "work/colreg/Rule19_baseline_colreg.txt": "af5b5cdf8050230ed62213351cd7a813af5df09cd36cb63dbf1e51544f371b85",
+    "work/colreg/Rule22_baseline_colreg.txt": "f9da270bc73c2a560fd478e1dbbbba6e697925aa2c26610324479990c1848e65",
+    "work/legacy_baseline/Rule19/legata_rule19.txt": "317305c7c2af028b76bba7a9108af947562d78b0ea1768182c7361be9aa1b10e",
+    "work/legacy_baseline/Rule22/legata_rule22.txt": "36da00dfcb0ccfa2cb0dfc1a360d72e5f1e747f3fde9e807e8095a9440b0e194",
+    "work/legacy_baseline/Rule23/legata_rule23.txt": "57de9f92e7a0db0f6cd84a0ed00f70a4f1f2caaee4e0b0e8f434cb30d97382e6",
+    "work/legacy_baseline/Rule622/legata_rule622.txt": "6f4ea7f48e1e002d82bb7e20687235297483daa08aeda0f3362581fc5bf3f9fb",
+    "work/legacy_baseline/Ruleb11/legata_ruleb11.txt": "2d937c6e4f130704d2c0b3ca08c8be013ab0dbb2fc0a3541da8abf2f537004b2",
+    "work/legacy_baseline/Ruleb12/legata_ruleb12.txt": "e3da320efe6696c09168f038c0b89c49198e9f544872b949fcdcd9df2022666b",
+    "agents/colreg_extractor.md": "6ba6bd54f426f504c6cb3ba6635837f902febe1edb6e580d61ee5bf8f1f958ae",
+    "schemas/colreg-extractor.schema.json": "1a500c24de2bf4d23f34290d67146043c0a5643e9045c3d4f053f6e24bd21058",
+    "LICENSE": "a43633a46633881d24e8f8a2d5d497989df4ba15fdc3d4880e0bd49b280f6df2"
+  },
+  "preserved_experiments": {
+    "experiments/rule19-run01/extraction.json": "89e17792ab95b228628ee744a8ce720dd9774e1fb7cb7b4bebea3806ac1cf1d1",
+    "experiments/rule22a-run01/validation.json": "c01689651d1c1698ce2d5bab4bd040fb1f3c20fc49e17f66ec50a24b4a35e4f2",
+    "experiments/rule22a-run01/review.fa.md": "cfa2c9080e1cad449c60b2614cfb8b08a6d02a59a66b708ecf8818f3b53ee2a3",
+    "experiments/rule22a-run01/run.json": "c1d626e92ee57cc6b48fd9e919835460b3f35f17136c91e0dd496696a7035f30",
+    "experiments/rule22a-run01/extraction.json": "2a22be3b620891133ea8e47994c442c7f1c71465f4b43c791df3aa3bebc9f549",
+    "experiments/toolchain-smoke/colreg-tests-rmc.log": "58da72dec4f06abd49ea0f9307f296276b31a285cfa12164b85c2931fb714538",
+    "experiments/toolchain-smoke/result.json": "399f908764586f72b61ec866e730ceb2de9fed1baad7108a76be4690168ee362",
+    "experiments/toolchain-smoke/model.property": "8dc2b249fdd731fcbf8279d627f91266860c52ae9e3f9c9e8d7063a1ccd21f7b",
+    "experiments/toolchain-smoke/colreg-install.log": "07b794f317ccb3422ef88483e38305bfc606b582a53bc05245d555329482760f",
+    "experiments/toolchain-smoke/colreg-lint.log": "801cb34173b6308bb24ff783e716a8385226fe275b5e46b8b797336ce669d8b1",
+    "experiments/toolchain-smoke/model.rebeca": "7fda383dbd7efba530ae2fa66fd48e03764323cf7119f94190d4d55323033448",
+    "experiments/toolchain-smoke/colreg-tests.log": "29df3a814b413285de297f7cdd626fe75ccd157d1ef25ead9d97ee013e50df38"
+  }
+}

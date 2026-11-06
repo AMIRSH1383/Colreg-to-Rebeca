@@ -6,12 +6,18 @@ from __future__ import annotations
 import re
 import xml.etree.ElementTree as ET
 from pathlib import Path
-from typing import Any, Dict
+from typing import TYPE_CHECKING, Any, Dict
 
-from utils import safe_path
+if __package__ or TYPE_CHECKING:
+    from .utils import safe_path
+else:  # Direct script execution and legacy sibling imports.
+    from utils import safe_path
+
 
 _NEGATIVE_PATTERNS = (
     "counterexample",
+    "not verified",
+    "unsatisfied",
     "not satisfied",
     "property violated",
     "violated",
@@ -36,7 +42,7 @@ def _local_name(tag: Any) -> str:
         return ""
     if "}" in tag:
         tag = tag.split("}", 1)[1]
-    return tag.strip().lower()
+    return str(tag).strip().lower()
 
 
 def _trace_has_content(trace_elem: ET.Element) -> bool:
@@ -58,6 +64,8 @@ def _trace_has_content(trace_elem: ET.Element) -> bool:
 def _normalise_status(text: str) -> str:
     """Map free-text verdict content to semantic outcome labels."""
     normalized = re.sub(r"\s+", " ", text.strip().lower())
+    if any(term in normalized for term in ("unknown", "not checked", "unavailable", "not evaluated")):
+        return "unknown"
     if not normalized:
         return "unknown"
 
@@ -107,8 +115,6 @@ def _extract_xml_signal(root: ET.Element) -> str:
     }
     if "cex" in normalized_candidates:
         return "cex"
-    if "satisfied" in normalized_candidates:
-        return "satisfied"
 
     status = _normalise_status("\n".join(candidates))
     if status in {"satisfied", "cex"}:
@@ -162,7 +168,9 @@ def parse_rmc_result_file(result_path: str) -> Dict[str, Any]:
         result["outcome"] = _extract_xml_signal(root)
         return result
     except ET.ParseError:
-        pass
+        if text.lstrip().startswith("<"):
+            result["error"] = "Malformed XML result"
+            return result
     except Exception as exc:
         result["error"] = str(exc)
         return result

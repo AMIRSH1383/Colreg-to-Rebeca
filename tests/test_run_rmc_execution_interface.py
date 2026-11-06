@@ -20,7 +20,7 @@ def test_run_model_out_passes_args(monkeypatch) -> None:
 
     monkeypatch.setattr(run_rmc_module.subprocess, "run", _run_stub)
 
-    with tempfile.TemporaryDirectory(dir=Path.home()) as td:
+    with tempfile.TemporaryDirectory(dir=tempfile.gettempdir()) as td:
         exe = Path(td) / "model.out"
         exe.write_text("#!/bin/sh\nexit 0\n", encoding="utf-8")
 
@@ -47,7 +47,7 @@ def test_run_model_out_supports_rmc_flags(monkeypatch) -> None:
 
     monkeypatch.setattr(run_rmc_module.subprocess, "run", _run_stub)
 
-    with tempfile.TemporaryDirectory(dir=Path.home()) as td:
+    with tempfile.TemporaryDirectory(dir=tempfile.gettempdir()) as td:
         base = Path(td)
         exe = base / "model.out"
         exe.write_text("#!/bin/sh\nexit 0\n", encoding="utf-8")
@@ -70,7 +70,7 @@ def test_run_model_out_supports_rmc_flags(monkeypatch) -> None:
 
 
 def test_run_model_out_rejects_small_hashmap_size() -> None:
-    with tempfile.TemporaryDirectory(dir=Path.home()) as td:
+    with tempfile.TemporaryDirectory(dir=tempfile.gettempdir()) as td:
         exe = Path(td) / "model.out"
         exe.write_text("#!/bin/sh\nexit 0\n", encoding="utf-8")
 
@@ -106,6 +106,7 @@ def test_run_rmc_detailed_forwards_model_out_args(monkeypatch) -> None:
 
     def _model_out_stub(executable, timeout_seconds=30, args=None, **kwargs):
         calls["model_out_args"] = list(args or [])
+        (Path(executable).parent / kwargs["export_result"]).write_text("<result>satisfied</result>")
         return {
             "executed": True,
             "exit_code": 0,
@@ -116,7 +117,7 @@ def test_run_rmc_detailed_forwards_model_out_args(monkeypatch) -> None:
     monkeypatch.setattr(run_rmc_module.subprocess, "run", _subprocess_stub)
     monkeypatch.setattr(run_rmc_module, "run_model_out", _model_out_stub)
 
-    with tempfile.TemporaryDirectory(dir=Path.home()) as td:
+    with tempfile.TemporaryDirectory(dir=tempfile.gettempdir()) as td:
         base = Path(td)
         jar = base / "rmc.jar"
         model = base / "m.rebeca"
@@ -170,6 +171,7 @@ def test_run_rmc_detailed_forwards_model_out_named_flags(monkeypatch) -> None:
         calls["export_result"] = export_result
         calls["hashmap_size"] = hashmap_size
         calls["export_statespace"] = export_statespace
+        (Path(executable).parent / export_result).write_text("<result>satisfied</result>")
         return {
             "executed": True,
             "exit_code": 0,
@@ -180,7 +182,7 @@ def test_run_rmc_detailed_forwards_model_out_named_flags(monkeypatch) -> None:
     monkeypatch.setattr(run_rmc_module.subprocess, "run", _subprocess_stub)
     monkeypatch.setattr(run_rmc_module, "run_model_out", _model_out_stub)
 
-    with tempfile.TemporaryDirectory(dir=Path.home()) as td:
+    with tempfile.TemporaryDirectory(dir=tempfile.gettempdir()) as td:
         base = Path(td)
         jar = base / "rmc.jar"
         model = base / "m.rebeca"
@@ -249,7 +251,7 @@ def test_run_rmc_detailed_uses_result_artifact_when_model_out_unknown(monkeypatc
     monkeypatch.setattr(run_rmc_module, "run_model_out", _model_out_stub)
     monkeypatch.setattr(run_rmc_module, "parse_rmc_result_file", _parse_stub)
 
-    with tempfile.TemporaryDirectory(dir=Path.home()) as td:
+    with tempfile.TemporaryDirectory(dir=tempfile.gettempdir()) as td:
         base = Path(td)
         jar = base / "rmc.jar"
         model = base / "m.rebeca"
@@ -313,7 +315,7 @@ def test_run_rmc_detailed_prefers_result_artifact_over_model_out_exit_outcome(mo
     monkeypatch.setattr(run_rmc_module, "run_model_out", _model_out_stub)
     monkeypatch.setattr(run_rmc_module, "parse_rmc_result_file", _parse_stub)
 
-    with tempfile.TemporaryDirectory(dir=Path.home()) as td:
+    with tempfile.TemporaryDirectory(dir=tempfile.gettempdir()) as td:
         base = Path(td)
         jar = base / "rmc.jar"
         model = base / "m.rebeca"
@@ -335,3 +337,41 @@ def test_run_rmc_detailed_prefers_result_artifact_over_model_out_exit_outcome(mo
 
     assert details["rmc_exit_code"] == 0
     assert details["verification_outcome"] == "cex"
+
+
+def test_compile_and_exit_zero_without_result_is_unknown(monkeypatch, tmp_path):
+    class Proc:
+        returncode = 0
+
+    def run(cmd, **kwargs):
+        if cmd[0] == 'java':
+            (Path(kwargs['cwd']) / 'generated.cpp').write_text('int main() { return 0; }')
+        elif cmd[0] == 'g++':
+            Path(cmd[-1]).write_text('binary')
+        return Proc()
+
+    monkeypatch.setattr(run_rmc_module.subprocess, 'run', run)
+    model = tmp_path / 'model.rebeca'; model.write_text('model')
+    prop = tmp_path / 'model.property'; prop.write_text('property')
+    jar = tmp_path / 'rmc.jar'; jar.write_text('jar')
+    out = tmp_path / 'out'; out.mkdir()
+    # An old satisfied result must not be reused in a new run.
+    (out / 'model_result.xml').write_text('<result>satisfied</result>')
+    result = run_rmc_module.run_rmc_detailed(str(jar), str(model), str(prop), str(out), run_model_outcome=True)
+    assert result['cpp_compile_ok'] is True
+    assert result['model_out']['exit_code'] == 0
+    assert result['verification_outcome'] == 'unknown'
+
+
+def test_java_failure_cannot_reuse_old_cpp(monkeypatch, tmp_path):
+    class Proc:
+        returncode = 0
+    monkeypatch.setattr(run_rmc_module.subprocess, 'run', lambda *a, **kw: Proc())
+    files = [tmp_path / name for name in ['rmc.jar', 'model.rebeca', 'model.property']]
+    for path in files:
+        path.write_text('input')
+    out = tmp_path / 'out'; out.mkdir()
+    (out / 'stale.cpp').write_text('int main() {return 0;}')
+    result = run_rmc_module.run_rmc_detailed(*(str(p) for p in files), str(out), run_model_outcome=True)
+    assert result['cpp_compile_ok'] is False
+    assert result['verification_outcome'] == 'unknown'

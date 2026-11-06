@@ -1,0 +1,9 @@
+── mypy --strict /workspace/Colreg-to-Rebeca/skills/rebeca_tooling/scripts ──
+mypy: PASS
+
+── flake8 --select=E,F,W /workspace/Colreg-to-Rebeca/skills/rebeca_tooling/scripts ──
+flake8: PASS
+
+── Summary ──
+  mypy: ✓ PASS
+  flake8: ✓ PASS

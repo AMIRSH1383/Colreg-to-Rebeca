@@ -102,3 +102,24 @@ def test_require_rmc_jar_error_includes_search_trace(monkeypatch: pytest.MonkeyP
     assert "Unable to locate rmc.jar" in message
     assert str(home_base / ".claude" / "rmc" / "rmc.jar") in message
     assert str(cwd_base / ".claude" / "rmc_path") in message
+
+
+def test_portable_home_precedes_legacy(monkeypatch, tmp_path):
+    home = tmp_path / 'home'
+    modern = home / '.rebeca/rmc.jar'
+    legacy = home / '.claude/rmc/rmc.jar'
+    _write_jar(modern)
+    _write_jar(legacy)
+    monkeypatch.delenv('RMC_JAR', raising=False)
+    monkeypatch.delenv('RMC_DESTINATION', raising=False)
+    monkeypatch.setattr('skills.rebeca_tooling.scripts.rmc_resolver.Path.home', lambda: home)
+    monkeypatch.setattr('skills.rebeca_tooling.scripts.rmc_resolver.Path.cwd', lambda: tmp_path)
+    assert resolve_rmc_jar() == str(modern)
+
+
+def test_explicit_missing_path_does_not_fall_back(monkeypatch, tmp_path):
+    modern = tmp_path / '.rebeca/rmc.jar'
+    _write_jar(modern)
+    monkeypatch.setenv('RMC_JAR', str(tmp_path / 'missing.jar'))
+    monkeypatch.setattr('skills.rebeca_tooling.scripts.rmc_resolver.Path.home', lambda: tmp_path)
+    assert resolve_rmc_jar() is None

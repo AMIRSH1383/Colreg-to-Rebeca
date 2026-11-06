@@ -18,17 +18,18 @@ def safe_path(p: str) -> Path:
     Prints an error and exits with code 1 if the path escapes ALLOWED_BASE.
     """
     resolved = Path(p).expanduser().resolve()
-    if not str(resolved).startswith(str(ALLOWED_BASE)):
+    if not resolved.is_relative_to(ALLOWED_BASE):
         print(f"Error: path '{p}' resolves outside allowed base '{ALLOWED_BASE}'", file=sys.stderr)
         sys.exit(1)
     return resolved
 
 
-def safe_open(p: str, mode: str = 'r') -> IO:
+def safe_open(p: str, mode: str = 'r') -> IO[str]:
     """
     Validate path with safe_path then open the file.
 
-    Prevents path traversal by resolving and bounding the path before open().
+    Resolves paths before opening. The default base is the filesystem root;
+    this is not a sandbox or an authorization boundary.
     Returns the open file handle on success.
     """
     return open(safe_path(p), mode)

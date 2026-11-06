@@ -1,0 +1,14 @@
+{
+  "schema_errors": [],
+  "status_ok": true,
+  "unique_entity_ids": true,
+  "unique_statement_ids": true,
+  "sequential_statement_ids": true,
+  "nonliteral_source_quotes": [],
+  "unresolved_subjects": [],
+  "invalid_dependency_targets": [],
+  "self_dependencies": [],
+  "entity_count": 1,
+  "statement_count": 7,
+  "reference_count": 1
+}

@@ -1,175 +1,130 @@
-# RebecAI
+# COLREG-to-Rebeca
 
-A multi-agent orchestration (MAO) system for transforming maritime safety rules from Legata formal specifications into verifiable Rebeca actor models, automated via the Rebeca Model Checker (RMC).
+Research tooling for translating natural-language COLREG regulations directly
+into verifiable Rebeca models and properties, without manually written Legata.
+The objective is to minimize unnecessary LLM calls and reuse deterministic tools.
 
-## Overview
+## Pipeline and current status
 
-RebecAI provides a unified framework to:
-- **Transform** formal specifications (Legata/COLREG) into verifiable Rebeca actor models
-- **Automate** model checking workflows using RMC
-- **Verify** properties using mutation scoring and vacuity checks
-- **Report** verification outcomes through automated tooling
+| Stage | Status |
+|---|---|
+| 1. COLREG Extractor (LLM) | Implemented as agent instructions and a JSON contract |
+| 2. Rebeca Extractor (deterministic Python) | Planned; not implemented |
+| 3. Semantic Binding & Formalization | Planned |
+| 4. Synthesis | Planned |
+| 5. RMC Verification | Existing reusable tooling; full pipeline integration pending |
+| 6. Reporting | Planned; historical reports are evidence, not a reporting implementation |
 
-## Repository Structure
+## Layout
 
-| Category | Path | Purpose |
-| :--- | :--- | :--- |
-| **Agents** | `agents/` | Coordinator + 4 specialist subagents |
-| **Skills** | `skills/` | Reusable knowledge injected at subagent startup |
+- `agents/`: canonical LLM instructions; `.opencode/agents/` is a synchronized copy.
+- `schemas/`: extraction and verification contracts.
+- `inputs/colreg/`: supplied Rule 19(a,b) and Rule 22(a) excerpts, not complete rules.
+- `inputs/rebeca/original_model.rebeca`: original model, preserved unchanged.
+- `skills/`: Rebeca handbook, mutation guidance, and retained Python verification tools.
+- `scripts/`: development and heuristic syntax-check utilities.
+- `tests/`: active tests; `archive/` is excluded from normal discovery.
+- `experiments/`: preserved extraction outputs, metadata, reviews, and toolchain evidence.
+- `archive/rebecai/`: old documentation, Legata baselines, FSM/acceptance tests.
+- `output/`: ignored scratch/build output; do not store unique research evidence here.
 
-## Quick Start
+## Development dependencies
+
+Python 3.10+, Java 11+, and **g++** are required for verification. The runner
+currently compiles with g++; clang alone is insufficient. RMC is an external JAR.
+Use an isolated virtual environment, never a global package installation:
 
 ```bash
-# Clone and install
-git clone https://github.com/3brahimi/RebecAI.git
-cd RebecAI
-python3 setup.py
-
-# Preview what would be installed (no writes)
-python3 setup.py --dry-run
-
-# Remote install (no clone required)
-curl -sSL https://raw.githubusercontent.com/3brahimi/RebecAI/main/setup.py | python3 -
-
-# Clean up all installed artifacts before re-install
-python3 purge.py && python3 setup.py
+python3 -m venv .venv
+# Windows: .venv\Scripts\activate
+source .venv/bin/activate
+python -m pip install -r requirements-dev.txt
 ```
 
-## Invoking the Agent
+RMC 2.14 download URL and SHA-256 are recorded in `configs/rmc_defaults.json`.
+Download from that official release over verified HTTPS and check the hash before
+use. Set `RMC_JAR` to the downloaded JAR. No credentials are required.
+The JSON config records reference defaults; CLIs do not automatically load it.
+Resolver precedence: `RMC_JAR`, `RMC_DESTINATION/rmc.jar`, legacy local/home
+`.claude/rmc_path[.txt]` markers, `~/.rebeca/rmc.jar`, local `.agents/rmc/rmc.jar`,
+then legacy `~/.claude/rmc/rmc.jar`. An explicit missing environment path does not
+silently fall back. Verification CLIs retain explicit `--jar` for reproducibility.
 
-The coordinator agent is named `legata_to_rebeca`. Below are copy-paste prompt templates for each supported platform. Fill in the four required values before sending.
+## Run the COLREG Extractor
 
-**Required values**
+Load `agents/colreg_extractor.md` into your LLM runner (OpenCode discovers its
+platform copy). Supply these fields, from the repository root:
 
-| Placeholder | What to provide |
-|-------------|-----------------|
-| `<rule_id>` | Short identifier, e.g. `Rule-22` |
-| `<legata_file>` | Path to the Legata `.txt` rule file |
-| `<reference_model>` | Path to the reference `.rebeca` model |
-| `<reference_property>` | Path to the reference `.property` file |
-
----
-
-### Claude Code
-
-```
-@legata_to_rebeca
-
-Transform <rule_id> to Rebeca.
-
-rule_id:            <rule_id>
-legata_input:       <legata_file>
-reference_model:    <reference_model>
-reference_property: <reference_property>
-output_dir:         output
+```text
+rule_id: Rule-19
+colreg_input: inputs/colreg/Rule19_baseline_colreg.txt
+output_file: output/rule19/extraction.json
 ```
 
-Run inside the project directory where RebecAI is installed (`~/.claude/agents/legata_to_rebeca.md` must exist). The agent has Bash access and will call the tooling scripts directly.
+This is an LLM extraction instruction, not a Python extraction command or an
+automatically registered Codex agent. Runner-specific invocation differs.
+Validate the resulting JSON against `schemas/colreg-extractor.schema.json` using
+`jsonschema`; check source grounding and cross-references separately. No automatic
+claim of identical outputs across independent LLM runs is made.
 
----
+Edit only the canonical agent, then run `python scripts/sync_agents.py`.
+`python scripts/sync_agents.py --check` detects platform-copy drift. The portable
+copy avoids symlink requirements on Windows. The existing prompt is unchanged.
 
-### Gemini CLI
+## Verification
 
-```
-@legata_to_rebeca
-
-Transform <rule_id> to Rebeca.
-
-rule_id:            <rule_id>
-legata_input:       <legata_file>
-reference_model:    <reference_model>
-reference_property: <reference_property>
-output_dir:         output
-```
-
-Run from the project root. Gemini CLI loads agents from `~/.gemini/agents/`. The agent file is a physical copy with Gemini-incompatible frontmatter keys stripped by the installer.
-
----
-
-### GitHub Copilot Chat
-
-Select the `legata_to_rebeca` agent in the Copilot Chat agent picker, then send:
-
-```
-Transform <rule_id> to Rebeca.
-
-rule_id:            <rule_id>
-legata_input:       <legata_file>
-reference_model:    <reference_model>
-reference_property: <reference_property>
-output_dir:         output
+```bash
+python skills/rebeca_tooling/scripts/verify_gate.py \
+  --jar "$RMC_JAR" --model path/to/model.rebeca \
+  --property path/to/model.property --rule-id Rule22 \
+  --output-dir output/Rule22/run01 --output-file output/Rule22/result.json \
+  --output-json
 ```
 
-The agent file lives at `.github/agents/legata_to_rebeca.agent.md`. Copilot Chat runs a single agent context — there are no spawned subagents. The coordinator executes all eight steps itself in sequence.
+The gate distinguishes `satisfied`, `violated`, `unknown`, `execution_failed`,
+`compilation_failed`, and `verification_failed`. Compilation is never a semantic
+pass. The runner exports and parses the model-checker result; missing semantic
+evidence remains unknown. Check `verified`, `passes_gate`, and `optional_checks`.
+Append `--vacuity --mutation` to enable optional diagnostics. Disabled checks are
+explicitly distinct from unknown/not-run checks. The legacy vacuity heuristic
+compares a property with a negated assertion expression; it is **not** a general
+logical antecedent reachability proof. Mutation errors are not killed mutants.
 
----
+For parse/compile only, use `run_rmc.py` with the same input flags. Exit zero
+means parse/compile success only. Add `--run-model-outcome --output-json` for
+semantic checking. Run either CLI with `--help` for timeouts and export options.
+Use dedicated generated-output directories; stale C++/executable artifacts are
+removed before a new build. The gate writes `output/work/<rule_id>/verification.json`;
+legacy output-policy step names remain accepted for existing consumers.
+`model_out.outcome` retains its legacy process-exit classification; use
+`verification_outcome` or the gate status as the semantic verdict. RMC may also
+report implicit safety failures such as deadlock, not only named assertions.
 
-**Concrete example (COLREG Rule 22)**
+## Validation
 
+```bash
+python -m pytest -q -m 'not requires_rmc'
+bash tests/run_integration_tests.sh
+python scripts/sync_agents.py --check
+bash tests/leakage_scanner.sh
+python scripts/validate-tooling.py
 ```
-Transform Rule-22 to Rebeca.
 
-rule_id:            Rule-22
-legata_input:       `colreg/Rule22.txt`
-reference_model:    `rebeca/reference.rebeca`
-reference_property: `rebeca/reference.property`
-output_dir:         `output/`
-```
+Real-toolchain tests are marked `requires_rmc` and skip with an explicit reason
+if the JAR, Java, or g++ is unavailable. A skipped test is not a pass. Lint/type
+checks are independent of runtime tests and should also pass before review.
+`python scripts/check_rebeca_syntax.py file.rebeca file.property` is only a
+heuristic for selected forbidden patterns, not a Rebeca parser.
 
-## Architecture: Multi-Agent Orchestration
+## Research preservation and attribution
 
-`legata_to_rebeca` is a **coordinator** that delegates each pipeline step to a specialist subagent. Each specialist runs in its own context window, calls deterministic Python scripts via `Bash`, and emits a structured JSON contract back to the coordinator.
+Existing JSON outputs and historical metadata are preserved unchanged, including
+old absolute paths. See `experiments/README.md` for provenance and
+`archive/rebecai/preservation.json` for original SHA-256 checksums and revision.
+The original model has no dedicated reference property file in this checkout;
+handbook examples are illustrative, not substitutes for one.
 
-```
-legata_to_rebeca (coordinator)
-├── Step03 → abstraction_agent    extract actors, discretize variables
-├── Step04 → mapping_agent        generate .rebeca model + .property file
-├── Step05 → synthesis_agent      LLM-assisted candidate generation (parallel)
-├── Step06 → verification_exec    RMC + vacuity check + mutation scoring
-├── Step07 → packaging_exec       collect and package artifacts
-└── Step08 → reporting_exec       score (100-point rubric) + reports
-```
-
-## Agents & Skills
-
-### Coordinator + Specialists
-
-| Agent | Step | Description |
-| :--- | :--- | :--- |
-| `legata_to_rebeca` | Coordinator | Orchestrates Step03–Step08, manages shared_state |
-| `abstraction_agent` | Step03 | Extracts actors, applies naming conventions, discretizes variables |
-| `mapping_agent` | Step04 | Generates `.rebeca` model and `.property` file |
-| `synthesis_agent` | Step05 | LLM-assisted candidate property generation (requires Step06 validation) |
-| `verification_exec` | Step06 | Runs RMC, vacuity check, mutation scoring |
-| `packaging_exec` | Step07 | Collects and packages pipeline artifacts |
-| `reporting_exec` | Step08 | Produces per-rule scorecards and aggregate reports |
-
-### Skills
-
-| Skill | Used by | Purpose |
-| :--- | :--- | :--- |
-| `rebeca_tooling` | All specialists | Schemas + script documentation; 14 Python dumb tools |
-| `rebeca_handbook` | abstraction, mapping, synthesis, verification, reporting | Modeling best practices |
-| `legata_to_rebeca` | Coordinator | Workflow guidance |
-| `rebeca_mutation` | verification_exec | Mutation testing patterns |
-
-## Installation Details
-
-`setup.py` installs agents and skills to `~/.agents/` (the primary truth copy) then creates platform-specific links:
-
-| Target | Location | Format |
-|--------|----------|--------|
-| Claude Code | `.claude/agents/` | Symlinks; full frontmatter including `skills:` |
-| Gemini CLI | `.gemini/agents/` | Physical copies; Gemini-incompatible keys stripped |
-| GitHub Copilot | `.github/agents/` | Symlinks with `.agent.md` suffix |
-
-`~/.agents/skills/` is a **shared namespace** — third-party skills (grepai, graphify) coexist with Rebeca's 5 owned skills. The installer only copies/links skills it owns and never overwrites unrelated entries.
-
-## Requirements
-
-- **Python 3.8+** | **Java 11+** (for RMC) | **C++ compiler** (g++/clang)
-- **Platforms:** ✅ macOS · ✅ Linux · ✅ Windows
-
-## Contributing
-
-To add agents, skills, or dumb tools: follow the structure in `agents/` and `skills/` and run `python3 setup.py` to install.
+Derived from **RebecAI**, the Legata-to-Rebeca project documented in
+`archive/rebecai/README.md` (upstream: https://github.com/3brahimi/RebecAI).
+Retain `LICENSE` and upstream attribution. Historical Legata material is kept for
+research comparisons, including separately identified Istanbul Strait case studies.
