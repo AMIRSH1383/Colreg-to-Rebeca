@@ -1,0 +1,697 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Rebeca Structural Extraction (v1)",
+  "description": "Deterministic, read-only partial structural snapshot. No control-flow or semantic guarantees.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "1.0"
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "line_count": {
+          "type": "integer",
+          "minimum": 1
+        }
+      },
+      "required": [
+        "path",
+        "line_count"
+      ]
+    },
+    "environment_constants": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "type": {
+            "type": "string",
+            "minLength": 1
+          },
+          "expression": {
+            "type": "string",
+            "minLength": 1
+          },
+          "line": {
+            "type": "integer",
+            "minimum": 1
+          }
+        },
+        "required": [
+          "name",
+          "type",
+          "expression",
+          "line"
+        ]
+      }
+    },
+    "reactive_classes": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "queue_size_expression": {
+            "type": "string",
+            "minLength": 1
+          },
+          "line": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "known_rebecs": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "type": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "array_dimensions": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "line": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "declaration_initializer": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "required": [
+                "name",
+                "type",
+                "array_dimensions"
+              ]
+            }
+          },
+          "state_variables": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "type": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "array_dimensions": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "line": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "declaration_initializer": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "constructor_initialization": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "expression": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "line": {
+                      "type": "integer",
+                      "minimum": 1
+                    },
+                    "per_instance": {
+                      "type": "object",
+                      "additionalProperties": {
+                        "oneOf": [
+                          {
+                            "type": "object",
+                            "additionalProperties": false,
+                            "properties": {
+                              "resolved": {
+                                "const": true
+                              },
+                              "value": {
+                                "type": [
+                                  "string",
+                                  "number",
+                                  "boolean"
+                                ]
+                              }
+                            },
+                            "required": [
+                              "resolved",
+                              "value"
+                            ]
+                          },
+                          {
+                            "type": "object",
+                            "additionalProperties": false,
+                            "properties": {
+                              "resolved": {
+                                "const": false
+                              },
+                              "expression": {
+                                "type": "string",
+                                "minLength": 1
+                              }
+                            },
+                            "required": [
+                              "resolved",
+                              "expression"
+                            ]
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  "required": [
+                    "expression",
+                    "line",
+                    "per_instance"
+                  ]
+                }
+              },
+              "required": [
+                "name",
+                "type",
+                "array_dimensions",
+                "line"
+              ]
+            }
+          },
+          "constructor": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "kind": {
+                    "enum": [
+                      "constructor",
+                      "message_server",
+                      "helper_method"
+                    ]
+                  },
+                  "line": {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  "parameters": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "properties": {
+                        "name": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "type": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "array_dimensions": {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "minLength": 1
+                          }
+                        },
+                        "line": {
+                          "type": "integer",
+                          "minimum": 1
+                        },
+                        "declaration_initializer": {
+                          "type": "string",
+                          "minLength": 1
+                        }
+                      },
+                      "required": [
+                        "name",
+                        "type",
+                        "array_dimensions"
+                      ]
+                    }
+                  },
+                  "priority": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "state_writes": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "properties": {
+                        "variable": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "count": {
+                          "type": "integer",
+                          "minimum": 1
+                        },
+                        "lines": {
+                          "type": "array",
+                          "items": {
+                            "type": "integer",
+                            "minimum": 1
+                          }
+                        },
+                        "operators": {
+                          "type": "array",
+                          "items": {
+                            "enum": [
+                              "=",
+                              "+=",
+                              "-=",
+                              "*=",
+                              "/=",
+                              "%=",
+                              "++",
+                              "--"
+                            ]
+                          }
+                        }
+                      },
+                      "required": [
+                        "variable",
+                        "count",
+                        "lines",
+                        "operators"
+                      ]
+                    }
+                  },
+                  "return_type": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "inline_assertions": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "properties": {
+                        "line": {
+                          "type": "integer",
+                          "minimum": 1
+                        },
+                        "condition": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "message": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "line",
+                        "condition",
+                        "message"
+                      ]
+                    }
+                  }
+                },
+                "required": [
+                  "name",
+                  "kind",
+                  "line",
+                  "parameters",
+                  "priority",
+                  "state_writes"
+                ]
+              }
+            ]
+          },
+          "message_servers": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "kind": {
+                  "enum": [
+                    "constructor",
+                    "message_server",
+                    "helper_method"
+                  ]
+                },
+                "line": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "parameters": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                      "name": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "type": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "array_dimensions": {
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "minLength": 1
+                        }
+                      },
+                      "line": {
+                        "type": "integer",
+                        "minimum": 1
+                      },
+                      "declaration_initializer": {
+                        "type": "string",
+                        "minLength": 1
+                      }
+                    },
+                    "required": [
+                      "name",
+                      "type",
+                      "array_dimensions"
+                    ]
+                  }
+                },
+                "priority": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                },
+                "state_writes": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                      "variable": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "count": {
+                        "type": "integer",
+                        "minimum": 1
+                      },
+                      "lines": {
+                        "type": "array",
+                        "items": {
+                          "type": "integer",
+                          "minimum": 1
+                        }
+                      },
+                      "operators": {
+                        "type": "array",
+                        "items": {
+                          "enum": [
+                            "=",
+                            "+=",
+                            "-=",
+                            "*=",
+                            "/=",
+                            "%=",
+                            "++",
+                            "--"
+                          ]
+                        }
+                      }
+                    },
+                    "required": [
+                      "variable",
+                      "count",
+                      "lines",
+                      "operators"
+                    ]
+                  }
+                },
+                "return_type": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "inline_assertions": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                      "line": {
+                        "type": "integer",
+                        "minimum": 1
+                      },
+                      "condition": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "message": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "line",
+                      "condition",
+                      "message"
+                    ]
+                  }
+                }
+              },
+              "required": [
+                "name",
+                "kind",
+                "line",
+                "parameters",
+                "priority",
+                "state_writes"
+              ]
+            }
+          },
+          "helper_methods": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "line": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "state_writes": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "inline_assertions": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                      "line": {
+                        "type": "integer",
+                        "minimum": 1
+                      },
+                      "condition": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "message": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "line",
+                      "condition",
+                      "message"
+                    ]
+                  }
+                }
+              },
+              "required": [
+                "name",
+                "line",
+                "state_writes"
+              ]
+            }
+          }
+        },
+        "required": [
+          "name",
+          "queue_size_expression",
+          "line",
+          "known_rebecs",
+          "state_variables",
+          "constructor",
+          "message_servers",
+          "helper_methods"
+        ]
+      }
+    },
+    "instances": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "class": {
+            "type": "string",
+            "minLength": 1
+          },
+          "priority": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "known_rebec_bindings": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "constructor_arguments": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "line": {
+            "type": "integer",
+            "minimum": 1
+          }
+        },
+        "required": [
+          "name",
+          "class",
+          "priority",
+          "known_rebec_bindings",
+          "constructor_arguments",
+          "line"
+        ]
+      }
+    },
+    "summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "reactive_classes": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "instances": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "state_variables": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "message_servers": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "helper_methods": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "env_constants": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "reactive_classes",
+        "instances",
+        "state_variables",
+        "message_servers",
+        "helper_methods",
+        "env_constants"
+      ]
+    },
+    "limitations": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "required": [
+    "schema_version",
+    "source",
+    "environment_constants",
+    "reactive_classes",
+    "instances",
+    "summary",
+    "limitations"
+  ]
+}

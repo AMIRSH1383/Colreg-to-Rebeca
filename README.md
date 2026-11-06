@@ -9,7 +9,7 @@ The objective is to minimize unnecessary LLM calls and reuse deterministic tools
 | Stage | Status |
 |---|---|
 | 1. COLREG Extractor (LLM) | Implemented as agent instructions and a JSON contract |
-| 2. Rebeca Extractor (deterministic Python) | Planned; not implemented |
+| 2. Rebeca Extractor (deterministic Python) | Implemented partial structural extraction |
 | 3. Semantic Binding & Formalization | Planned |
 | 4. Synthesis | Planned |
 | 5. RMC Verification | Existing reusable tooling; full pipeline integration pending |
@@ -70,6 +70,25 @@ claim of identical outputs across independent LLM runs is made.
 Edit only the canonical agent, then run `python scripts/sync_agents.py`.
 `python scripts/sync_agents.py --check` detects platform-copy drift. The portable
 copy avoids symlink requirements on Windows. The existing prompt is unchanged.
+
+## Run the Rebeca Extractor
+
+```bash
+python scripts/rebeca_extractor.py --input inputs/rebeca/original_model.rebeca \
+  --output output/rebeca_extraction.json
+python -m pytest -q tests/test_rebeca_extractor.py
+```
+
+The extractor uses only the standard library. Validate its JSON against
+`schemas/rebeca_extraction.schema.json` (tests use the existing `jsonschema`
+development dependency). Output includes classes, state declarations, instance
+bindings, constructor-value candidates and a syntactic method/write index.
+It does not evaluate general expressions, initialize arrays, or analyze control
+flow, timing, or transitive method effects. Missing initialization fields are not
+proof of zero/default values; unresolved values must remain unknown downstream.
+Helper signatures/bodies are intentionally compacted. Semantic Binding remains
+unimplemented. See `experiments/rebeca-extractor-review/` for the original-model
+review. Generated snapshots and test logs remain local and are not committed.
 
 ## Verification
 
