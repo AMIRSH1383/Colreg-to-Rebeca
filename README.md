@@ -10,7 +10,7 @@ The objective is to minimize unnecessary LLM calls and reuse deterministic tools
 |---|---|
 | 1. COLREG Extractor (LLM) | Implemented as agent instructions and a JSON contract |
 | 2. Rebeca Extractor (deterministic Python) | Implemented partial structural extraction |
-| 3. Semantic Binding & Formalization | Planned |
+| 3. Semantic Binding | Implemented one-request symbol binding; formalization is not implemented |
 | 4. Synthesis | Planned |
 | 5. RMC Verification | Existing reusable tooling; full pipeline integration pending |
 | 6. Reporting | Planned; historical reports are evidence, not a reporting implementation |
@@ -86,9 +86,50 @@ bindings, constructor-value candidates and a syntactic method/write index.
 It does not evaluate general expressions, initialize arrays, or analyze control
 flow, timing, or transitive method effects. Missing initialization fields are not
 proof of zero/default values; unresolved values must remain unknown downstream.
-Helper signatures/bodies are intentionally compacted. Semantic Binding remains
+Helper signatures/bodies are intentionally compacted. Formalization remains
 unimplemented. See `experiments/rebeca-extractor-review/` for the original-model
 review. Generated snapshots and test logs remain local and are not committed.
+
+## Run Semantic Binding
+
+The runner consumes the two existing extraction JSONs; it does not regenerate
+inputs, load a model/handbook, synthesize properties, or execute verification.
+It requires the existing `jsonschema` development dependency and an authenticated
+`codex` CLI. No credentials are stored in the repository.
+
+```bash
+python scripts/semantic_binding.py \
+  --colreg experiments/rule22a-run01/extraction.json \
+  --rebeca output/rebeca_extraction.json \
+  --output output/Rule22/semantic_binding.json
+python -m pytest -q tests/test_semantic_binding.py
+```
+
+Use fresh output paths. `agents/semantic_binding_agent.md` is canonical;
+`.opencode/agents/semantic_binding_agent.md` is its portable synchronized copy
+(`python scripts/sync_agents.py --check`).
+`schemas/semantic-binding.schema.json` defines the result. `bindings` contain
+participant/class/instance and concept/state-variable correspondences with evidence
+pointers. Missing and uncertain matches appear in `unresolved_concepts`. `exact`
+means an identifier match; neither exact nor semantic correspondences prove physical
+meaning, units, regulatory equivalence, or model satisfaction.
+
+Only agent instructions, the output schema, the COLREG JSON and a compact projection
+of the Rebeca JSON are sent. All state-variable candidates are retained, with stable
+indexes for evidence. No catalog, examples, skills or source model are sent. The
+CLI runs in an empty temporary directory with shell, skill discovery, web search and
+multi-agent execution disabled; any recorded tool use invalidates the result.
+There is one CLI turn and no automatic repair loop. Optional `--model` and `--timeout`
+control provider selection and duration. Provider transport retries are not additional
+application turns and their exact request count may be unavailable.
+
+The runner validates both input schemas, output schema, complete concept coverage,
+class/instance/variable references, basic scalar types, scope and evidence pointers.
+These structural checks cannot prove the correctness of LLM semantic judgments.
+Usage, input hashes and failures are written to a separate `.usage.json` beside the
+result. Unknown token usage stays null. Failure writes no binding result; previous
+results and inputs are never overwritten. In a restricted environment, the Codex
+runtime may require execution permissions for its own initialization files.
 
 ## Verification
 
