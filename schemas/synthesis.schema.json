@@ -1,0 +1,89 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "property_content",
+    "patches",
+    "requirements",
+    "unresolved"
+  ],
+  "properties": {
+    "property_content": {
+      "type": "string"
+    },
+    "patches": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "section_id",
+          "section_sha256",
+          "old",
+          "new",
+          "reason"
+        ],
+        "properties": {
+          "section_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "section_sha256": {
+            "type": "string",
+            "minLength": 1
+          },
+          "old": {
+            "type": "string",
+            "minLength": 1
+          },
+          "new": {
+            "type": "string",
+            "minLength": 1
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "requirements": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "statement_id",
+          "disposition",
+          "reason"
+        ],
+        "properties": {
+          "statement_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "disposition": {
+            "enum": [
+              "generated",
+              "context",
+              "unresolved"
+            ]
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "unresolved": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    }
+  },
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Synthesis response"
+}
