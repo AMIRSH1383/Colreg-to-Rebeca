@@ -1,0 +1,17 @@
+reactiveclass TimingProbe(10) {
+    statevars { boolean ok; }
+    TimingProbe() {
+        ok = true;
+        self.afterOnly() after(7);
+        self.deadlineOnly() deadline(12);
+        self.combined(100) after(11) deadline(16);
+    }
+    msgsrv afterOnly() { }
+    msgsrv deadlineOnly() { }
+    msgsrv combined(int rate) {
+        self.sink() after(rate) deadline(rate+5);
+        combined(rate) after(rate);
+    }
+    msgsrv sink() { }
+}
+main { TimingProbe timer():(); }
