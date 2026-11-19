@@ -3,15 +3,15 @@
 Translate natural-language COLREG rules into source-grounded extractions,
 semantic bindings, conditional Rebeca properties and RMC results. The initial
 Rule 22(a) pipeline completed with a corrected RMC timing compiler; its satisfied
-result has unresolved vacuity and regulatory-semantics limitations. A Coordinator
-Agent is not implemented. No supplementary skills or handbooks are loaded.
+result has unresolved vacuity and regulatory-semantics limitations.
 
 ```text
-agents/                       Canonical prompts: extraction, binding, synthesis
+agents/                       Coordinator and three specialist prompts
 .opencode/agents/             Byte-identical portable copies
 inputs/{colreg,rebeca}/       Original research inputs (never rewritten by runners)
 schemas/                      Unchanged stage contracts
 scripts/
+  coordinator/                Stage ordering, host handoffs, final report
   extraction/                 Deterministic Rebeca extractor
   binding/                    Semantic Binding runner/response validation
   synthesis/                  Compact request, response validation, exact patches
@@ -42,6 +42,26 @@ deleted before migration and safely restored from Git during finalization;
 no input text was reconstructed or altered.
 
 ## Per-rule workflow
+
+Invoke the Coordinator from a host that supports agent prompts and shell
+execution. The Coordinator handles the stage calls and writes
+`experiments/Rule22a/coordinator_report.json`.
+
+```text
+@colreg_to_rebeca
+
+rule_id: Rule22a
+```
+
+For a terminal run that reuses saved outputs, use
+`python -m scripts.coordinator.pipeline --rule-id Rule22a --reuse`.
+The Python process returns a checkpoint when a specialist response is needed.
+The Coordinator Agent handles those checkpoints through native delegation or
+same-session execution, depending on the host. See the execution modes, input
+overrides, full-rerun option, and live Codex Synthesis test in
+[Coordinator usage](scripts/coordinator/README.md).
+
+### Individual stage commands
 
 Use `--rule Rule22a` or `--rule Rule19ab`. Each stage writes the designated files
 in that rule's existing directory. Computation occurs under ignored output/work;

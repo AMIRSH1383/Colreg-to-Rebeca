@@ -10,7 +10,9 @@
         "started_at": "2026-11-19T12:14:51.004310+00:00"
       },
       "last_success": {
-        "inputs": {},
+        "inputs": {
+          "inputs/colreg/Rule22_baseline_colreg.txt": "f9da270bc73c2a560fd478e1dbbbba6e697925aa2c26610324479990c1848e65"
+        },
         "artifacts": {
           "colreg_extraction.json": "2a22be3b620891133ea8e47994c442c7f1c71465f4b43c791df3aa3bebc9f549",
           "extraction/source-run.json": "c1d626e92ee57cc6b48fd9e919835460b3f35f17136c91e0dd496696a7035f30",
@@ -20,7 +22,12 @@
         "provenance": {
           "execution": "migration_of_authentic_saved_outputs",
           "note": "Raw COLREG input was already locally deleted; no source file was reconstructed. Extraction is preserved as supplied.",
-          "historical_payload_paths_preserved": true
+          "historical_payload_paths_preserved": true,
+          "restored_source": {
+            "commit": "cd5e5d4e844013e4031a3d0291dbdc76d93f2864",
+            "path": "work/colreg/Rule22_baseline_colreg.txt",
+            "evidence": "Tracked source at recorded extraction revision matches restored input byte-for-byte."
+          }
         }
       }
     },

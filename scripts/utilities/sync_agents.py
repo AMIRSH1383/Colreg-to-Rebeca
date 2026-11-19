@@ -9,7 +9,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--check', action='store_true', help='Check without writing')
     args = parser.parse_args()
-    for name in ('colreg_extractor', 'semantic_binding_agent', 'synthesis_agent'):
+    for name in ('colreg_extractor', 'semantic_binding_agent', 'synthesis_agent', 'colreg_to_rebeca'):
         source = ROOT / f'agents/{name}.md'
         target = ROOT / f'.opencode/agents/{name}.md'
         if args.check:

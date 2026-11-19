@@ -11,6 +11,8 @@ htmlcov/
 .env.*
 !.env.example
 output/
+# Generated Coordinator reports may refer to local verification logs.
+/experiments/*/coordinator_report.json
 *.out
 statespace.xml
 *.jar

@@ -13,7 +13,12 @@ import sys
 from scripts.utilities.experiment_store import Experiment, ROOT
 
 
-def managed_main(stage: str, argv: list[str] | None, legacy_main: Callable[[list[str]], int | None]) -> int | None:
+def managed_main(
+    stage: str, argv: list[str] | None, legacy_main: Callable[[list[str]], int | None],
+    *, expected_inputs: dict[str, str | None] | None = None,
+    contract_inputs: tuple[Path, ...] = (),
+    validate_outputs: Callable[[Path], None] | None = None,
+) -> int | None:
     args = list(sys.argv[1:] if argv is None else argv)
     if '--help' in args or '-h' in args:
         print('Managed mode: --rule RULE [--experiments-dir PATH]. Outputs update one permanent rule directory; failed attempts preserve last success.')
@@ -66,9 +71,18 @@ def managed_main(stage: str, argv: list[str] | None, legacy_main: Callable[[list
                 args += ['--rule-id', rule]
         else:
             raise ValueError('Unsupported CLI stage')
+        inputs.extend(contract_inputs)
+        transient: list[Path] = []
         if '--response' in args:
-            inputs.append(Path(args[args.index('--response') + 1]))
+            response = Path(args[args.index('--response') + 1])
+            inputs.append(response)
+            if expected_inputs is not None:
+                transient.append(response)
         with experiment.attempt(stage, inputs, provenance={'execution': 'existing_runner'}) as attempt:
+            if expected_inputs is not None and any(
+                attempt.inputs.get(key) != value for key, value in expected_inputs.items()
+            ):
+                raise ValueError('Stage inputs changed before the runner started')
             work = attempt.workspace
             if stage == 'rebeca_extraction':
                 args += ['--output', str(work / 'rebeca_extraction.json')]
@@ -78,16 +92,22 @@ def managed_main(stage: str, argv: list[str] | None, legacy_main: Callable[[list
                 args += ['--output-dir', str(work / 'result')]
                 if stage == 'verification':
                     args += ['--base-dir', str(work / 'pipeline'), '--output-file', str(work / 'result/result.json')]
-            captured = io.StringIO()
-            with contextlib.redirect_stdout(captured):
-                code = legacy_main(args)
-            (work / 'runner.stdout.log').write_text(captured.getvalue())
+            captured, diagnostics = io.StringIO(), io.StringIO()
+            try:
+                with contextlib.redirect_stdout(captured), contextlib.redirect_stderr(diagnostics):
+                    code = legacy_main(args)
+            finally:
+                (work / 'runner.stdout.log').write_text(captured.getvalue())
+                (work / 'runner.stderr.log').write_text(diagnostics.getvalue())
+                print(diagnostics.getvalue(), end='', file=sys.stderr)
             if code not in (None, 0):
                 raise ValueError(f'{stage} runner failed with exit {code}')
             if stage == 'synthesis' and '--prepare-only' in args:
                 target = attempt.prepared()
                 print(json.dumps({'status': 'prepared', 'request': str(target / 'result/request.json')}))
                 return 0
+            if validate_outputs is not None:
+                validate_outputs(work)
             if stage == 'rebeca_extraction':
                 files = {'rebeca_extraction.json': work / 'rebeca_extraction.json'}
             elif stage == 'binding':
@@ -125,7 +145,7 @@ def managed_main(stage: str, argv: list[str] | None, legacy_main: Callable[[list
                                       + '\n\nConsult result XML for the specific checked property/failure. '
                                       'This record does not establish non-vacuity or regulatory compliance.\n')
                 files['verification/assessment.md'] = assessment
-            attempt.publish(files)
+            attempt.publish(files, transient_inputs=transient)
         print(json.dumps({'status': 'completed', 'rule': rule, 'stage': stage, 'directory': str(folder)}))
         return 0
     except (Exception, SystemExit) as exc:

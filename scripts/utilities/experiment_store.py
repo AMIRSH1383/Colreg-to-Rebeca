@@ -144,7 +144,7 @@ class Attempt:
         self.finished = True
         return target
 
-    def publish(self, files: dict[str, Path]) -> None:
+    def publish(self, files: dict[str, Path], *, transient_inputs: Iterable[Path] = ()) -> None:
         """files maps final relative paths to already validated source files."""
         if snapshot(self.paths) != self.inputs:
             raise ValueError('Inputs changed during stage execution')
@@ -183,8 +183,10 @@ class Attempt:
                         Path(temporary).unlink(missing_ok=True)
                 else:
                     target.unlink(missing_ok=True)
+            transient = {path_key(path) for path in transient_inputs}
             data['stages'][self.stage]['last_success'] = {
-                'inputs': self.inputs, 'artifacts': {name: digest(folder / name) for name in files},
+                'inputs': {key: value for key, value in self.inputs.items() if key not in transient},
+                'artifacts': {name: digest(folder / name) for name in files},
                 'provenance': self.provenance}
             data['stages'][self.stage]['last_attempt'].update(status='completed')
             atomic_json(self.experiment.manifest, data)
