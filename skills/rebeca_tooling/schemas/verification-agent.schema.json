@@ -1,5 +1,0 @@
-{
-  "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$ref": "../../../schemas/verification.schema.json",
-  "description": "Compatibility reference. Historical contract is in archive/rebecai/verification-agent.schema.json."
-}

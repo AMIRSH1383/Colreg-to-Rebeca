@@ -1,0 +1,2750 @@
+{
+  "schema_version": "1.0",
+  "source": {
+    "path": "inputs/rebeca/original_model.rebeca",
+    "line_count": 1557
+  },
+  "environment_constants": [
+    {
+      "name": "EPSILON",
+      "type": "double",
+      "expression": "0.01",
+      "line": 5
+    },
+    {
+      "name": "INFINITY",
+      "type": "double",
+      "expression": "9999",
+      "line": 6
+    },
+    {
+      "name": "SQRT2",
+      "type": "double",
+      "expression": "1.4142",
+      "line": 7
+    },
+    {
+      "name": "SIN45",
+      "type": "double",
+      "expression": "0.7071",
+      "line": 8
+    },
+    {
+      "name": "COS45",
+      "type": "double",
+      "expression": "0.7071",
+      "line": 9
+    },
+    {
+      "name": "MAP_WIDTH",
+      "type": "int",
+      "expression": "50",
+      "line": 12
+    },
+    {
+      "name": "MAP_HEIGHT",
+      "type": "int",
+      "expression": "50",
+      "line": 13
+    },
+    {
+      "name": "MAP_RESOL",
+      "type": "double",
+      "expression": "2.00",
+      "line": 14
+    },
+    {
+      "name": "CELL_WIDTH",
+      "type": "double",
+      "expression": "MAP_RESOL",
+      "line": 15
+    },
+    {
+      "name": "CELL_DIAG",
+      "type": "double",
+      "expression": "SQRT2*MAP_RESOL",
+      "line": 16
+    },
+    {
+      "name": "XMAX",
+      "type": "int",
+      "expression": "MAP_HEIGHT-1",
+      "line": 17
+    },
+    {
+      "name": "YMAX",
+      "type": "int",
+      "expression": "MAP_WIDTH-1",
+      "line": 18
+    },
+    {
+      "name": "SAFE_MARGIN",
+      "type": "double",
+      "expression": "0.02",
+      "line": 21
+    },
+    {
+      "name": "STOP_ZONE",
+      "type": "double",
+      "expression": "0.3",
+      "line": 22
+    },
+    {
+      "name": "COLLISION_MARGIN",
+      "type": "double",
+      "expression": "0.02",
+      "line": 23
+    },
+    {
+      "name": "ship_ANGULAR_VELOCITY",
+      "type": "double",
+      "expression": "360",
+      "line": 26
+    },
+    {
+      "name": "ANGLE_INC",
+      "type": "int",
+      "expression": "2",
+      "line": 27
+    },
+    {
+      "name": "FIELD_OF_VIEW",
+      "type": "int",
+      "expression": "180",
+      "line": 28
+    },
+    {
+      "name": "LASERSCAN_RATE",
+      "type": "int",
+      "expression": "100",
+      "line": 29
+    },
+    {
+      "name": "LASERSCAN_MAX_DISTANCE",
+      "type": "double",
+      "expression": "10.0",
+      "line": 30
+    },
+    {
+      "name": "COMBINE_ZICZAC",
+      "type": "boolean",
+      "expression": "true",
+      "line": 35
+    },
+    {
+      "name": "BUFFER_SIZE",
+      "type": "int",
+      "expression": "101",
+      "line": 38
+    },
+    {
+      "name": "DIR_E",
+      "type": "int",
+      "expression": "0",
+      "line": 41
+    },
+    {
+      "name": "DIR_NE",
+      "type": "int",
+      "expression": "1",
+      "line": 42
+    },
+    {
+      "name": "DIR_N",
+      "type": "int",
+      "expression": "2",
+      "line": 43
+    },
+    {
+      "name": "DIR_NW",
+      "type": "int",
+      "expression": "3",
+      "line": 44
+    },
+    {
+      "name": "DIR_W",
+      "type": "int",
+      "expression": "4",
+      "line": 45
+    },
+    {
+      "name": "DIR_SW",
+      "type": "int",
+      "expression": "5",
+      "line": 46
+    },
+    {
+      "name": "DIR_S",
+      "type": "int",
+      "expression": "6",
+      "line": 47
+    },
+    {
+      "name": "DIR_SE",
+      "type": "int",
+      "expression": "7",
+      "line": 48
+    },
+    {
+      "name": "ACTION_FREE",
+      "type": "int",
+      "expression": "0",
+      "line": 51
+    },
+    {
+      "name": "ACTION_ONGOING",
+      "type": "int",
+      "expression": "1",
+      "line": 52
+    },
+    {
+      "name": "ACTION_DONE",
+      "type": "int",
+      "expression": "2",
+      "line": 53
+    },
+    {
+      "name": "ACTION_CANCELLED",
+      "type": "int",
+      "expression": "3",
+      "line": 54
+    },
+    {
+      "name": "WCET_ACTION_NAME",
+      "type": "int",
+      "expression": "30000",
+      "line": 56
+    },
+    {
+      "name": "NROFSHIPS",
+      "type": "int",
+      "expression": "2",
+      "line": 63
+    },
+    {
+      "name": "UNDERCURRENT_ATTR",
+      "type": "int",
+      "expression": "3",
+      "line": 65
+    },
+    {
+      "name": "VISRANGEOK",
+      "type": "int",
+      "expression": "1200",
+      "line": 68
+    },
+    {
+      "name": "VISRANGENOTOK",
+      "type": "int",
+      "expression": "500",
+      "line": 69
+    },
+    {
+      "name": "SCALING_FACTOR",
+      "type": "int",
+      "expression": "100",
+      "line": 72
+    },
+    {
+      "name": "FOG_ACTIVATED",
+      "type": "boolean",
+      "expression": "true",
+      "line": 75
+    },
+    {
+      "name": "FOG_VAR_0",
+      "type": "double",
+      "expression": "13.0",
+      "line": 76
+    },
+    {
+      "name": "FOG_VAR_1",
+      "type": "double",
+      "expression": "25.0",
+      "line": 77
+    },
+    {
+      "name": "FOG_VAR_2",
+      "type": "double",
+      "expression": "10.0",
+      "line": 78
+    },
+    {
+      "name": "FOG_VAR_3",
+      "type": "double",
+      "expression": "35.0",
+      "line": 79
+    }
+  ],
+  "reactive_classes": [
+    {
+      "name": "Ship",
+      "queue_size_expression": "50",
+      "line": 84,
+      "known_rebecs": [
+        {
+          "name": "theMap",
+          "type": "MapServer",
+          "array_dimensions": [],
+          "line": 86
+        }
+      ],
+      "state_variables": [
+        {
+          "name": "ship_index",
+          "type": "byte",
+          "array_dimensions": [],
+          "line": 89,
+          "constructor_initialization": {
+            "expression": "idx",
+            "line": 172,
+            "per_instance": {
+              "s1": {
+                "resolved": true,
+                "value": 1
+              },
+              "s2": {
+                "resolved": true,
+                "value": 2
+              }
+            }
+          }
+        },
+        {
+          "name": "targetX",
+          "type": "int",
+          "array_dimensions": [],
+          "line": 90,
+          "constructor_initialization": {
+            "expression": "tx",
+            "line": 177,
+            "per_instance": {
+              "s1": {
+                "resolved": true,
+                "value": 47
+              },
+              "s2": {
+                "resolved": true,
+                "value": 12
+              }
+            }
+          }
+        },
+        {
+          "name": "targetY",
+          "type": "int",
+          "array_dimensions": [],
+          "line": 90,
+          "constructor_initialization": {
+            "expression": "ty",
+            "line": 178,
+            "per_instance": {
+              "s1": {
+                "resolved": true,
+                "value": 13
+              },
+              "s2": {
+                "resolved": true,
+                "value": 10
+              }
+            }
+          }
+        },
+        {
+          "name": "distance2target",
+          "type": "int",
+          "array_dimensions": [],
+          "line": 91,
+          "constructor_initialization": {
+            "expression": "(int)INFINITY",
+            "line": 180,
+            "per_instance": {
+              "s1": {
+                "resolved": false,
+                "expression": "(int)INFINITY"
+              },
+              "s2": {
+                "resolved": false,
+                "expression": "(int)INFINITY"
+              }
+            }
+          }
+        },
+        {
+          "name": "target_tolerance",
+          "type": "int",
+          "array_dimensions": [],
+          "line": 92,
+          "constructor_initialization": {
+            "expression": "tolerance",
+            "line": 181,
+            "per_instance": {
+              "s1": {
+                "resolved": true,
+                "value": 2
+              },
+              "s2": {
+                "resolved": true,
+                "value": 2
+              }
+            }
+          }
+        },
+        {
+          "name": "obstacles",
+          "type": "int",
+          "array_dimensions": [
+            "101"
+          ],
+          "line": 93
+        },
+        {
+          "name": "front_obstacle",
+          "type": "int",
+          "array_dimensions": [],
+          "line": 94,
+          "constructor_initialization": {
+            "expression": "0",
+            "line": 206,
+            "per_instance": {
+              "s1": {
+                "resolved": true,
+                "value": 0
+              },
+              "s2": {
+                "resolved": true,
+                "value": 0
+              }
+            }
+          }
+        },
+        {
+          "name": "targets",
+          "type": "int",
+          "array_dimensions": [
+            "11"
+          ],
+          "line": 95
+        },
+        {
+          "name": "moves",
+          "type": "int",
+          "array_dimensions": [
+            "101"
+          ],
+          "line": 96
+        },
+        {
+          "name": "moveidx",
+          "type": "int",
+          "array_dimensions": [],
+          "line": 97,
+          "constructor_initialization": {
+            "expression": "0",
+            "line": 190,
+            "per_instance": {
+              "s1": {
+                "resolved": true,
+                "value": 0
+              },
+              "s2": {
+                "resolved": true,
+                "value": 0
+              }
+            }
+          }
+        },
+        {
+          "name": "isWaiting",
+          "type": "boolean",
+          "array_dimensions": [],
+          "line": 98,
+          "constructor_initialization": {
+            "expression": "false",
+            "line": 194,
+            "per_instance": {
+              "s1": {
+                "resolved": true,
+                "value": false
+              },
+              "s2": {
+                "resolved": true,
+                "value": false
+              }
+            }
+          }
+        },
+        {
+          "name": "waits",
+          "type": "int",
+          "array_dimensions": [],
+          "line": 99,
+          "constructor_initialization": {
+            "expression": "0",
+            "line": 193,
+            "per_instance": {
+              "s1": {
+                "resolved": true,
+                "value": 0
+              },
+              "s2": {
+                "resolved": true,
+                "value": 0
+              }
+            }
+          }
+        },
+        {
+          "name": "max_waiting_rounds",
+          "type": "int",
+          "array_dimensions": [],
+          "line": 100,
+          "constructor_initialization": {
+            "expression": "round((double)maxwait / LASERSCAN_RATE)",
+            "line": 199,
+            "per_instance": {
+              "s1": {
+                "resolved": false,
+                "expression": "round((double)maxwait / LASERSCAN_RATE)"
+              },
+              "s2": {
+                "resolved": false,
+                "expression": "round((double)maxwait / LASERSCAN_RATE)"
+              }
+            }
+          }
+        },
+        {
+          "name": "failures",
+          "type": "int",
+          "array_dimensions": [],
+          "line": 101,
+          "constructor_initialization": {
+            "expression": "0",
+            "line": 195,
+            "per_instance": {
+              "s1": {
+                "resolved": true,
+                "value": 0
+              },
+              "s2": {
+                "resolved": true,
+                "value": 0
+              }
+            }
+          }
+        },
+        {
+          "name": "scan_before_move",
+          "type": "boolean",
+          "array_dimensions": [],
+          "line": 102,
+          "constructor_initialization": {
+            "expression": "scanfirst",
+            "line": 198,
+            "per_instance": {
+              "s1": {
+                "resolved": true,
+                "value": false
+              },
+              "s2": {
+                "resolved": true,
+                "value": false
+              }
+            }
+          }
+        },
+        {
+          "name": "default_time_cross",
+          "type": "int",
+          "array_dimensions": [],
+          "line": 103,
+          "constructor_initialization": {
+            "expression": "round(1000 * MAP_RESOL / real_velocity)",
+            "line": 183,
+            "per_instance": {
+              "s1": {
+                "resolved": false,
+                "expression": "round(1000 * MAP_RESOL / real_velocity)"
+              },
+              "s2": {
+                "resolved": false,
+                "expression": "round(1000 * MAP_RESOL / real_velocity)"
+              }
+            }
+          }
+        },
+        {
+          "name": "default_time_cross_diag",
+          "type": "int",
+          "array_dimensions": [],
+          "line": 104,
+          "constructor_initialization": {
+            "expression": "round(1000 * SQRT2 * MAP_RESOL / real_velocity)",
+            "line": 184,
+            "per_instance": {
+              "s1": {
+                "resolved": false,
+                "expression": "round(1000 * SQRT2 * MAP_RESOL / real_velocity)"
+              },
+              "s2": {
+                "resolved": false,
+                "expression": "round(1000 * SQRT2 * MAP_RESOL / real_velocity)"
+              }
+            }
+          }
+        },
+        {
+          "name": "default_velocity",
+          "type": "int",
+          "array_dimensions": [],
+          "line": 105,
+          "constructor_initialization": {
+            "expression": "round(real_velocity / MAP_RESOL)",
+            "line": 182,
+            "per_instance": {
+              "s1": {
+                "resolved": false,
+                "expression": "round(real_velocity / MAP_RESOL)"
+              },
+              "s2": {
+                "resolved": false,
+                "expression": "round(real_velocity / MAP_RESOL)"
+              }
+            }
+          }
+        },
+        {
+          "name": "ship_x",
+          "type": "int",
+          "array_dimensions": [],
+          "line": 106,
+          "constructor_initialization": {
+            "expression": "x",
+            "line": 174,
+            "per_instance": {
+              "s1": {
+                "resolved": true,
+                "value": 5
+              },
+              "s2": {
+                "resolved": true,
+                "value": 10
+              }
+            }
+          }
+        },
+        {
+          "name": "ship_y",
+          "type": "int",
+          "array_dimensions": [],
+          "line": 106,
+          "constructor_initialization": {
+            "expression": "y",
+            "line": 175,
+            "per_instance": {
+              "s1": {
+                "resolved": true,
+                "value": 13
+              },
+              "s2": {
+                "resolved": true,
+                "value": 5
+              }
+            }
+          }
+        },
+        {
+          "name": "ship_dir",
+          "type": "int",
+          "array_dimensions": [],
+          "line": 106,
+          "constructor_initialization": {
+            "expression": "DIR_N",
+            "line": 176,
+            "per_instance": {
+              "s1": {
+                "resolved": true,
+                "value": 2
+              },
+              "s2": {
+                "resolved": true,
+                "value": 2
+              }
+            }
+          }
+        },
+        {
+          "name": "velocity",
+          "type": "int",
+          "array_dimensions": [],
+          "line": 106,
+          "constructor_initialization": {
+            "expression": "0",
+            "line": 185,
+            "per_instance": {
+              "s1": {
+                "resolved": true,
+                "value": 0
+              },
+              "s2": {
+                "resolved": true,
+                "value": 0
+              }
+            }
+          }
+        },
+        {
+          "name": "ship_length",
+          "type": "int",
+          "array_dimensions": [],
+          "line": 109,
+          "constructor_initialization": {
+            "expression": "s_length",
+            "line": 145,
+            "per_instance": {
+              "s1": {
+                "resolved": true,
+                "value": 12
+              },
+              "s2": {
+                "resolved": true,
+                "value": 10
+              }
+            }
+          }
+        },
+        {
+          "name": "ship_width",
+          "type": "int",
+          "array_dimensions": [],
+          "line": 110,
+          "constructor_initialization": {
+            "expression": "s_width",
+            "line": 146,
+            "per_instance": {
+              "s1": {
+                "resolved": true,
+                "value": 20
+              },
+              "s2": {
+                "resolved": true,
+                "value": 20
+              }
+            }
+          }
+        },
+        {
+          "name": "ship_draught",
+          "type": "int",
+          "array_dimensions": [],
+          "line": 111,
+          "constructor_initialization": {
+            "expression": "s_draught",
+            "line": 147,
+            "per_instance": {
+              "s1": {
+                "resolved": true,
+                "value": 3
+              },
+              "s2": {
+                "resolved": true,
+                "value": 3
+              }
+            }
+          }
+        },
+        {
+          "name": "ship_velocity",
+          "type": "int",
+          "array_dimensions": [],
+          "line": 112,
+          "constructor_initialization": {
+            "expression": "(int)(real_velocity*10)",
+            "line": 149,
+            "per_instance": {
+              "s1": {
+                "resolved": false,
+                "expression": "(int)(real_velocity*10)"
+              },
+              "s2": {
+                "resolved": false,
+                "expression": "(int)(real_velocity*10)"
+              }
+            }
+          }
+        },
+        {
+          "name": "original_velocity",
+          "type": "int",
+          "array_dimensions": [],
+          "line": 113,
+          "constructor_initialization": {
+            "expression": "ship_velocity",
+            "line": 150,
+            "per_instance": {
+              "s1": {
+                "resolved": false,
+                "expression": "ship_velocity"
+              },
+              "s2": {
+                "resolved": false,
+                "expression": "ship_velocity"
+              }
+            }
+          }
+        },
+        {
+          "name": "vis_range",
+          "type": "int",
+          "array_dimensions": [],
+          "line": 114,
+          "constructor_initialization": {
+            "expression": "VISRANGEOK",
+            "line": 151,
+            "per_instance": {
+              "s1": {
+                "resolved": true,
+                "value": 1200
+              },
+              "s2": {
+                "resolved": true,
+                "value": 1200
+              }
+            }
+          }
+        },
+        {
+          "name": "restricted_visibility",
+          "type": "boolean",
+          "array_dimensions": [],
+          "line": 115,
+          "constructor_initialization": {
+            "expression": "false",
+            "line": 152,
+            "per_instance": {
+              "s1": {
+                "resolved": true,
+                "value": false
+              },
+              "s2": {
+                "resolved": true,
+                "value": false
+              }
+            }
+          }
+        },
+        {
+          "name": "contains_hazardous",
+          "type": "boolean",
+          "array_dimensions": [],
+          "line": 116,
+          "constructor_initialization": {
+            "expression": "is_hazardous",
+            "line": 153,
+            "per_instance": {
+              "s1": {
+                "resolved": true,
+                "value": false
+              },
+              "s2": {
+                "resolved": true,
+                "value": false
+              }
+            }
+          }
+        },
+        {
+          "name": "vessel_type_powerdriven",
+          "type": "boolean",
+          "array_dimensions": [],
+          "line": 117,
+          "constructor_initialization": {
+            "expression": "is_powerdriven",
+            "line": 154,
+            "per_instance": {
+              "s1": {
+                "resolved": true,
+                "value": true
+              },
+              "s2": {
+                "resolved": true,
+                "value": true
+              }
+            }
+          }
+        },
+        {
+          "name": "engine_on",
+          "type": "boolean",
+          "array_dimensions": [],
+          "line": 118,
+          "constructor_initialization": {
+            "expression": "true",
+            "line": 155,
+            "per_instance": {
+              "s1": {
+                "resolved": true,
+                "value": true
+              },
+              "s2": {
+                "resolved": true,
+                "value": true
+              }
+            }
+          }
+        },
+        {
+          "name": "masthead_light",
+          "type": "boolean",
+          "array_dimensions": [],
+          "line": 120,
+          "constructor_initialization": {
+            "expression": "true",
+            "line": 157,
+            "per_instance": {
+              "s1": {
+                "resolved": true,
+                "value": true
+              },
+              "s2": {
+                "resolved": true,
+                "value": true
+              }
+            }
+          }
+        },
+        {
+          "name": "masthead_light_range",
+          "type": "int",
+          "array_dimensions": [],
+          "line": 121,
+          "constructor_initialization": {
+            "expression": "6",
+            "line": 158,
+            "per_instance": {
+              "s1": {
+                "resolved": true,
+                "value": 6
+              },
+              "s2": {
+                "resolved": true,
+                "value": 6
+              }
+            }
+          }
+        },
+        {
+          "name": "side_light",
+          "type": "boolean",
+          "array_dimensions": [],
+          "line": 122,
+          "constructor_initialization": {
+            "expression": "true",
+            "line": 159,
+            "per_instance": {
+              "s1": {
+                "resolved": true,
+                "value": true
+              },
+              "s2": {
+                "resolved": true,
+                "value": true
+              }
+            }
+          }
+        },
+        {
+          "name": "side_light_on",
+          "type": "boolean",
+          "array_dimensions": [],
+          "line": 123,
+          "constructor_initialization": {
+            "expression": "true",
+            "line": 160,
+            "per_instance": {
+              "s1": {
+                "resolved": true,
+                "value": true
+              },
+              "s2": {
+                "resolved": true,
+                "value": true
+              }
+            }
+          }
+        },
+        {
+          "name": "side_light_range",
+          "type": "int",
+          "array_dimensions": [],
+          "line": 124,
+          "constructor_initialization": {
+            "expression": "3",
+            "line": 161,
+            "per_instance": {
+              "s1": {
+                "resolved": true,
+                "value": 3
+              },
+              "s2": {
+                "resolved": true,
+                "value": 3
+              }
+            }
+          }
+        },
+        {
+          "name": "stern_light",
+          "type": "boolean",
+          "array_dimensions": [],
+          "line": 125,
+          "constructor_initialization": {
+            "expression": "true",
+            "line": 162,
+            "per_instance": {
+              "s1": {
+                "resolved": true,
+                "value": true
+              },
+              "s2": {
+                "resolved": true,
+                "value": true
+              }
+            }
+          }
+        },
+        {
+          "name": "stern_light_range",
+          "type": "int",
+          "array_dimensions": [],
+          "line": 126,
+          "constructor_initialization": {
+            "expression": "3",
+            "line": 163,
+            "per_instance": {
+              "s1": {
+                "resolved": true,
+                "value": 3
+              },
+              "s2": {
+                "resolved": true,
+                "value": 3
+              }
+            }
+          }
+        },
+        {
+          "name": "towing_light",
+          "type": "boolean",
+          "array_dimensions": [],
+          "line": 127,
+          "constructor_initialization": {
+            "expression": "true",
+            "line": 164,
+            "per_instance": {
+              "s1": {
+                "resolved": true,
+                "value": true
+              },
+              "s2": {
+                "resolved": true,
+                "value": true
+              }
+            }
+          }
+        },
+        {
+          "name": "towing_light_range",
+          "type": "int",
+          "array_dimensions": [],
+          "line": 128,
+          "constructor_initialization": {
+            "expression": "3",
+            "line": 165,
+            "per_instance": {
+              "s1": {
+                "resolved": true,
+                "value": 3
+              },
+              "s2": {
+                "resolved": true,
+                "value": 3
+              }
+            }
+          }
+        },
+        {
+          "name": "signal_light",
+          "type": "boolean",
+          "array_dimensions": [],
+          "line": 129,
+          "constructor_initialization": {
+            "expression": "true",
+            "line": 166,
+            "per_instance": {
+              "s1": {
+                "resolved": true,
+                "value": true
+              },
+              "s2": {
+                "resolved": true,
+                "value": true
+              }
+            }
+          }
+        },
+        {
+          "name": "signal_light_range",
+          "type": "int",
+          "array_dimensions": [],
+          "line": 130,
+          "constructor_initialization": {
+            "expression": "3",
+            "line": 167,
+            "per_instance": {
+              "s1": {
+                "resolved": true,
+                "value": 3
+              },
+              "s2": {
+                "resolved": true,
+                "value": 3
+              }
+            }
+          }
+        },
+        {
+          "name": "allround_light",
+          "type": "boolean",
+          "array_dimensions": [],
+          "line": 132,
+          "constructor_initialization": {
+            "expression": "true",
+            "line": 168,
+            "per_instance": {
+              "s1": {
+                "resolved": true,
+                "value": true
+              },
+              "s2": {
+                "resolved": true,
+                "value": true
+              }
+            }
+          }
+        },
+        {
+          "name": "allround_light_on",
+          "type": "boolean",
+          "array_dimensions": [],
+          "line": 133,
+          "constructor_initialization": {
+            "expression": "true",
+            "line": 169,
+            "per_instance": {
+              "s1": {
+                "resolved": true,
+                "value": true
+              },
+              "s2": {
+                "resolved": true,
+                "value": true
+              }
+            }
+          }
+        },
+        {
+          "name": "allround_light_range",
+          "type": "int",
+          "array_dimensions": [],
+          "line": 134,
+          "constructor_initialization": {
+            "expression": "2",
+            "line": 170,
+            "per_instance": {
+              "s1": {
+                "resolved": true,
+                "value": 2
+              },
+              "s2": {
+                "resolved": true,
+                "value": 2
+              }
+            }
+          }
+        }
+      ],
+      "constructor": {
+        "name": "Ship",
+        "kind": "constructor",
+        "line": 139,
+        "parameters": [
+          {
+            "name": "idx",
+            "type": "byte",
+            "array_dimensions": []
+          },
+          {
+            "name": "x",
+            "type": "int",
+            "array_dimensions": []
+          },
+          {
+            "name": "y",
+            "type": "int",
+            "array_dimensions": []
+          },
+          {
+            "name": "tx",
+            "type": "int",
+            "array_dimensions": []
+          },
+          {
+            "name": "ty",
+            "type": "int",
+            "array_dimensions": []
+          },
+          {
+            "name": "tolerance",
+            "type": "int",
+            "array_dimensions": []
+          },
+          {
+            "name": "real_velocity",
+            "type": "double",
+            "array_dimensions": []
+          },
+          {
+            "name": "maxwait",
+            "type": "int",
+            "array_dimensions": []
+          },
+          {
+            "name": "scanfirst",
+            "type": "boolean",
+            "array_dimensions": []
+          },
+          {
+            "name": "s_length",
+            "type": "int",
+            "array_dimensions": []
+          },
+          {
+            "name": "s_width",
+            "type": "int",
+            "array_dimensions": []
+          },
+          {
+            "name": "s_draught",
+            "type": "int",
+            "array_dimensions": []
+          },
+          {
+            "name": "is_hazardous",
+            "type": "boolean",
+            "array_dimensions": []
+          },
+          {
+            "name": "is_powerdriven",
+            "type": "boolean",
+            "array_dimensions": []
+          }
+        ],
+        "priority": null,
+        "state_writes": [
+          {
+            "variable": "ship_length",
+            "count": 1,
+            "lines": [
+              145
+            ],
+            "operators": [
+              "="
+            ]
+          },
+          {
+            "variable": "ship_width",
+            "count": 1,
+            "lines": [
+              146
+            ],
+            "operators": [
+              "="
+            ]
+          },
+          {
+            "variable": "ship_draught",
+            "count": 1,
+            "lines": [
+              147
+            ],
+            "operators": [
+              "="
+            ]
+          },
+          {
+            "variable": "ship_velocity",
+            "count": 1,
+            "lines": [
+              149
+            ],
+            "operators": [
+              "="
+            ]
+          },
+          {
+            "variable": "original_velocity",
+            "count": 1,
+            "lines": [
+              150
+            ],
+            "operators": [
+              "="
+            ]
+          },
+          {
+            "variable": "vis_range",
+            "count": 1,
+            "lines": [
+              151
+            ],
+            "operators": [
+              "="
+            ]
+          },
+          {
+            "variable": "restricted_visibility",
+            "count": 1,
+            "lines": [
+              152
+            ],
+            "operators": [
+              "="
+            ]
+          },
+          {
+            "variable": "contains_hazardous",
+            "count": 1,
+            "lines": [
+              153
+            ],
+            "operators": [
+              "="
+            ]
+          },
+          {
+            "variable": "vessel_type_powerdriven",
+            "count": 1,
+            "lines": [
+              154
+            ],
+            "operators": [
+              "="
+            ]
+          },
+          {
+            "variable": "engine_on",
+            "count": 1,
+            "lines": [
+              155
+            ],
+            "operators": [
+              "="
+            ]
+          },
+          {
+            "variable": "masthead_light",
+            "count": 1,
+            "lines": [
+              157
+            ],
+            "operators": [
+              "="
+            ]
+          },
+          {
+            "variable": "masthead_light_range",
+            "count": 1,
+            "lines": [
+              158
+            ],
+            "operators": [
+              "="
+            ]
+          },
+          {
+            "variable": "side_light",
+            "count": 1,
+            "lines": [
+              159
+            ],
+            "operators": [
+              "="
+            ]
+          },
+          {
+            "variable": "side_light_on",
+            "count": 1,
+            "lines": [
+              160
+            ],
+            "operators": [
+              "="
+            ]
+          },
+          {
+            "variable": "side_light_range",
+            "count": 1,
+            "lines": [
+              161
+            ],
+            "operators": [
+              "="
+            ]
+          },
+          {
+            "variable": "stern_light",
+            "count": 1,
+            "lines": [
+              162
+            ],
+            "operators": [
+              "="
+            ]
+          },
+          {
+            "variable": "stern_light_range",
+            "count": 1,
+            "lines": [
+              163
+            ],
+            "operators": [
+              "="
+            ]
+          },
+          {
+            "variable": "towing_light",
+            "count": 1,
+            "lines": [
+              164
+            ],
+            "operators": [
+              "="
+            ]
+          },
+          {
+            "variable": "towing_light_range",
+            "count": 1,
+            "lines": [
+              165
+            ],
+            "operators": [
+              "="
+            ]
+          },
+          {
+            "variable": "signal_light",
+            "count": 1,
+            "lines": [
+              166
+            ],
+            "operators": [
+              "="
+            ]
+          },
+          {
+            "variable": "signal_light_range",
+            "count": 1,
+            "lines": [
+              167
+            ],
+            "operators": [
+              "="
+            ]
+          },
+          {
+            "variable": "allround_light",
+            "count": 1,
+            "lines": [
+              168
+            ],
+            "operators": [
+              "="
+            ]
+          },
+          {
+            "variable": "allround_light_on",
+            "count": 1,
+            "lines": [
+              169
+            ],
+            "operators": [
+              "="
+            ]
+          },
+          {
+            "variable": "allround_light_range",
+            "count": 1,
+            "lines": [
+              170
+            ],
+            "operators": [
+              "="
+            ]
+          },
+          {
+            "variable": "ship_index",
+            "count": 1,
+            "lines": [
+              172
+            ],
+            "operators": [
+              "="
+            ]
+          },
+          {
+            "variable": "ship_x",
+            "count": 1,
+            "lines": [
+              174
+            ],
+            "operators": [
+              "="
+            ]
+          },
+          {
+            "variable": "ship_y",
+            "count": 1,
+            "lines": [
+              175
+            ],
+            "operators": [
+              "="
+            ]
+          },
+          {
+            "variable": "ship_dir",
+            "count": 1,
+            "lines": [
+              176
+            ],
+            "operators": [
+              "="
+            ]
+          },
+          {
+            "variable": "targetX",
+            "count": 1,
+            "lines": [
+              177
+            ],
+            "operators": [
+              "="
+            ]
+          },
+          {
+            "variable": "targetY",
+            "count": 1,
+            "lines": [
+              178
+            ],
+            "operators": [
+              "="
+            ]
+          },
+          {
+            "variable": "distance2target",
+            "count": 1,
+            "lines": [
+              180
+            ],
+            "operators": [
+              "="
+            ]
+          },
+          {
+            "variable": "target_tolerance",
+            "count": 1,
+            "lines": [
+              181
+            ],
+            "operators": [
+              "="
+            ]
+          },
+          {
+            "variable": "default_velocity",
+            "count": 1,
+            "lines": [
+              182
+            ],
+            "operators": [
+              "="
+            ]
+          },
+          {
+            "variable": "default_time_cross",
+            "count": 1,
+            "lines": [
+              183
+            ],
+            "operators": [
+              "="
+            ]
+          },
+          {
+            "variable": "default_time_cross_diag",
+            "count": 1,
+            "lines": [
+              184
+            ],
+            "operators": [
+              "="
+            ]
+          },
+          {
+            "variable": "velocity",
+            "count": 1,
+            "lines": [
+              185
+            ],
+            "operators": [
+              "="
+            ]
+          },
+          {
+            "variable": "moves",
+            "count": 2,
+            "lines": [
+              186,
+              188
+            ],
+            "operators": [
+              "="
+            ]
+          },
+          {
+            "variable": "moveidx",
+            "count": 1,
+            "lines": [
+              190
+            ],
+            "operators": [
+              "="
+            ]
+          },
+          {
+            "variable": "waits",
+            "count": 1,
+            "lines": [
+              193
+            ],
+            "operators": [
+              "="
+            ]
+          },
+          {
+            "variable": "isWaiting",
+            "count": 1,
+            "lines": [
+              194
+            ],
+            "operators": [
+              "="
+            ]
+          },
+          {
+            "variable": "failures",
+            "count": 1,
+            "lines": [
+              195
+            ],
+            "operators": [
+              "="
+            ]
+          },
+          {
+            "variable": "scan_before_move",
+            "count": 1,
+            "lines": [
+              198
+            ],
+            "operators": [
+              "="
+            ]
+          },
+          {
+            "variable": "max_waiting_rounds",
+            "count": 1,
+            "lines": [
+              199
+            ],
+            "operators": [
+              "="
+            ]
+          },
+          {
+            "variable": "targets",
+            "count": 1,
+            "lines": [
+              202
+            ],
+            "operators": [
+              "="
+            ]
+          },
+          {
+            "variable": "obstacles",
+            "count": 1,
+            "lines": [
+              205
+            ],
+            "operators": [
+              "="
+            ]
+          },
+          {
+            "variable": "front_obstacle",
+            "count": 1,
+            "lines": [
+              206
+            ],
+            "operators": [
+              "="
+            ]
+          }
+        ],
+        "inline_assertions": [
+          {
+            "line": 141,
+            "condition": "idx>=1",
+            "message": "Ship index must be from 1"
+          },
+          {
+            "line": 142,
+            "condition": "s_length>=1",
+            "message": "Ship length must be positive int at least 1"
+          },
+          {
+            "line": 143,
+            "condition": "s_width>=1",
+            "message": "Ship width must be positive int at least 1"
+          }
+        ]
+      },
+      "message_servers": [
+        {
+          "name": "onLaserScan",
+          "kind": "message_server",
+          "line": 477,
+          "parameters": [
+            {
+              "name": "scandata",
+              "type": "int",
+              "array_dimensions": [
+                "101"
+              ]
+            },
+            {
+              "name": "angles",
+              "type": "int",
+              "array_dimensions": [
+                "101"
+              ]
+            }
+          ],
+          "priority": 3,
+          "state_writes": [
+            {
+              "variable": "obstacles",
+              "count": 1,
+              "lines": [
+                480
+              ],
+              "operators": [
+                "="
+              ]
+            },
+            {
+              "variable": "front_obstacle",
+              "count": 1,
+              "lines": [
+                482
+              ],
+              "operators": [
+                "="
+              ]
+            }
+          ]
+        },
+        {
+          "name": "updateMovingStatus",
+          "kind": "message_server",
+          "line": 610,
+          "parameters": [
+            {
+              "name": "moveNext",
+              "type": "boolean",
+              "array_dimensions": []
+            }
+          ],
+          "priority": 1,
+          "state_writes": [
+            {
+              "variable": "vis_range",
+              "count": 2,
+              "lines": [
+                623,
+                628
+              ],
+              "operators": [
+                "="
+              ]
+            },
+            {
+              "variable": "restricted_visibility",
+              "count": 2,
+              "lines": [
+                624,
+                629
+              ],
+              "operators": [
+                "="
+              ]
+            },
+            {
+              "variable": "ship_velocity",
+              "count": 2,
+              "lines": [
+                625,
+                630
+              ],
+              "operators": [
+                "="
+              ]
+            },
+            {
+              "variable": "velocity",
+              "count": 4,
+              "lines": [
+                638,
+                671,
+                698,
+                717
+              ],
+              "operators": [
+                "="
+              ]
+            },
+            {
+              "variable": "targets",
+              "count": 1,
+              "lines": [
+                653
+              ],
+              "operators": [
+                "--"
+              ]
+            },
+            {
+              "variable": "ship_dir",
+              "count": 1,
+              "lines": [
+                675
+              ],
+              "operators": [
+                "="
+              ]
+            },
+            {
+              "variable": "front_obstacle",
+              "count": 1,
+              "lines": [
+                693
+              ],
+              "operators": [
+                "="
+              ]
+            },
+            {
+              "variable": "moveidx",
+              "count": 1,
+              "lines": [
+                705
+              ],
+              "operators": [
+                "++"
+              ]
+            },
+            {
+              "variable": "waits",
+              "count": 2,
+              "lines": [
+                707,
+                719
+              ],
+              "operators": [
+                "=",
+                "++"
+              ]
+            },
+            {
+              "variable": "isWaiting",
+              "count": 2,
+              "lines": [
+                708,
+                718
+              ],
+              "operators": [
+                "="
+              ]
+            },
+            {
+              "variable": "failures",
+              "count": 1,
+              "lines": [
+                722
+              ],
+              "operators": [
+                "++"
+              ]
+            }
+          ]
+        },
+        {
+          "name": "onNewPath",
+          "kind": "message_server",
+          "line": 742,
+          "parameters": [
+            {
+              "name": "path",
+              "type": "int",
+              "array_dimensions": [
+                "101"
+              ]
+            }
+          ],
+          "priority": 10,
+          "state_writes": [
+            {
+              "variable": "failures",
+              "count": 2,
+              "lines": [
+                748,
+                761
+              ],
+              "operators": [
+                "--",
+                "++"
+              ]
+            },
+            {
+              "variable": "moves",
+              "count": 1,
+              "lines": [
+                752
+              ],
+              "operators": [
+                "="
+              ]
+            },
+            {
+              "variable": "velocity",
+              "count": 1,
+              "lines": [
+                755
+              ],
+              "operators": [
+                "="
+              ]
+            }
+          ],
+          "inline_assertions": [
+            {
+              "line": 763,
+              "condition": "false",
+              "message": "the ship seems to get stuck"
+            }
+          ]
+        }
+      ],
+      "helper_methods": [
+        {
+          "name": "isInsideRect",
+          "line": 212,
+          "state_writes": []
+        },
+        {
+          "name": "real2map",
+          "line": 217,
+          "state_writes": []
+        },
+        {
+          "name": "stop",
+          "line": 222,
+          "state_writes": [
+            "isWaiting",
+            "moveidx",
+            "moves",
+            "velocity",
+            "waits"
+          ]
+        },
+        {
+          "name": "resume",
+          "line": 234,
+          "state_writes": [
+            "isWaiting",
+            "velocity",
+            "waits"
+          ]
+        },
+        {
+          "name": "xy2idx",
+          "line": 243,
+          "state_writes": []
+        },
+        {
+          "name": "idx2xy",
+          "line": 268,
+          "state_writes": []
+        },
+        {
+          "name": "cmp",
+          "line": 282,
+          "state_writes": []
+        },
+        {
+          "name": "round",
+          "line": 288,
+          "state_writes": []
+        },
+        {
+          "name": "getTimeToStop",
+          "line": 297,
+          "state_writes": []
+        },
+        {
+          "name": "getDistanceToStop",
+          "line": 303,
+          "state_writes": []
+        },
+        {
+          "name": "setTarget",
+          "line": 308,
+          "state_writes": [
+            "targets"
+          ]
+        },
+        {
+          "name": "getNextDir",
+          "line": 349,
+          "state_writes": []
+        },
+        {
+          "name": "getTargetDir",
+          "line": 364,
+          "state_writes": []
+        },
+        {
+          "name": "getTileAtDir",
+          "line": 376,
+          "state_writes": []
+        },
+        {
+          "name": "getneighbours",
+          "line": 388,
+          "state_writes": []
+        },
+        {
+          "name": "move",
+          "line": 402,
+          "state_writes": [
+            "distance2target",
+            "ship_dir",
+            "ship_x",
+            "ship_y",
+            "velocity"
+          ]
+        },
+        {
+          "name": "rotate",
+          "line": 423,
+          "state_writes": [
+            "ship_dir"
+          ]
+        },
+        {
+          "name": "rotate180",
+          "line": 430,
+          "state_writes": []
+        },
+        {
+          "name": "rotateLeft",
+          "line": 435,
+          "state_writes": []
+        },
+        {
+          "name": "rotateRight",
+          "line": 440,
+          "state_writes": []
+        },
+        {
+          "name": "abs",
+          "line": 445,
+          "state_writes": []
+        },
+        {
+          "name": "edistance",
+          "line": 451,
+          "state_writes": []
+        },
+        {
+          "name": "mdistance",
+          "line": 456,
+          "state_writes": []
+        },
+        {
+          "name": "odistance",
+          "line": 463,
+          "state_writes": []
+        },
+        {
+          "name": "isInside",
+          "line": 471,
+          "state_writes": []
+        },
+        {
+          "name": "getNewCoord",
+          "line": 489,
+          "state_writes": []
+        },
+        {
+          "name": "getObstacleAtDir",
+          "line": 509,
+          "state_writes": []
+        },
+        {
+          "name": "grid2map",
+          "line": 538,
+          "state_writes": []
+        },
+        {
+          "name": "map2ship",
+          "line": 546,
+          "state_writes": []
+        },
+        {
+          "name": "getDirWithoutObstacle",
+          "line": 564,
+          "state_writes": []
+        },
+        {
+          "name": "sort8",
+          "line": 587,
+          "state_writes": []
+        }
+      ]
+    },
+    {
+      "name": "MapServer",
+      "queue_size_expression": "50",
+      "line": 785,
+      "known_rebecs": [
+        {
+          "name": "s1",
+          "type": "Ship",
+          "array_dimensions": [],
+          "line": 787
+        },
+        {
+          "name": "s2",
+          "type": "Ship",
+          "array_dimensions": [],
+          "line": 788
+        }
+      ],
+      "state_variables": [
+        {
+          "name": "ship_loc_dir_vel",
+          "type": "int",
+          "array_dimensions": [
+            "9"
+          ],
+          "line": 792
+        },
+        {
+          "name": "speed_safe_range",
+          "type": "int",
+          "array_dimensions": [],
+          "line": 793,
+          "constructor_initialization": {
+            "expression": "7",
+            "line": 820,
+            "per_instance": {
+              "theMap": {
+                "resolved": true,
+                "value": 7
+              }
+            }
+          }
+        },
+        {
+          "name": "ship1_inside_traffic_zone",
+          "type": "boolean",
+          "array_dimensions": [],
+          "line": 795,
+          "constructor_initialization": {
+            "expression": "false",
+            "line": 816,
+            "per_instance": {
+              "theMap": {
+                "resolved": true,
+                "value": false
+              }
+            }
+          }
+        },
+        {
+          "name": "ship2_inside_traffic_zone",
+          "type": "boolean",
+          "array_dimensions": [],
+          "line": 796,
+          "constructor_initialization": {
+            "expression": "false",
+            "line": 817,
+            "per_instance": {
+              "theMap": {
+                "resolved": true,
+                "value": false
+              }
+            }
+          }
+        },
+        {
+          "name": "undercurrent",
+          "type": "int",
+          "array_dimensions": [],
+          "line": 797,
+          "constructor_initialization": {
+            "expression": "UNDERCURRENT_ATTR",
+            "line": 818,
+            "per_instance": {
+              "theMap": {
+                "resolved": true,
+                "value": 3
+              }
+            }
+          }
+        },
+        {
+          "name": "ships_close_to_each_other",
+          "type": "boolean",
+          "array_dimensions": [],
+          "line": 798,
+          "constructor_initialization": {
+            "expression": "false",
+            "line": 819,
+            "per_instance": {
+              "theMap": {
+                "resolved": true,
+                "value": false
+              }
+            }
+          }
+        }
+      ],
+      "constructor": {
+        "name": "MapServer",
+        "kind": "constructor",
+        "line": 802,
+        "parameters": [
+          {
+            "name": "rcount",
+            "type": "int",
+            "array_dimensions": []
+          }
+        ],
+        "priority": null,
+        "state_writes": [
+          {
+            "variable": "ship_loc_dir_vel",
+            "count": 5,
+            "lines": [
+              805,
+              807,
+              808,
+              809,
+              810
+            ],
+            "operators": [
+              "="
+            ]
+          },
+          {
+            "variable": "ship1_inside_traffic_zone",
+            "count": 1,
+            "lines": [
+              816
+            ],
+            "operators": [
+              "="
+            ]
+          },
+          {
+            "variable": "ship2_inside_traffic_zone",
+            "count": 1,
+            "lines": [
+              817
+            ],
+            "operators": [
+              "="
+            ]
+          },
+          {
+            "variable": "undercurrent",
+            "count": 1,
+            "lines": [
+              818
+            ],
+            "operators": [
+              "="
+            ]
+          },
+          {
+            "variable": "ships_close_to_each_other",
+            "count": 1,
+            "lines": [
+              819
+            ],
+            "operators": [
+              "="
+            ]
+          },
+          {
+            "variable": "speed_safe_range",
+            "count": 1,
+            "lines": [
+              820
+            ],
+            "operators": [
+              "="
+            ]
+          }
+        ],
+        "inline_assertions": [
+          {
+            "line": 804,
+            "condition": "rcount>=1 && rcount<=max",
+            "message": "Number of ships is out of range"
+          }
+        ]
+      },
+      "message_servers": [
+        {
+          "name": "scanObstacles",
+          "kind": "message_server",
+          "line": 913,
+          "parameters": [
+            {
+              "name": "ship",
+              "type": "Ship",
+              "array_dimensions": []
+            },
+            {
+              "name": "ship_index",
+              "type": "int",
+              "array_dimensions": []
+            },
+            {
+              "name": "rate",
+              "type": "int",
+              "array_dimensions": []
+            },
+            {
+              "name": "fov",
+              "type": "int",
+              "array_dimensions": []
+            },
+            {
+              "name": "max_distance",
+              "type": "int",
+              "array_dimensions": []
+            }
+          ],
+          "priority": 1,
+          "state_writes": []
+        },
+        {
+          "name": "updateShipLocation",
+          "kind": "message_server",
+          "line": 1063,
+          "parameters": [
+            {
+              "name": "idx",
+              "type": "int",
+              "array_dimensions": []
+            },
+            {
+              "name": "ship_x",
+              "type": "int",
+              "array_dimensions": []
+            },
+            {
+              "name": "ship_y",
+              "type": "int",
+              "array_dimensions": []
+            },
+            {
+              "name": "ship_dir",
+              "type": "int",
+              "array_dimensions": []
+            },
+            {
+              "name": "velocity",
+              "type": "int",
+              "array_dimensions": []
+            },
+            {
+              "name": "s_length",
+              "type": "int",
+              "array_dimensions": []
+            },
+            {
+              "name": "s_width",
+              "type": "int",
+              "array_dimensions": []
+            }
+          ],
+          "priority": 5,
+          "state_writes": [
+            {
+              "variable": "ship_loc_dir_vel",
+              "count": 4,
+              "lines": [
+                1073,
+                1074,
+                1075,
+                1076
+              ],
+              "operators": [
+                "="
+              ]
+            },
+            {
+              "variable": "ships_close_to_each_other",
+              "count": 2,
+              "lines": [
+                1081,
+                1084
+              ],
+              "operators": [
+                "="
+              ]
+            },
+            {
+              "variable": "ship1_inside_traffic_zone",
+              "count": 2,
+              "lines": [
+                1141,
+                1147
+              ],
+              "operators": [
+                "="
+              ]
+            },
+            {
+              "variable": "ship2_inside_traffic_zone",
+              "count": 2,
+              "lines": [
+                1143,
+                1149
+              ],
+              "operators": [
+                "="
+              ]
+            }
+          ],
+          "inline_assertions": [
+            {
+              "line": 1125,
+              "condition": "!collided",
+              "message": "Collision with another ship!"
+            }
+          ]
+        },
+        {
+          "name": "generatePath",
+          "kind": "message_server",
+          "line": 1236,
+          "parameters": [
+            {
+              "name": "ship",
+              "type": "Ship",
+              "array_dimensions": []
+            },
+            {
+              "name": "ship_index",
+              "type": "int",
+              "array_dimensions": []
+            },
+            {
+              "name": "startX",
+              "type": "int",
+              "array_dimensions": []
+            },
+            {
+              "name": "startY",
+              "type": "int",
+              "array_dimensions": []
+            },
+            {
+              "name": "targetX",
+              "type": "int",
+              "array_dimensions": []
+            },
+            {
+              "name": "targetY",
+              "type": "int",
+              "array_dimensions": []
+            },
+            {
+              "name": "s_length",
+              "type": "int",
+              "array_dimensions": []
+            },
+            {
+              "name": "s_width",
+              "type": "int",
+              "array_dimensions": []
+            }
+          ],
+          "priority": 3,
+          "state_writes": [],
+          "inline_assertions": [
+            {
+              "line": 1299,
+              "condition": "false",
+              "message": "gapleft"
+            },
+            {
+              "line": 1305,
+              "condition": "false",
+              "message": "gapright"
+            },
+            {
+              "line": 1312,
+              "condition": "false",
+              "message": "gaptop"
+            },
+            {
+              "line": 1318,
+              "condition": "false",
+              "message": "gapbottom"
+            },
+            {
+              "line": 1493,
+              "condition": "path[1]==xy2idx(startX,startY) && path[path[0]] == xy2idx(targetX,targetY)",
+              "message": "Incorrect path"
+            },
+            {
+              "line": 1542,
+              "condition": "ship_index!=1",
+              "message": "Ship1 Path not found"
+            },
+            {
+              "line": 1543,
+              "condition": "ship_index!=2",
+              "message": "Ship2 Path not found"
+            }
+          ]
+        }
+      ],
+      "helper_methods": [
+        {
+          "name": "abs",
+          "line": 826,
+          "state_writes": []
+        },
+        {
+          "name": "sign",
+          "line": 830,
+          "state_writes": []
+        },
+        {
+          "name": "min",
+          "line": 834,
+          "state_writes": []
+        },
+        {
+          "name": "max",
+          "line": 838,
+          "state_writes": []
+        },
+        {
+          "name": "round",
+          "line": 843,
+          "state_writes": []
+        },
+        {
+          "name": "isInside",
+          "line": 851,
+          "state_writes": []
+        },
+        {
+          "name": "sqrt",
+          "line": 856,
+          "state_writes": []
+        },
+        {
+          "name": "edistance",
+          "line": 872,
+          "state_writes": []
+        },
+        {
+          "name": "mdistance",
+          "line": 877,
+          "state_writes": []
+        },
+        {
+          "name": "odistance",
+          "line": 882,
+          "state_writes": []
+        },
+        {
+          "name": "getAngleFromDir",
+          "line": 890,
+          "state_writes": []
+        },
+        {
+          "name": "getAngleCalc",
+          "line": 897,
+          "state_writes": []
+        },
+        {
+          "name": "ship2map",
+          "line": 1012,
+          "state_writes": []
+        },
+        {
+          "name": "map2ship",
+          "line": 1026,
+          "state_writes": []
+        },
+        {
+          "name": "isInsideRect",
+          "line": 1042,
+          "state_writes": []
+        },
+        {
+          "name": "isRectIntersect",
+          "line": 1046,
+          "state_writes": []
+        },
+        {
+          "name": "xy2idx",
+          "line": 1158,
+          "state_writes": []
+        },
+        {
+          "name": "idx2xy",
+          "line": 1178,
+          "state_writes": []
+        },
+        {
+          "name": "expandObstacles",
+          "line": 1193,
+          "state_writes": []
+        },
+        {
+          "name": "getNeighborAtDir",
+          "line": 1212,
+          "state_writes": []
+        },
+        {
+          "name": "getneighbours",
+          "line": 1224,
+          "state_writes": []
+        }
+      ]
+    }
+  ],
+  "instances": [
+    {
+      "name": "s1",
+      "class": "Ship",
+      "priority": 3,
+      "known_rebec_bindings": {
+        "theMap": "theMap"
+      },
+      "constructor_arguments": {
+        "idx": "1",
+        "x": "5",
+        "y": "13",
+        "tx": "47",
+        "ty": "13",
+        "tolerance": "2",
+        "real_velocity": "1.1",
+        "maxwait": "1500",
+        "scanfirst": "false",
+        "s_length": "12",
+        "s_width": "20",
+        "s_draught": "3",
+        "is_hazardous": "false",
+        "is_powerdriven": "true"
+      },
+      "line": 1553
+    },
+    {
+      "name": "s2",
+      "class": "Ship",
+      "priority": 5,
+      "known_rebec_bindings": {
+        "theMap": "theMap"
+      },
+      "constructor_arguments": {
+        "idx": "2",
+        "x": "10",
+        "y": "5",
+        "tx": "12",
+        "ty": "10",
+        "tolerance": "2",
+        "real_velocity": "1.1",
+        "maxwait": "2000",
+        "scanfirst": "false",
+        "s_length": "10",
+        "s_width": "20",
+        "s_draught": "3",
+        "is_hazardous": "false",
+        "is_powerdriven": "true"
+      },
+      "line": 1554
+    },
+    {
+      "name": "theMap",
+      "class": "MapServer",
+      "priority": 1,
+      "known_rebec_bindings": {
+        "s1": "s1",
+        "s2": "s2"
+      },
+      "constructor_arguments": {
+        "rcount": "2"
+      },
+      "line": 1555
+    }
+  ],
+  "summary": {
+    "reactive_classes": 2,
+    "instances": 3,
+    "state_variables": 52,
+    "message_servers": 6,
+    "helper_methods": 52,
+    "env_constants": 45
+  },
+  "limitations": [
+    "State writes are a syntactic index, not a control-flow or data-flow analysis. Local shadowing is conservatively applied across each entire method.",
+    "Only direct scalar constructor assignments are considered candidate initial values; nontrivial expressions and indexed/conditional initializations remain unresolved."
+  ]
+}

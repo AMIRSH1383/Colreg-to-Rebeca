@@ -1,0 +1,17 @@
+// CONDITIONAL SYMBOLIC CHECKS ONLY: regulatory interpretation is unresolved.
+// Source thresholds are untranslated; model units and physical semantics are unestablished.
+// Qualifiers and assumptions require review in report.json; no compliance claim.
+property {
+  Assertion {
+    stmt03_vessel_s1: !((s1.ship_length >= 50)) || (s1.masthead_light_range >= 6);
+    stmt03_vessel_s2: !((s2.ship_length >= 50)) || (s2.masthead_light_range >= 6);
+    stmt04_vessel_s1: !((s1.ship_length >= 50)) || (s1.side_light_range >= 3);
+    stmt04_vessel_s2: !((s2.ship_length >= 50)) || (s2.side_light_range >= 3);
+    stmt05_vessel_s1: !((s1.ship_length >= 50)) || (s1.stern_light_range >= 3);
+    stmt05_vessel_s2: !((s2.ship_length >= 50)) || (s2.stern_light_range >= 3);
+    stmt06_vessel_s1: !((s1.ship_length >= 50)) || (s1.towing_light_range >= 3);
+    stmt06_vessel_s2: !((s2.ship_length >= 50)) || (s2.towing_light_range >= 3);
+    stmt07_vessel_s1: !((s1.ship_length >= 50)) || (s1.allround_light_range >= 3);
+    stmt07_vessel_s2: !((s2.ship_length >= 50)) || (s2.allround_light_range >= 3);
+  }
+}

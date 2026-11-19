@@ -1,0 +1,16 @@
+{
+  "sha256": {
+    "LICENSE": "a43633a46633881d24e8f8a2d5d497989df4ba15fdc3d4880e0bd49b280f6df2",
+    "inputs/rebeca/original_model.rebeca": "cb1bd2ae7a1c9637785c9d7f55d5bc6224299ea3d8d1795b77a6197580a8bc66",
+    "schemas/colreg-extractor.schema.json": "1a500c24de2bf4d23f34290d67146043c0a5643e9045c3d4f053f6e24bd21058",
+    "schemas/rebeca_extraction.schema.json": "1a829f69fc59ccb97d985d02d9c76209843ef446111f4100b112f64e259b1d04",
+    "schemas/verification.schema.json": "672306a57305a0d6b6091c5a8393adec6805df3800f7121a2f5eb9b601f9cd1c",
+    "schemas/synthesis.schema.json": "dbe34f92fa12cdc2e44057e1c72e7cc077c19e7c7b418e42996228bc3ce62f72",
+    "schemas/semantic-binding.schema.json": "26212f823ab3b52abb2752e2f95f1f795dafd9ad63b8dc9fffd8d32f54ec3842",
+    "agents/colreg_extractor.md": "6ba6bd54f426f504c6cb3ba6635837f902febe1edb6e580d61ee5bf8f1f958ae",
+    "agents/synthesis_agent.md": "5a2cbffc73749f47d7c67d9722a6c766b7f27c0ef5d613cf7dcdca148edf4602",
+    "agents/semantic_binding_agent.md": "fab27ef26c65cc6d58bb50270cb9d1de5ca2b7a819922125107bb9d3b082dc48",
+    "inputs/colreg/Rule19_baseline_colreg.txt": "af5b5cdf8050230ed62213351cd7a813af5df09cd36cb63dbf1e51544f371b85",
+    "inputs/colreg/Rule22_baseline_colreg.txt": "f9da270bc73c2a560fd478e1dbbbba6e697925aa2c26610324479990c1848e65"
+  }
+}

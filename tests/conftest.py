@@ -7,12 +7,8 @@ from pathlib import Path
 import shutil
 
 _ROOT = Path(__file__).parent.parent
-_SCRIPTS = _ROOT / "skills" / "rebeca_tooling" / "scripts"
-_TESTS = Path(__file__).parent
 
 sys.path.insert(0, str(_ROOT))
-sys.path.insert(0, str(_SCRIPTS))
-sys.path.insert(0, str(_TESTS))
 
 import pytest
 
@@ -21,7 +17,7 @@ import pytest
 # Real rmc.jar — used by tests that invoke run_rmc for real
 # ---------------------------------------------------------------------------
 
-from rmc_resolver import resolve_rmc_jar
+from verification.rmc_resolver import resolve_rmc_jar
 RMC_JAR = resolve_rmc_jar()
 RMC_READY = bool(RMC_JAR and shutil.which("java") and shutil.which("g++"))
 
@@ -125,5 +121,5 @@ def home_tmp():
 
 @pytest.fixture
 def engine():
-    from mutation_engine import MutationEngine
+    from verification.mutation_engine import MutationEngine
     return MutationEngine()

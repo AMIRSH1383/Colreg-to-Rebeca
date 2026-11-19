@@ -1,0 +1,51 @@
+{
+  "property_content": "// CONDITIONAL SYMBOLIC CHECKS ONLY: regulatory interpretation is unresolved.\n// Source thresholds are untranslated; model units and physical semantics are unestablished.\n// Qualifiers and assumptions require review in report.json; no compliance claim.\nproperty {\n  Assertion {\n    stmt03_vessel_s1: !((s1.ship_length >= 50)) || (s1.masthead_light_range >= 6);\n    stmt03_vessel_s2: !((s2.ship_length >= 50)) || (s2.masthead_light_range >= 6);\n    stmt04_vessel_s1: !((s1.ship_length >= 50)) || (s1.side_light_range >= 3);\n    stmt04_vessel_s2: !((s2.ship_length >= 50)) || (s2.side_light_range >= 3);\n    stmt05_vessel_s1: !((s1.ship_length >= 50)) || (s1.stern_light_range >= 3);\n    stmt05_vessel_s2: !((s2.ship_length >= 50)) || (s2.stern_light_range >= 3);\n    stmt06_vessel_s1: !((s1.ship_length >= 50)) || (s1.towing_light_range >= 3);\n    stmt06_vessel_s2: !((s2.ship_length >= 50)) || (s2.towing_light_range >= 3);\n    stmt07_vessel_s1: !((s1.ship_length >= 50)) || (s1.allround_light_range >= 3);\n    stmt07_vessel_s2: !((s2.ship_length >= 50)) || (s2.allround_light_range >= 3);\n  }\n}\n",
+  "patches": [],
+  "requirements": [
+    {
+      "statement_id": "stmt01",
+      "disposition": "unresolved",
+      "reason": "No supported scalar comparison or accepted intensity binding exists. Light presence and range cannot supply intensity. Section 8 Annex I remains external; no intensity assertion or new state is invented."
+    },
+    {
+      "statement_id": "stmt02",
+      "disposition": "context",
+      "reason": "Use ship_length >= 50 only as the same-actor antecedent for stmt03 through stmt07 on both s1 and s2, independent of initial lengths. This is conditional symbolic scope: model metres are not established; no conversion or regulatory equivalence is assumed."
+    },
+    {
+      "statement_id": "stmt03",
+      "disposition": "generated",
+      "reason": "Conditional scalar-only candidate: for each mapped Ship actor, ship_length >= 50 implies masthead_light_range >= 6. The source threshold is untranslated; length/range units and physical visibility semantics remain unresolved. Direct state references need no model patch."
+    },
+    {
+      "statement_id": "stmt04",
+      "disposition": "generated",
+      "reason": "Conditional scalar-only candidate: for each mapped Ship actor, ship_length >= 50 implies side_light_range >= 3. Length/range units and physical visibility semantics remain unresolved; no model-unit conversion is supplied."
+    },
+    {
+      "statement_id": "stmt05",
+      "disposition": "generated",
+      "reason": "Conditional scalar-only candidate: for each mapped Ship actor, ship_length >= 50 implies stern_light_range >= 3. Length/range units and physical visibility semantics remain unresolved; no model-unit conversion is supplied."
+    },
+    {
+      "statement_id": "stmt06",
+      "disposition": "generated",
+      "reason": "Conditional scalar-only candidate: for each mapped Ship actor, ship_length >= 50 implies towing_light_range >= 3. Length/range units and physical visibility semantics remain unresolved; no model-unit conversion is supplied."
+    },
+    {
+      "statement_id": "stmt07",
+      "disposition": "generated",
+      "reason": "Conditional scalar-only range candidate: for each mapped Ship actor, ship_length >= 50 implies allround_light_range >= 3. This does not formalize the white/red/green/yellow qualifier: colors and separate colored lights are absent. Units and physical visibility remain unresolved. Preserve allround_light_range initialization at 2; no behavior or initializer change is necessary."
+    }
+  ],
+  "unresolved": [
+    "stmt01: light_intensity is unmapped and has no supported scalar comparison; Section 8 Annex I is external and unavailable in these inputs.",
+    "stmt02 and dependent obligations: ship_length is not established to use metres. Regulatory interpretation requires evidence that the source 50-metre threshold is comparable to model values; no equality of units or conversion is asserted.",
+    "stmt03 through stmt07: light-range units and physical visibility semantics are unestablished. Source numbers 6 and 3 are untranslated symbolic thresholds, not demonstrated physical distances in the model.",
+    "stmt07: all-round light colors white, red, green and yellow are unrepresented; the range-only candidate does not establish color coverage or full statement formalization.",
+    "The vessel-to-Ship correspondence identifies modeled participants without establishing regulatory compliance. Both Ship instances are included irrespective of their initial length values.",
+    "Initializers do not establish regulatory minima. No initializer, scheduling, handler, or behavior is changed to manufacture compliance.",
+    "Required before regulatory interpretation: establish length/range comparability and physical visibility semantics, resolve Annex I intensity, and represent or justify the color qualifier. These prerequisites remain unverified, not accepted assumptions.",
+    "Extraction open_assumptions is empty. No reachability or vacuity analysis, compilation, or RMC verification has been run; guarded assertions may be vacuous."
+  ]
+}

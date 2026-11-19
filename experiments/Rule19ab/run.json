@@ -1,0 +1,57 @@
+{
+  "schema_version": "1.0",
+  "rule": "Rule19ab",
+  "stages": {
+    "colreg_extraction": {
+      "status": "current",
+      "last_attempt": {
+        "status": "completed",
+        "inputs": {},
+        "started_at": "2026-11-19T12:14:51.012735+00:00"
+      },
+      "last_success": {
+        "inputs": {},
+        "artifacts": {
+          "colreg_extraction.json": "89e17792ab95b228628ee744a8ce720dd9774e1fb7cb7b4bebea3806ac1cf1d1"
+        },
+        "provenance": {
+          "execution": "migration_of_authentic_saved_outputs",
+          "note": "Raw COLREG input was already locally deleted; no source file was reconstructed. Extraction is preserved as supplied.",
+          "historical_payload_paths_preserved": true
+        }
+      }
+    },
+    "rebeca_extraction": {
+      "status": "current",
+      "last_attempt": {
+        "status": "completed",
+        "inputs": {
+          "inputs/rebeca/original_model.rebeca": "cb1bd2ae7a1c9637785c9d7f55d5bc6224299ea3d8d1795b77a6197580a8bc66"
+        },
+        "started_at": "2026-11-19T12:14:51.015379+00:00"
+      },
+      "last_success": {
+        "inputs": {
+          "inputs/rebeca/original_model.rebeca": "cb1bd2ae7a1c9637785c9d7f55d5bc6224299ea3d8d1795b77a6197580a8bc66"
+        },
+        "artifacts": {
+          "rebeca_extraction.json": "7fd0f730be770a96813f9438a11d3a946c057b942ba85a57160044cc65044760"
+        },
+        "provenance": {
+          "execution": "migration_of_authentic_saved_outputs",
+          "note": "Same authentic saved original-model inventory; no regeneration.",
+          "historical_payload_paths_preserved": true
+        }
+      }
+    },
+    "binding": {
+      "status": "missing"
+    },
+    "synthesis": {
+      "status": "missing"
+    },
+    "verification": {
+      "status": "missing"
+    }
+  }
+}

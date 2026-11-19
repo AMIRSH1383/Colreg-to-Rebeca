@@ -15,7 +15,9 @@ output/
 statespace.xml
 *.jar
 *.log
-# Deliberately retained historical validation logs.
-!experiments/**/*.log
 .vscode/
 .idea/
+
+# Short-lived publication locks and atomic staging files.
+.publish.lock
+.publish-*

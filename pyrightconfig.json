@@ -1,6 +1,6 @@
 {
-  "include": ["skills", "scripts", "tests"],
-  "exclude": ["archive", "experiments", "output", "**/__pycache__"],
-  "extraPaths": ["skills/rebeca_tooling/scripts", "tests"],
+  "include": ["verification", "scripts", "tests"],
+  "exclude": ["experiments", "output", "**/__pycache__"],
+  "extraPaths": ["."],
   "pythonVersion": "3.10"
 }

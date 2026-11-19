@@ -1,0 +1,146 @@
+{
+  "rule_id": "Rule-22a",
+  "status": "partial",
+  "interpretation": "symbolic candidates only where caveats are present; no inferred model units or behavior",
+  "semantic_uncertainties": {
+    "stmt01": [
+      "The correspondence identifies the modeled participant without establishing regulatory compliance."
+    ],
+    "stmt02": [
+      "The correspondence identifies the modeled participant without establishing regulatory compliance.",
+      "The supplied inventory does not establish that ship_length uses metres.",
+      "Both Ship instances are included irrespective of their initial length values.",
+      "Regulatory interpretation requires established comparability with source unit 'metres'; model units are unknown and no conversion is applied."
+    ],
+    "stmt03": [
+      "The correspondence identifies the modeled participant without establishing regulatory compliance.",
+      "The supplied declaration does not establish range units or physical visibility semantics.",
+      "The initializer does not establish a regulatory minimum.",
+      "Regulatory interpretation requires established comparability with source unit 'miles'; model units are unknown and no conversion is applied.",
+      "Prerequisite stmt02: The correspondence identifies the modeled participant without establishing regulatory compliance.",
+      "Prerequisite stmt02: The supplied inventory does not establish that ship_length uses metres.",
+      "Prerequisite stmt02: Both Ship instances are included irrespective of their initial length values.",
+      "Prerequisite stmt02: Regulatory interpretation requires established comparability with source unit 'metres'; model units are unknown and no conversion is applied."
+    ],
+    "stmt04": [
+      "The correspondence identifies the modeled participant without establishing regulatory compliance.",
+      "The supplied declaration does not establish range units or physical visibility semantics.",
+      "The initializer does not establish a regulatory minimum.",
+      "Regulatory interpretation requires established comparability with source unit 'miles'; model units are unknown and no conversion is applied.",
+      "Prerequisite stmt02: The correspondence identifies the modeled participant without establishing regulatory compliance.",
+      "Prerequisite stmt02: The supplied inventory does not establish that ship_length uses metres.",
+      "Prerequisite stmt02: Both Ship instances are included irrespective of their initial length values.",
+      "Prerequisite stmt02: Regulatory interpretation requires established comparability with source unit 'metres'; model units are unknown and no conversion is applied."
+    ],
+    "stmt05": [
+      "The correspondence identifies the modeled participant without establishing regulatory compliance.",
+      "The supplied declaration does not establish range units or physical visibility semantics.",
+      "The initializer does not establish a regulatory minimum.",
+      "Regulatory interpretation requires established comparability with source unit 'miles'; model units are unknown and no conversion is applied.",
+      "Prerequisite stmt02: The correspondence identifies the modeled participant without establishing regulatory compliance.",
+      "Prerequisite stmt02: The supplied inventory does not establish that ship_length uses metres.",
+      "Prerequisite stmt02: Both Ship instances are included irrespective of their initial length values.",
+      "Prerequisite stmt02: Regulatory interpretation requires established comparability with source unit 'metres'; model units are unknown and no conversion is applied."
+    ],
+    "stmt06": [
+      "The correspondence identifies the modeled participant without establishing regulatory compliance.",
+      "The supplied declaration does not establish range units or physical visibility semantics.",
+      "The initializer does not establish a regulatory minimum.",
+      "Regulatory interpretation requires established comparability with source unit 'miles'; model units are unknown and no conversion is applied.",
+      "Prerequisite stmt02: The correspondence identifies the modeled participant without establishing regulatory compliance.",
+      "Prerequisite stmt02: The supplied inventory does not establish that ship_length uses metres.",
+      "Prerequisite stmt02: Both Ship instances are included irrespective of their initial length values.",
+      "Prerequisite stmt02: Regulatory interpretation requires established comparability with source unit 'metres'; model units are unknown and no conversion is applied."
+    ],
+    "stmt07": [
+      "The correspondence identifies the modeled participant without establishing regulatory compliance.",
+      "The supplied declaration does not establish range units or physical visibility semantics.",
+      "The inventory does not identify the all-round light's color or separate white, red, green and yellow lights.",
+      "The initializer does not establish a regulatory minimum.",
+      "Regulatory interpretation requires established comparability with source unit 'miles'; model units are unknown and no conversion is applied.",
+      "Prerequisite stmt02: The correspondence identifies the modeled participant without establishing regulatory compliance.",
+      "Prerequisite stmt02: The supplied inventory does not establish that ship_length uses metres.",
+      "Prerequisite stmt02: Both Ship instances are included irrespective of their initial length values.",
+      "Prerequisite stmt02: Regulatory interpretation requires established comparability with source unit 'metres'; model units are unknown and no conversion is applied."
+    ]
+  },
+  "open_assumptions": [],
+  "references": [
+    "Section 8 Annex I"
+  ],
+  "requirements": [
+    {
+      "statement_id": "stmt01",
+      "disposition": "unresolved",
+      "reason": "No supported scalar comparison or accepted intensity binding exists. Light presence and range cannot supply intensity. Section 8 Annex I remains external; no intensity assertion or new state is invented."
+    },
+    {
+      "statement_id": "stmt02",
+      "disposition": "context",
+      "reason": "Use ship_length >= 50 only as the same-actor antecedent for stmt03 through stmt07 on both s1 and s2, independent of initial lengths. This is conditional symbolic scope: model metres are not established; no conversion or regulatory equivalence is assumed."
+    },
+    {
+      "statement_id": "stmt03",
+      "disposition": "generated",
+      "reason": "Conditional scalar-only candidate: for each mapped Ship actor, ship_length >= 50 implies masthead_light_range >= 6. The source threshold is untranslated; length/range units and physical visibility semantics remain unresolved. Direct state references need no model patch."
+    },
+    {
+      "statement_id": "stmt04",
+      "disposition": "generated",
+      "reason": "Conditional scalar-only candidate: for each mapped Ship actor, ship_length >= 50 implies side_light_range >= 3. Length/range units and physical visibility semantics remain unresolved; no model-unit conversion is supplied."
+    },
+    {
+      "statement_id": "stmt05",
+      "disposition": "generated",
+      "reason": "Conditional scalar-only candidate: for each mapped Ship actor, ship_length >= 50 implies stern_light_range >= 3. Length/range units and physical visibility semantics remain unresolved; no model-unit conversion is supplied."
+    },
+    {
+      "statement_id": "stmt06",
+      "disposition": "generated",
+      "reason": "Conditional scalar-only candidate: for each mapped Ship actor, ship_length >= 50 implies towing_light_range >= 3. Length/range units and physical visibility semantics remain unresolved; no model-unit conversion is supplied."
+    },
+    {
+      "statement_id": "stmt07",
+      "disposition": "generated",
+      "reason": "Conditional scalar-only range candidate: for each mapped Ship actor, ship_length >= 50 implies allround_light_range >= 3. This does not formalize the white/red/green/yellow qualifier: colors and separate colored lights are absent. Units and physical visibility remain unresolved. Preserve allround_light_range initialization at 2; no behavior or initializer change is necessary."
+    }
+  ],
+  "unresolved": [
+    "stmt01: light_intensity is unmapped and has no supported scalar comparison; Section 8 Annex I is external and unavailable in these inputs.",
+    "stmt02 and dependent obligations: ship_length is not established to use metres. Regulatory interpretation requires evidence that the source 50-metre threshold is comparable to model values; no equality of units or conversion is asserted.",
+    "stmt03 through stmt07: light-range units and physical visibility semantics are unestablished. Source numbers 6 and 3 are untranslated symbolic thresholds, not demonstrated physical distances in the model.",
+    "stmt07: all-round light colors white, red, green and yellow are unrepresented; the range-only candidate does not establish color coverage or full statement formalization.",
+    "The vessel-to-Ship correspondence identifies modeled participants without establishing regulatory compliance. Both Ship instances are included irrespective of their initial length values.",
+    "Initializers do not establish regulatory minima. No initializer, scheduling, handler, or behavior is changed to manufacture compliance.",
+    "Required before regulatory interpretation: establish length/range comparability and physical visibility semantics, resolve Annex I intensity, and represent or justify the color qualifier. These prerequisites remain unverified, not accepted assumptions.",
+    "Extraction open_assumptions is empty. No reachability or vacuity analysis, compilation, or RMC verification has been run; guarded assertions may be vacuous."
+  ],
+  "blocked": {
+    "stmt01": [
+      "No supported scalar comparison",
+      "Missing accepted concept or entity binding"
+    ]
+  },
+  "binding_unresolved": [
+    {
+      "kind": "concept",
+      "entity": "vessel",
+      "concept": "light_intensity",
+      "statement_ids": [
+        "stmt01"
+      ],
+      "reason": "No supplied Ship state variable represents light intensity. Light presence flags and light-range attributes do not establish intensity, and the referenced Section 8 Annex I specification remains external to the supplied inputs."
+    }
+  ],
+  "source_sha256": "cb1bd2ae7a1c9637785c9d7f55d5bc6224299ea3d8d1795b77a6197580a8bc66",
+  "model_sha256": "cb1bd2ae7a1c9637785c9d7f55d5bc6224299ea3d8d1795b77a6197580a8bc66",
+  "byte_identical": true,
+  "property_generated": true,
+  "verification": "not_run",
+  "usage": {
+    "provider": "external_response",
+    "invocations": 0,
+    "input_tokens": null,
+    "output_tokens": null
+  }
+}

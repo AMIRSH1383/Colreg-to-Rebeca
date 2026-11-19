@@ -9,5 +9,3 @@ output/
 *.out
 *.jar
 statespace.xml
-# Historical material is available through explicit reads when needed.
-archive/

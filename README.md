@@ -1,190 +1,135 @@
 # COLREG-to-Rebeca
 
-Research tooling for translating natural-language COLREG regulations directly
-into verifiable Rebeca models and properties, without manually written Legata.
-The objective is to minimize unnecessary LLM calls and reuse deterministic tools.
-
-## Pipeline and current status
-
-| Stage | Status |
-|---|---|
-| 1. COLREG Extractor (LLM) | Implemented as agent instructions and a JSON contract |
-| 2. Rebeca Extractor (deterministic Python) | Implemented partial structural extraction |
-| 3. Semantic Binding | Implemented one-request symbol binding; formalization is not implemented |
-| 4. Synthesis | Planned |
-| 5. RMC Verification | Existing reusable tooling; full pipeline integration pending |
-| 6. Reporting | Planned; historical reports are evidence, not a reporting implementation |
-
-## Layout
-
-- `agents/`: canonical LLM instructions; `.opencode/agents/` is a synchronized copy.
-- `schemas/`: extraction and verification contracts.
-- `inputs/colreg/`: supplied Rule 19(a,b) and Rule 22(a) excerpts, not complete rules.
-- `inputs/rebeca/original_model.rebeca`: original model, preserved unchanged.
-- `skills/`: Rebeca handbook, mutation guidance, and retained Python verification tools.
-- `scripts/`: development and heuristic syntax-check utilities.
-- `tests/`: active tests; `archive/` is excluded from normal discovery.
-- `experiments/`: preserved extraction outputs, metadata, reviews, and toolchain evidence.
-- `archive/rebecai/`: old documentation, Legata baselines, FSM/acceptance tests.
-- `output/`: ignored scratch/build output; do not store unique research evidence here.
-
-## Development dependencies
-
-Python 3.10+, Java 11+, and **g++** are required for verification. The runner
-currently compiles with g++; clang alone is insufficient. RMC is an external JAR.
-Use an isolated virtual environment, never a global package installation:
-
-```bash
-python3 -m venv .venv
-# Windows: .venv\Scripts\activate
-source .venv/bin/activate
-python -m pip install -r requirements-dev.txt
-```
-
-RMC 2.14 download URL and SHA-256 are recorded in `configs/rmc_defaults.json`.
-Download from that official release over verified HTTPS and check the hash before
-use. Set `RMC_JAR` to the downloaded JAR. No credentials are required.
-The JSON config records reference defaults; CLIs do not automatically load it.
-Resolver precedence: `RMC_JAR`, `RMC_DESTINATION/rmc.jar`, legacy local/home
-`.claude/rmc_path[.txt]` markers, `~/.rebeca/rmc.jar`, local `.agents/rmc/rmc.jar`,
-then legacy `~/.claude/rmc/rmc.jar`. An explicit missing environment path does not
-silently fall back. Verification CLIs retain explicit `--jar` for reproducibility.
-
-## Run the COLREG Extractor
-
-Load `agents/colreg_extractor.md` into your LLM runner (OpenCode discovers its
-platform copy). Supply these fields, from the repository root:
+Translate natural-language COLREG rules into source-grounded extractions,
+semantic bindings, conditional Rebeca properties and RMC results. The initial
+Rule 22(a) pipeline completed with a corrected RMC timing compiler; its satisfied
+result has unresolved vacuity and regulatory-semantics limitations. A Coordinator
+Agent is not implemented. No supplementary skills or handbooks are loaded.
 
 ```text
-rule_id: Rule-19
-colreg_input: inputs/colreg/Rule19_baseline_colreg.txt
-output_file: output/rule19/extraction.json
+agents/                       Canonical prompts: extraction, binding, synthesis
+.opencode/agents/             Byte-identical portable copies
+inputs/{colreg,rebeca}/       Original research inputs (never rewritten by runners)
+schemas/                      Unchanged stage contracts
+scripts/
+  extraction/                 Deterministic Rebeca extractor
+  binding/                    Semantic Binding runner/response validation
+  synthesis/                  Compact request, response validation, exact patches
+  utilities/                  Agent sync, syntax/lint checks, experiment lifecycle
+verification/                 Existing RMC runner, parser, resolver, gate and diagnostics
+  rmc/configs/                Original and corrected-build reference configurations
+  rmc/timing_fix/             Reproducible compiler patch, builder and smoke model
+tests/{extraction,binding,synthesis,verification,integration}/
+experiments/{Rule22a,Rule19ab}/ Permanent small research outputs and run.json
+output/                       Ignored scratch, builds, C++, binaries, statespaces, logs
 ```
 
-This is an LLM extraction instruction, not a Python extraction command or an
-automatically registered Codex agent. Runner-specific invocation differs.
-Validate the resulting JSON against `schemas/colreg-extractor.schema.json` using
-`jsonschema`; check source grounding and cross-references separately. No automatic
-claim of identical outputs across independent LLM runs is made.
+## Setup
 
-Edit only the canonical agent, then run `python scripts/sync_agents.py`.
-`python scripts/sync_agents.py --check` detects platform-copy drift. The portable
-copy avoids symlink requirements on Windows. The existing prompt is unchanged.
+Python 3.10+ is supported; install the development requirements in a virtual
+environment. RMC also requires Java and g++; timing-fix packaging needs a JDK
+with source-file launching. OpenJDK 21 and g++ 14 were used for the recorded run.
 
-## Run the Rebeca Extractor
-
-```bash
-python scripts/rebeca_extractor.py --input inputs/rebeca/original_model.rebeca \
-  --output output/rebeca_extraction.json
-python -m pytest -q tests/test_rebeca_extractor.py
+```sh
+python -m venv .venv
+.venv/bin/python -m pip install -r requirements-dev.txt
 ```
 
-The extractor uses only the standard library. Validate its JSON against
-`schemas/rebeca_extraction.schema.json` (tests use the existing `jsonschema`
-development dependency). Output includes classes, state declarations, instance
-bindings, constructor-value candidates and a syntactic method/write index.
-It does not evaluate general expressions, initialize arrays, or analyze control
-flow, timing, or transitive method effects. Missing initialization fields are not
-proof of zero/default values; unresolved values must remain unknown downstream.
-Helper signatures/bodies are intentionally compacted. Formalization remains
-unimplemented. See `experiments/rebeca-extractor-review/` for the original-model
-review. Generated snapshots and test logs remain local and are not committed.
+The original model SHA-256 is
+`cb1bd2ae7a1c9637785c9d7f55d5bc6224299ea3d8d1795b77a6197580a8bc66`.
+Both original tracked COLREG input files are preserved. They were locally
+deleted before migration and safely restored from Git during finalization;
+no input text was reconstructed or altered.
 
-## Run Semantic Binding
+## Per-rule workflow
 
-The runner consumes the two existing extraction JSONs; it does not regenerate
-inputs, load a model/handbook, synthesize properties, or execute verification.
-It requires the existing `jsonschema` development dependency and an authenticated
-`codex` CLI. No credentials are stored in the repository.
+Use `--rule Rule22a` or `--rule Rule19ab`. Each stage writes the designated files
+in that rule's existing directory. Computation occurs under ignored output/work;
+publication occurs only after successful validation. A failure keeps the last
+successful payload and records the failed attempt. Hash changes mark dependent
+stages stale. Consumers inspect run.json; file existence alone is not validity.
+See [experiment lifecycle](experiments/README.md) for details and limitations.
 
-```bash
-python scripts/semantic_binding.py \
-  --colreg experiments/rule22a-run01/extraction.json \
-  --rebeca output/rebeca_extraction.json \
-  --output output/Rule22/semantic_binding.json
-python -m pytest -q tests/test_semantic_binding.py
+1. Execute agents/colreg_extractor.md in the current session with its unchanged
+   inputs/contract, writing a candidate under output/work. Publish the authentic
+   returned extraction (this command does not invoke an LLM):
+
+```sh
+python -m scripts.utilities.experiments publish-colreg --rule Rule22a \
+  --source output/work/Rule22a/colreg-response.json
 ```
 
-Use fresh output paths. `agents/semantic_binding_agent.md` is canonical;
-`.opencode/agents/semantic_binding_agent.md` is its portable synchronized copy
-(`python scripts/sync_agents.py --check`).
-`schemas/semantic-binding.schema.json` defines the result. `bindings` contain
-participant/class/instance and concept/state-variable correspondences with evidence
-pointers. Missing and uncertain matches appear in `unresolved_concepts`. `exact`
-means an identifier match; neither exact nor semantic correspondences prove physical
-meaning, units, regulatory equivalence, or model satisfaction.
+Supply `--colreg-input inputs/colreg/<actual-file>.txt` when the original text is
+available. Without it, raw-source provenance is explicitly incomplete.
 
-Only agent instructions, the output schema, the COLREG JSON and a compact projection
-of the Rebeca JSON are sent. All state-variable candidates are retained, with stable
-indexes for evidence. No catalog, examples, skills or source model are sent. The
-CLI runs in an empty temporary directory with shell, skill discovery, web search and
-multi-agent execution disabled; any recorded tool use invalidates the result.
-There is one CLI turn and no automatic repair loop. Optional `--model` and `--timeout`
-control provider selection and duration. Provider transport retries are not additional
-application turns and their exact request count may be unavailable.
+2. Extract the original Rebeca model deterministically:
 
-The runner validates both input schemas, output schema, complete concept coverage,
-class/instance/variable references, basic scalar types, scope and evidence pointers.
-These structural checks cannot prove the correctness of LLM semantic judgments.
-Usage, input hashes and failures are written to a separate `.usage.json` beside the
-result. Unknown token usage stays null. Failure writes no binding result; previous
-results and inputs are never overwritten. In a restricted environment, the Codex
-runtime may require execution permissions for its own initialization files.
-
-## Verification
-
-```bash
-python skills/rebeca_tooling/scripts/verify_gate.py \
-  --jar "$RMC_JAR" --model path/to/model.rebeca \
-  --property path/to/model.property --rule-id Rule22 \
-  --output-dir output/Rule22/run01 --output-file output/Rule22/result.json \
-  --output-json
+```sh
+python -m scripts.extraction.rebeca_extractor --rule Rule22a
 ```
 
-The gate distinguishes `satisfied`, `violated`, `unknown`, `execution_failed`,
-`compilation_failed`, and `verification_failed`. Compilation is never a semantic
-pass. The runner exports and parses the model-checker result; missing semantic
-evidence remains unknown. Check `verified`, `passes_gate`, and `optional_checks`.
-Append `--vacuity --mutation` to enable optional diagnostics. Disabled checks are
-explicitly distinct from unknown/not-run checks. The legacy vacuity heuristic
-compares a property with a negated assertion expression; it is **not** a general
-logical antecedent reachability proof. Mutation errors are not killed mutants.
+3. Execute agents/semantic_binding_agent.md using the existing two inventories
+   and its compact projection; import the actual response:
 
-For parse/compile only, use `run_rmc.py` with the same input flags. Exit zero
-means parse/compile success only. Add `--run-model-outcome --output-json` for
-semantic checking. Run either CLI with `--help` for timeouts and export options.
-Use dedicated generated-output directories; stale C++/executable artifacts are
-removed before a new build. The gate writes `output/work/<rule_id>/verification.json`;
-legacy output-policy step names remain accepted for existing consumers.
-`model_out.outcome` retains its legacy process-exit classification; use
-`verification_outcome` or the gate status as the semantic verdict. RMC may also
-report implicit safety failures such as deadlock, not only named assertions.
+```sh
+python -m scripts.binding.semantic_binding --rule Rule22a \
+  --response output/work/Rule22a/binding-response.json
+```
 
-## Validation
+The binding runner's original explicit-input/provider mode remains available;
+response import avoids a nested CLI in hosted environments. No automatic repairs.
 
-```bash
+4. Prepare synthesis, perform one current-session pass using
+   agents/synthesis_agent.md, and import its actual response:
+
+```sh
+python -m scripts.synthesis.synthesis --rule Rule22a --prepare-only
+python -m scripts.synthesis.synthesis --rule Rule22a \
+  --response output/work/Rule22a/synthesis-response.json
+```
+
+The first command prints the compact request path under output/work/Rule22a.
+The runner checks all hashes, mappings, actors, thresholds and guards, then
+applies source-anchored patches to a copy. The original model is never changed.
+See [synthesis documentation](scripts/synthesis/README.md).
+
+5. Build the pinned, separately versioned RMC derivative, then use the existing gate:
+
+```sh
+python -m verification.rmc.timing_fix.build \
+  --input-jar /path/to/original/rmc-2.14.jar \
+  --output-dir output/toolchains/rmc-2.14-colreg-timing.1
+python -m verification.verify_gate --rule Rule22a --no-vacuity --no-mutation
+```
+
+The managed gate selects the corrected JAR from
+verification/rmc/configs/rmc_timing_fixed.json, unless `--jar` overrides it.
+The reference JSON is not an implicit configuration loader for low-level tools.
+See [timing fix](verification/rmc/timing_fix/README.md) and
+[verification tooling](verification/README.md). Process/compile success is not
+semantic satisfaction. Unknown, compilation failures and execution failures do
+not replace a completed managed verification result; violations are valid
+completed results and are published as such. Optional diagnostics are distinct
+from the semantic verdict.
+
+All stage CLIs retain explicit input/output modes for isolated scratch work.
+Direct script paths and `python -m` both work; old flattened paths have moved.
+Do not point scratch outputs at permanent experiments or bypass run.json checks.
+
+## Development checks
+
+```sh
 python -m pytest -q -m 'not requires_rmc'
-bash tests/run_integration_tests.sh
-python scripts/sync_agents.py --check
-bash tests/leakage_scanner.sh
-python scripts/validate-tooling.py
+python -m scripts.utilities.sync_agents --check
+python -m scripts.utilities.validate_tooling
+bash tests/integration/leakage_scanner.sh
 ```
 
-Real-toolchain tests are marked `requires_rmc` and skip with an explicit reason
-if the JAR, Java, or g++ is unavailable. A skipped test is not a pass. Lint/type
-checks are independent of runtime tests and should also pass before review.
-`python scripts/check_rebeca_syntax.py file.rebeca file.property` is only a
-heuristic for selected forbidden patterns, not a Rebeca parser.
+Set RMC_JAR to an existing corrected build to enable the small real-toolchain
+fixtures: `python -m pytest -q -m requires_rmc`. These are isolated synthetic
+checks, not another full Rule 22(a) research experiment. Generated artifacts stay
+outside tracked experiments. Tests are grouped by stage and run from a fresh
+checkout without the removed legacy implementation.
 
-## Research preservation and attribution
-
-Existing JSON outputs and historical metadata are preserved unchanged, including
-old absolute paths. See `experiments/README.md` for provenance and
-`archive/rebecai/preservation.json` for original SHA-256 checksums and revision.
-The original model has no dedicated reference property file in this checkout;
-handbook examples are illustrative, not substitutes for one.
-
-Derived from **RebecAI**, the Legata-to-Rebeca project documented in
-`archive/rebecai/README.md` (upstream: https://github.com/3brahimi/RebecAI).
-Retain `LICENSE` and upstream attribution. Historical Legata material is kept for
-research comparisons, including separately identified Istanbul Strait case studies.
+The original license remains in LICENSE; see [ATTRIBUTION.md](ATTRIBUTION.md).
+Migration details and compatibility limits are in [MIGRATION.md](MIGRATION.md).

@@ -1,0 +1,143 @@
+{
+  "schema_version": "1.0",
+  "rule": "Rule22a",
+  "stages": {
+    "colreg_extraction": {
+      "status": "current",
+      "last_attempt": {
+        "status": "completed",
+        "inputs": {},
+        "started_at": "2026-11-19T12:14:51.004310+00:00"
+      },
+      "last_success": {
+        "inputs": {},
+        "artifacts": {
+          "colreg_extraction.json": "2a22be3b620891133ea8e47994c442c7f1c71465f4b43c791df3aa3bebc9f549",
+          "extraction/source-run.json": "c1d626e92ee57cc6b48fd9e919835460b3f35f17136c91e0dd496696a7035f30",
+          "extraction/validation.json": "c01689651d1c1698ce2d5bab4bd040fb1f3c20fc49e17f66ec50a24b4a35e4f2",
+          "extraction/review.fa.md": "cfa2c9080e1cad449c60b2614cfb8b08a6d02a59a66b708ecf8818f3b53ee2a3"
+        },
+        "provenance": {
+          "execution": "migration_of_authentic_saved_outputs",
+          "note": "Raw COLREG input was already locally deleted; no source file was reconstructed. Extraction is preserved as supplied.",
+          "historical_payload_paths_preserved": true
+        }
+      }
+    },
+    "rebeca_extraction": {
+      "status": "current",
+      "last_attempt": {
+        "status": "completed",
+        "inputs": {
+          "inputs/rebeca/original_model.rebeca": "cb1bd2ae7a1c9637785c9d7f55d5bc6224299ea3d8d1795b77a6197580a8bc66"
+        },
+        "started_at": "2026-11-19T12:14:51.009079+00:00"
+      },
+      "last_success": {
+        "inputs": {
+          "inputs/rebeca/original_model.rebeca": "cb1bd2ae7a1c9637785c9d7f55d5bc6224299ea3d8d1795b77a6197580a8bc66"
+        },
+        "artifacts": {
+          "rebeca_extraction.json": "7fd0f730be770a96813f9438a11d3a946c057b942ba85a57160044cc65044760"
+        },
+        "provenance": {
+          "execution": "migration_of_authentic_saved_outputs",
+          "note": "Same authentic saved original-model inventory; no regeneration.",
+          "historical_payload_paths_preserved": true
+        }
+      }
+    },
+    "binding": {
+      "status": "current",
+      "last_attempt": {
+        "status": "completed",
+        "inputs": {
+          "experiments/Rule22a/colreg_extraction.json": "2a22be3b620891133ea8e47994c442c7f1c71465f4b43c791df3aa3bebc9f549",
+          "experiments/Rule22a/rebeca_extraction.json": "7fd0f730be770a96813f9438a11d3a946c057b942ba85a57160044cc65044760"
+        },
+        "started_at": "2026-11-19T12:14:51.018584+00:00"
+      },
+      "last_success": {
+        "inputs": {
+          "experiments/Rule22a/colreg_extraction.json": "2a22be3b620891133ea8e47994c442c7f1c71465f4b43c791df3aa3bebc9f549",
+          "experiments/Rule22a/rebeca_extraction.json": "7fd0f730be770a96813f9438a11d3a946c057b942ba85a57160044cc65044760"
+        },
+        "artifacts": {
+          "semantic_binding.json": "8e782d58ef8bf1c304291c43ad52e17a74257cdf9fe4f3b8efbbf1864001b7fb"
+        },
+        "provenance": {
+          "execution": "migration_of_authentic_saved_outputs",
+          "note": "",
+          "historical_payload_paths_preserved": true
+        }
+      }
+    },
+    "synthesis": {
+      "status": "current",
+      "last_attempt": {
+        "status": "completed",
+        "inputs": {
+          "experiments/Rule22a/colreg_extraction.json": "2a22be3b620891133ea8e47994c442c7f1c71465f4b43c791df3aa3bebc9f549",
+          "experiments/Rule22a/rebeca_extraction.json": "7fd0f730be770a96813f9438a11d3a946c057b942ba85a57160044cc65044760",
+          "experiments/Rule22a/semantic_binding.json": "8e782d58ef8bf1c304291c43ad52e17a74257cdf9fe4f3b8efbbf1864001b7fb",
+          "inputs/rebeca/original_model.rebeca": "cb1bd2ae7a1c9637785c9d7f55d5bc6224299ea3d8d1795b77a6197580a8bc66"
+        },
+        "started_at": "2026-11-19T12:14:51.024209+00:00"
+      },
+      "last_success": {
+        "inputs": {
+          "experiments/Rule22a/colreg_extraction.json": "2a22be3b620891133ea8e47994c442c7f1c71465f4b43c791df3aa3bebc9f549",
+          "experiments/Rule22a/rebeca_extraction.json": "7fd0f730be770a96813f9438a11d3a946c057b942ba85a57160044cc65044760",
+          "experiments/Rule22a/semantic_binding.json": "8e782d58ef8bf1c304291c43ad52e17a74257cdf9fe4f3b8efbbf1864001b7fb",
+          "inputs/rebeca/original_model.rebeca": "cb1bd2ae7a1c9637785c9d7f55d5bc6224299ea3d8d1795b77a6197580a8bc66"
+        },
+        "artifacts": {
+          "synthesis/usage.json": "949bc4057545ceb4f6739f42fc7b8d88dd1257b03e3a8a71c355d2c639c58b77",
+          "synthesis/request.json": "b4f88d4fd1be314e331bddd7c20bfea7313329bcd063649a73b43c3f91d3e6d3",
+          "synthesis/model.rebeca": "cb1bd2ae7a1c9637785c9d7f55d5bc6224299ea3d8d1795b77a6197580a8bc66",
+          "synthesis/model.diff": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "synthesis/execution_provenance.json": "f999984f25f87d18dad1aaa9444fd7c4f17b9a429989d96d7eed8bce33792518",
+          "synthesis/model.property": "7c5d81e387e9c3299d15ec21d4663ec377614a9aa631c4814f20cec67f1e3ed9",
+          "synthesis/response.json": "92589440fae88b03f4ff0c3ba3ba33789bf65af936607a50846c7b1958ec435c",
+          "synthesis/patches.json": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+          "synthesis/report.json": "ecfb96bb01f88a542a317d590db4a636e23593e2ca0344c1a909231483f4f7d2"
+        },
+        "provenance": {
+          "execution": "migration_of_authentic_saved_outputs",
+          "note": "",
+          "historical_payload_paths_preserved": true
+        }
+      }
+    },
+    "verification": {
+      "status": "current",
+      "last_attempt": {
+        "status": "completed",
+        "inputs": {
+          "experiments/Rule22a/synthesis/model.rebeca": "cb1bd2ae7a1c9637785c9d7f55d5bc6224299ea3d8d1795b77a6197580a8bc66",
+          "experiments/Rule22a/synthesis/model.property": "7c5d81e387e9c3299d15ec21d4663ec377614a9aa631c4814f20cec67f1e3ed9",
+          "output/toolchains/rmc-2.14-colreg-timing.1/rmc-2.14-colreg-timing.1.jar": "9aab24c776dad1b869b5b4770748980870cf1b583f7aa7cb4daa86579ebcee0e"
+        },
+        "started_at": "2026-11-19T12:14:51.413831+00:00"
+      },
+      "last_success": {
+        "inputs": {
+          "experiments/Rule22a/synthesis/model.rebeca": "cb1bd2ae7a1c9637785c9d7f55d5bc6224299ea3d8d1795b77a6197580a8bc66",
+          "experiments/Rule22a/synthesis/model.property": "7c5d81e387e9c3299d15ec21d4663ec377614a9aa631c4814f20cec67f1e3ed9",
+          "output/toolchains/rmc-2.14-colreg-timing.1/rmc-2.14-colreg-timing.1.jar": "9aab24c776dad1b869b5b4770748980870cf1b583f7aa7cb4daa86579ebcee0e"
+        },
+        "artifacts": {
+          "verification/result.json": "c4bf3adc3163dda958e454a291d6e8c209d469c2ba829f4623f661fdc95ebe17",
+          "verification/assessment.md": "3f3cb016b4b70ece21a215108e271648b1c97e90e08616da35cd391a9e430f1d",
+          "verification/model_result.xml": "71f972ff457634a5c944e519915e54f6fff8cd35aab254c92bdf46bc80875222",
+          "verification/execution.json": "dae5927a59f6ca682dfbd7c102ef0634836786ebd2039ac936e1cee1c24a7e37"
+        },
+        "provenance": {
+          "execution": "migration_of_authentic_saved_outputs",
+          "note": "Corrected RMC completed run; vacuity and semantic limitations remain as recorded.",
+          "historical_payload_paths_preserved": true
+        }
+      }
+    }
+  }
+}
