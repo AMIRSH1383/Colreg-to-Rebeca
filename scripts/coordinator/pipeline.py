@@ -28,6 +28,10 @@ LLM = {
     'synthesis': ('synthesis_agent', 'synthesis.schema.json'),
 }
 RULES = {
+    'rule3b': ('Rule3b', 'Rule-3b', 'Rule3b.txt'),
+    'rule6ai': ('Rule6ai', 'Rule-6ai', 'Rule6ai.txt'),
+    'rule13b': ('Rule13b', 'Rule-13b', 'Rule13b.txt'),
+    'rule23a': ('Rule23a', 'Rule-23a', 'Rule23a.txt'),
     'rule22a': ('Rule22a', 'Rule-22a', 'Rule22_baseline_colreg.txt'),
     'rule19ab': ('Rule19ab', 'Rule-19', 'Rule19_baseline_colreg.txt'),
     'rule19': ('Rule19ab', 'Rule-19', 'Rule19_baseline_colreg.txt'),

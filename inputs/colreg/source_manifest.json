@@ -1,0 +1,150 @@
+{
+  "workbook": {
+    "filename": "COLREG_Formalizability_Benchmark_v2.xlsx",
+    "sha256": "eac4a4fa7511a0ff1067c46a0ea7284f1bd30af030eb09914656e2a350d78198"
+  },
+  "sheet": "Benchmark",
+  "text_column": "G",
+  "text_encoding": "UTF-8",
+  "cell_separator": "\n\n",
+  "files": {
+    "Rule3b.txt": {
+      "rule_id": "Rule3b",
+      "sources": [
+        {
+          "cell": "G10",
+          "source_key": "COLREG2018/PartA/R3-b",
+          "role": "target"
+        }
+      ],
+      "text_sha256": "561b88009829749d20eb0ce86cea257f20b6e4c5d7a7cc90408343cb7fcd3de0",
+      "relevant_state_variables": [
+        "Ship.vessel_type_powerdriven"
+      ]
+    },
+    "Rule6ai.txt": {
+      "rule_id": "Rule6ai",
+      "sources": [
+        {
+          "cell": "G30",
+          "source_key": "COLREG2018/PartB/R6-a-i",
+          "role": "target"
+        }
+      ],
+      "text_sha256": "122d2bbd1ebe56d4445b8bbbfe4e187cd559ba85f30248732bbed198b78ec7d8",
+      "relevant_state_variables": [
+        "Ship.restricted_visibility",
+        "Ship.vis_range",
+        "Ship.ship_velocity",
+        "Ship.original_velocity"
+      ]
+    },
+    "Rule23a.txt": {
+      "rule_id": "Rule23a",
+      "sources": [
+        {
+          "cell": "G22",
+          "source_key": "COLREG2018/PartA/R3-i",
+          "role": "context"
+        },
+        {
+          "cell": "G118",
+          "source_key": "COLREG2018/PartC/R20-a",
+          "role": "context"
+        },
+        {
+          "cell": "G119",
+          "source_key": "COLREG2018/PartC/R20-b",
+          "role": "context"
+        },
+        {
+          "cell": "G120",
+          "source_key": "COLREG2018/PartC/R20-c",
+          "role": "context"
+        },
+        {
+          "cell": "G122",
+          "source_key": "COLREG2018/PartC/R20-e",
+          "role": "context"
+        },
+        {
+          "cell": "G133",
+          "source_key": "COLREG2018/PartC/R23-a-i",
+          "role": "target"
+        },
+        {
+          "cell": "G134",
+          "source_key": "COLREG2018/PartC/R23-a-ii",
+          "role": "target"
+        },
+        {
+          "cell": "G135",
+          "source_key": "COLREG2018/PartC/R23-a-iii",
+          "role": "target"
+        },
+        {
+          "cell": "G136",
+          "source_key": "COLREG2018/PartC/R23-a-iv",
+          "role": "target"
+        },
+        {
+          "cell": "G139",
+          "source_key": "COLREG2018/PartC/R23-d-i",
+          "role": "context"
+        },
+        {
+          "cell": "G140",
+          "source_key": "COLREG2018/PartC/R23-d-ii",
+          "role": "context"
+        },
+        {
+          "cell": "G141",
+          "source_key": "COLREG2018/PartC/R23-d-iii",
+          "role": "context"
+        }
+      ],
+      "text_sha256": "f4c2da751ecaf7498a810c737d50173fad6048da01d92f64adf05409742843cd",
+      "relevant_state_variables": [
+        "Ship.vessel_type_powerdriven",
+        "Ship.ship_length",
+        "Ship.original_velocity",
+        "Ship.restricted_visibility",
+        "Ship.masthead_light",
+        "Ship.side_light",
+        "Ship.side_light_on",
+        "Ship.stern_light",
+        "Ship.allround_light",
+        "Ship.allround_light_on"
+      ]
+    },
+    "Rule13b.txt": {
+      "rule_id": "Rule13b",
+      "sources": [
+        {
+          "cell": "G24",
+          "source_key": "COLREG2018/PartA/R3-k",
+          "role": "context"
+        },
+        {
+          "cell": "G79",
+          "source_key": "COLREG2018/PartB/R11-main",
+          "role": "context"
+        },
+        {
+          "cell": "G85",
+          "source_key": "COLREG2018/PartB/R13-b",
+          "role": "target"
+        }
+      ],
+      "text_sha256": "a664b458f82ae81773fbcfbe158cfac00ed622b0bbdbe3ed6ae66219a8b5baaa",
+      "relevant_state_variables": [
+        "Ship.ship_x",
+        "Ship.ship_y",
+        "Ship.ship_dir",
+        "Ship.stern_light",
+        "Ship.side_light",
+        "MapServer.ship_loc_dir_vel"
+      ]
+    }
+  }
+}
