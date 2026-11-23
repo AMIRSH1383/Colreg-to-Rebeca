@@ -1,0 +1,40 @@
+{
+  "record_type": "publication_metadata",
+  "derived_from": [
+    "../run.json",
+    "../coordinator_report.json",
+    "../colreg_extraction.json",
+    "preparation_error.txt"
+  ],
+  "mode": "full_rerun",
+  "status": "preparation_failed",
+  "attempt": {
+    "status": "failed",
+    "inputs": {
+      "experiments/Rule19ab/colreg_extraction.json": "74c063f8a5c7b8742ead79a8018f4c4b472e111ff9b45b25a3c27c59c21449c5",
+      "experiments/Rule19ab/semantic_binding.json": "e2eeeb26b5cad88244a37f5b35b3d366cbf083c6811422cb1dfbcd3423820333",
+      "experiments/Rule19ab/rebeca_extraction.json": "12a8d2e36d3132fe4ae66531684a6077a579684298b7a3cd63a9dd3640274d7a",
+      "inputs/rebeca/original_model.rebeca": "cb1bd2ae7a1c9637785c9d7f55d5bc6224299ea3d8d1795b77a6197580a8bc66",
+      "agents/synthesis_agent.md": "9b6789bcf61bc873a15c60592d982567f58df10869328a9d0f3f449c632fe2a7",
+      "schemas/synthesis.schema.json": "dbe34f92fa12cdc2e44057e1c72e7cc077c19e7c7b418e42996228bc3ce62f72"
+    },
+    "started_at": "2026-11-23T13:45:25.652709+00:00",
+    "error": "synthesis runner failed with exit 1"
+  },
+  "error": "Synthesis failed: Cross-participant scope requires explicit semantics\nManaged synthesis failed: synthesis runner failed with exit 1",
+  "scope_dependency": {
+    "statement_id": "stmt03",
+    "statement_subjects": [
+      "power_driven_vessel"
+    ],
+    "scope_id": "stmt01",
+    "scope_subjects": [
+      "vessel"
+    ]
+  },
+  "specialist_invocations": 0,
+  "model_generated": false,
+  "property_generated": false,
+  "assertions_generated": 0,
+  "verification_status": "not_run"
+}

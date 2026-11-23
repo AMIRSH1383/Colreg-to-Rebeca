@@ -1,0 +1,126 @@
+{
+  "status": "partial",
+  "rule_id": "Rule-19",
+  "bindings": [
+    {
+      "kind": "entity",
+      "entity": "vessel",
+      "concept": null,
+      "statement_ids": [
+        "stmt01",
+        "stmt02"
+      ],
+      "target": {
+        "class": "Ship",
+        "instances": [
+          "s1",
+          "s2"
+        ],
+        "variable": null
+      },
+      "match_type": "semantic",
+      "reason": "Ship is the model class for vessels, and s1 and s2 are its represented instances.",
+      "evidence": [
+        {
+          "input": "colreg",
+          "pointer": "/extraction/entities/0"
+        },
+        {
+          "input": "colreg",
+          "pointer": "/extraction/statements/0"
+        },
+        {
+          "input": "colreg",
+          "pointer": "/extraction/statements/1"
+        },
+        {
+          "input": "rebeca",
+          "pointer": "/reactive_classes/0"
+        },
+        {
+          "input": "rebeca",
+          "pointer": "/instances/0"
+        },
+        {
+          "input": "rebeca",
+          "pointer": "/instances/1"
+        }
+      ],
+      "limitations": []
+    },
+    {
+      "kind": "entity",
+      "entity": "power_driven_vessel",
+      "concept": null,
+      "statement_ids": [
+        "stmt03"
+      ],
+      "target": {
+        "class": "Ship",
+        "instances": [
+          "s1",
+          "s2"
+        ],
+        "variable": null
+      },
+      "match_type": "semantic",
+      "reason": "Both represented Ship instances are initialized with vessel_type_powerdriven set to true, supporting their classification as power-driven vessels.",
+      "evidence": [
+        {
+          "input": "colreg",
+          "pointer": "/extraction/entities/1"
+        },
+        {
+          "input": "colreg",
+          "pointer": "/extraction/statements/2"
+        },
+        {
+          "input": "rebeca",
+          "pointer": "/reactive_classes/0"
+        },
+        {
+          "input": "rebeca",
+          "pointer": "/reactive_classes/0/state_variables/30"
+        },
+        {
+          "input": "rebeca",
+          "pointer": "/instances/0"
+        },
+        {
+          "input": "rebeca",
+          "pointer": "/instances/1"
+        }
+      ],
+      "limitations": []
+    }
+  ],
+  "unresolved_concepts": [
+    {
+      "kind": "concept",
+      "entity": "vessel",
+      "concept": "restricted_visibility_scope",
+      "statement_ids": [
+        "stmt01"
+      ],
+      "reason": "Ship.restricted_visibility represents a visibility condition. The inventory does not establish a Ship variable that also captures whether the vessels are out of sight of one another while navigating in or near the affected area."
+    },
+    {
+      "kind": "concept",
+      "entity": "vessel",
+      "concept": "safe_speed",
+      "statement_ids": [
+        "stmt02"
+      ],
+      "reason": "The inventory does not identify a Ship speed variable as representing a safe speed adapted to the prevailing restricted-visibility conditions. MapServer.speed_safe_range belongs to a different class, and its initializer does not establish a regulatory threshold."
+    },
+    {
+      "kind": "concept",
+      "entity": "power_driven_vessel",
+      "concept": "engine_readiness",
+      "statement_ids": [
+        "stmt03"
+      ],
+      "reason": "Ship.engine_on records an on/off state. Its initialization does not establish readiness for immediate manoeuvre, and the inventory supplies no other Ship variable for that capability."
+    }
+  ]
+}

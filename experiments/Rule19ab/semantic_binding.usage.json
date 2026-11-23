@@ -1,0 +1,15 @@
+{
+  "status": "completed",
+  "provider": "external_response",
+  "model_requested": null,
+  "llm_calls_attempted": 0,
+  "llm_calls_completed": 0,
+  "token_usage": null,
+  "provider_request_count": null,
+  "note": "Imported existing response; no provider invocation.",
+  "input_sha256": {
+    "/workspace/Colreg-to-Rebeca/experiments/Rule19ab/colreg_extraction.json": "74c063f8a5c7b8742ead79a8018f4c4b472e111ff9b45b25a3c27c59c21449c5",
+    "/workspace/Colreg-to-Rebeca/experiments/Rule19ab/rebeca_extraction.json": "12a8d2e36d3132fe4ae66531684a6077a579684298b7a3cd63a9dd3640274d7a"
+  },
+  "prompt_characters": 19145
+}

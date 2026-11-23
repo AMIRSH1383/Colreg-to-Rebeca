@@ -1,0 +1,66 @@
+{
+  "rule": "Rule19ab",
+  "run_mode": "full_rerun",
+  "run_status": "failed",
+  "started_at": "2026-11-23T13:43:31.665074+00:00",
+  "finished_at": "2026-11-23T13:45:25.720968+00:00",
+  "duration_seconds": 114.056,
+  "duration_scope": "Wall clock from Coordinator start through its terminal report. Per-agent times start at checkpoint publication and include dispatch and response handoff.",
+  "usage_note": "Native delegation exposes pass counts. Exact model identifiers, provider request counts, and token counts were unavailable. Token flags were omitted when resuming checkpoints.",
+  "overall": {
+    "specialist_invocations": 2,
+    "provider_request_count": "unavailable",
+    "model": "unavailable",
+    "input_tokens": "unavailable",
+    "output_tokens": "unavailable",
+    "total_tokens": "unavailable",
+    "cached_input_tokens": "unavailable"
+  },
+  "agents": [
+    {
+      "agent": "colreg_extractor",
+      "stage": "colreg_extraction",
+      "execution": "native",
+      "status": "response_received",
+      "specialist_invocations": 1,
+      "model": "unavailable",
+      "input_tokens": "unavailable",
+      "output_tokens": "unavailable",
+      "total_tokens": "unavailable",
+      "cached_input_tokens": "unavailable",
+      "checkpoint_issued_at": "2026-11-23T13:43:32.012790+00:00",
+      "response_observed_at": "2026-11-23T13:44:06.164457+00:00",
+      "response_timing_source": "response file write",
+      "checkpoint_to_response_seconds": 34.152
+    },
+    {
+      "agent": "semantic_binding_agent",
+      "stage": "binding",
+      "execution": "native",
+      "status": "response_received",
+      "specialist_invocations": 1,
+      "model": "unavailable",
+      "input_tokens": "unavailable",
+      "output_tokens": "unavailable",
+      "total_tokens": "unavailable",
+      "cached_input_tokens": "unavailable",
+      "checkpoint_issued_at": "2026-11-23T13:44:19.744231+00:00",
+      "response_observed_at": "2026-11-23T13:45:25.480733+00:00",
+      "response_timing_source": "host receipt of response",
+      "checkpoint_to_response_seconds": 65.737
+    },
+    {
+      "agent": "synthesis_agent",
+      "stage": "synthesis",
+      "status": "not_invoked",
+      "reason": "Coordinator preparation failed before issuing a synthesis checkpoint.",
+      "specialist_invocations": 0,
+      "model": "unavailable",
+      "input_tokens": "unavailable",
+      "output_tokens": "unavailable",
+      "total_tokens": "unavailable",
+      "cached_input_tokens": "unavailable",
+      "checkpoint_to_response_seconds": "not_applicable"
+    }
+  ]
+}

@@ -6,18 +6,25 @@
       "status": "current",
       "last_attempt": {
         "status": "completed",
-        "inputs": {},
-        "started_at": "2026-11-19T12:14:51.012735+00:00"
+        "inputs": {
+          "inputs/colreg/Rule19_baseline_colreg.txt": "af5b5cdf8050230ed62213351cd7a813af5df09cd36cb63dbf1e51544f371b85",
+          "agents/colreg_extractor.md": "6ba6bd54f426f504c6cb3ba6635837f902febe1edb6e580d61ee5bf8f1f958ae",
+          "schemas/colreg-extractor.schema.json": "1a500c24de2bf4d23f34290d67146043c0a5643e9045c3d4f053f6e24bd21058",
+          "output/work/Rule19ab/coordinator/agent-response.json": "74c063f8a5c7b8742ead79a8018f4c4b472e111ff9b45b25a3c27c59c21449c5"
+        },
+        "started_at": "2026-11-23T13:44:19.610906+00:00"
       },
       "last_success": {
-        "inputs": {},
+        "inputs": {
+          "inputs/colreg/Rule19_baseline_colreg.txt": "af5b5cdf8050230ed62213351cd7a813af5df09cd36cb63dbf1e51544f371b85",
+          "agents/colreg_extractor.md": "6ba6bd54f426f504c6cb3ba6635837f902febe1edb6e580d61ee5bf8f1f958ae",
+          "schemas/colreg-extractor.schema.json": "1a500c24de2bf4d23f34290d67146043c0a5643e9045c3d4f053f6e24bd21058"
+        },
         "artifacts": {
-          "colreg_extraction.json": "89e17792ab95b228628ee744a8ce720dd9774e1fb7cb7b4bebea3806ac1cf1d1"
+          "colreg_extraction.json": "74c063f8a5c7b8742ead79a8018f4c4b472e111ff9b45b25a3c27c59c21449c5"
         },
         "provenance": {
-          "execution": "migration_of_authentic_saved_outputs",
-          "note": "Raw COLREG input was already locally deleted; no source file was reconstructed. Extraction is preserved as supplied.",
-          "historical_payload_paths_preserved": true
+          "execution": "coordinator_agent_response"
         }
       }
     },
@@ -28,27 +35,64 @@
         "inputs": {
           "inputs/rebeca/original_model.rebeca": "cb1bd2ae7a1c9637785c9d7f55d5bc6224299ea3d8d1795b77a6197580a8bc66"
         },
-        "started_at": "2026-11-19T12:14:51.015379+00:00"
+        "started_at": "2026-11-23T13:44:19.627537+00:00"
       },
       "last_success": {
         "inputs": {
           "inputs/rebeca/original_model.rebeca": "cb1bd2ae7a1c9637785c9d7f55d5bc6224299ea3d8d1795b77a6197580a8bc66"
         },
         "artifacts": {
-          "rebeca_extraction.json": "7fd0f730be770a96813f9438a11d3a946c057b942ba85a57160044cc65044760"
+          "rebeca_extraction.json": "12a8d2e36d3132fe4ae66531684a6077a579684298b7a3cd63a9dd3640274d7a"
         },
         "provenance": {
-          "execution": "migration_of_authentic_saved_outputs",
-          "note": "Same authentic saved original-model inventory; no regeneration.",
-          "historical_payload_paths_preserved": true
+          "execution": "existing_runner"
         }
       }
     },
     "binding": {
-      "status": "missing"
+      "status": "current",
+      "last_attempt": {
+        "status": "completed",
+        "inputs": {
+          "experiments/Rule19ab/colreg_extraction.json": "74c063f8a5c7b8742ead79a8018f4c4b472e111ff9b45b25a3c27c59c21449c5",
+          "experiments/Rule19ab/rebeca_extraction.json": "12a8d2e36d3132fe4ae66531684a6077a579684298b7a3cd63a9dd3640274d7a",
+          "agents/semantic_binding_agent.md": "fab27ef26c65cc6d58bb50270cb9d1de5ca2b7a819922125107bb9d3b082dc48",
+          "schemas/semantic-binding.schema.json": "26212f823ab3b52abb2752e2f95f1f795dafd9ad63b8dc9fffd8d32f54ec3842",
+          "output/work/Rule19ab/coordinator/agent-response.json": "38520eccef0a872a1b181b4816e22b8d664daa5057496e6f1f9f4f152d0596e7"
+        },
+        "started_at": "2026-11-23T13:45:25.621115+00:00"
+      },
+      "last_success": {
+        "inputs": {
+          "experiments/Rule19ab/colreg_extraction.json": "74c063f8a5c7b8742ead79a8018f4c4b472e111ff9b45b25a3c27c59c21449c5",
+          "experiments/Rule19ab/rebeca_extraction.json": "12a8d2e36d3132fe4ae66531684a6077a579684298b7a3cd63a9dd3640274d7a",
+          "agents/semantic_binding_agent.md": "fab27ef26c65cc6d58bb50270cb9d1de5ca2b7a819922125107bb9d3b082dc48",
+          "schemas/semantic-binding.schema.json": "26212f823ab3b52abb2752e2f95f1f795dafd9ad63b8dc9fffd8d32f54ec3842"
+        },
+        "artifacts": {
+          "semantic_binding.usage.json": "aae01c13affbae3b65a94c5ac2e13f4331c0be4e4919133de3591cb14b74f8cd",
+          "semantic_binding.json": "e2eeeb26b5cad88244a37f5b35b3d366cbf083c6811422cb1dfbcd3423820333"
+        },
+        "provenance": {
+          "execution": "existing_runner"
+        }
+      }
     },
     "synthesis": {
-      "status": "missing"
+      "status": "missing",
+      "last_attempt": {
+        "status": "failed",
+        "inputs": {
+          "experiments/Rule19ab/colreg_extraction.json": "74c063f8a5c7b8742ead79a8018f4c4b472e111ff9b45b25a3c27c59c21449c5",
+          "experiments/Rule19ab/semantic_binding.json": "e2eeeb26b5cad88244a37f5b35b3d366cbf083c6811422cb1dfbcd3423820333",
+          "experiments/Rule19ab/rebeca_extraction.json": "12a8d2e36d3132fe4ae66531684a6077a579684298b7a3cd63a9dd3640274d7a",
+          "inputs/rebeca/original_model.rebeca": "cb1bd2ae7a1c9637785c9d7f55d5bc6224299ea3d8d1795b77a6197580a8bc66",
+          "agents/synthesis_agent.md": "9b6789bcf61bc873a15c60592d982567f58df10869328a9d0f3f449c632fe2a7",
+          "schemas/synthesis.schema.json": "dbe34f92fa12cdc2e44057e1c72e7cc077c19e7c7b418e42996228bc3ce62f72"
+        },
+        "started_at": "2026-11-23T13:45:25.652709+00:00",
+        "error": "synthesis runner failed with exit 1"
+      }
     },
     "verification": {
       "status": "missing"

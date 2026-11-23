@@ -1,0 +1,119 @@
+{
+  "rule": "Rule19ab",
+  "rule_id": "Rule-19",
+  "status": "failed",
+  "mode": "full_rerun",
+  "stages": {
+    "colreg_extraction": {
+      "status": "executed",
+      "artifacts": [
+        "colreg_extraction.json"
+      ]
+    },
+    "rebeca_extraction": {
+      "status": "executed",
+      "artifacts": [
+        "rebeca_extraction.json"
+      ]
+    },
+    "binding": {
+      "status": "executed",
+      "artifacts": [
+        "semantic_binding.json",
+        "semantic_binding.usage.json"
+      ]
+    },
+    "synthesis": {
+      "status": "failed"
+    },
+    "verification": {
+      "status": "not_run"
+    },
+    "reporting": {
+      "status": "executed"
+    }
+  },
+  "model": null,
+  "property": null,
+  "verification": null,
+  "freshness_manifest": "experiments/Rule19ab/run.json",
+  "incomplete_checks": [],
+  "binding_status": "partial",
+  "synthesis_status": null,
+  "binding_unresolved": [
+    {
+      "kind": "concept",
+      "entity": "vessel",
+      "concept": "restricted_visibility_scope",
+      "statement_ids": [
+        "stmt01"
+      ],
+      "reason": "Ship.restricted_visibility represents a visibility condition. The inventory does not establish a Ship variable that also captures whether the vessels are out of sight of one another while navigating in or near the affected area."
+    },
+    {
+      "kind": "concept",
+      "entity": "vessel",
+      "concept": "safe_speed",
+      "statement_ids": [
+        "stmt02"
+      ],
+      "reason": "The inventory does not identify a Ship speed variable as representing a safe speed adapted to the prevailing restricted-visibility conditions. MapServer.speed_safe_range belongs to a different class, and its initializer does not establish a regulatory threshold."
+    },
+    {
+      "kind": "concept",
+      "entity": "power_driven_vessel",
+      "concept": "engine_readiness",
+      "statement_ids": [
+        "stmt03"
+      ],
+      "reason": "Ship.engine_on records an on/off state. Its initialization does not establish readiness for immediate manoeuvre, and the inventory supplies no other Ship variable for that capability."
+    }
+  ],
+  "unresolved": [],
+  "semantic_uncertainties": {},
+  "open_assumptions": [
+    {
+      "source_text": "not in sight of one another",
+      "reason": "The text provides no criteria for determining whether vessels are in sight of one another."
+    },
+    {
+      "source_text": "in or near an area of restricted visibility",
+      "reason": "The text gives no criteria for identifying an area of restricted visibility or determining whether a vessel is near it."
+    },
+    {
+      "source_text": "a safe speed adapted to the prevailing circumstances and conditions of restricted visibility",
+      "reason": "The text does not specify which prevailing circumstances to evaluate or how to determine an appropriate safe speed under them."
+    },
+    {
+      "source_text": "engines ready for immediate manoeuvre",
+      "reason": "The text specifies neither how to assess engine readiness nor a response time for an immediate manoeuvre."
+    }
+  ],
+  "interpretation": null,
+  "regulatory_compliance": "not_established",
+  "llm": {
+    "passes_reported_this_invocation": 2,
+    "input_tokens": null,
+    "output_tokens": null,
+    "passes": [
+      {
+        "stage": "colreg_extraction",
+        "execution": "native",
+        "input_tokens": null,
+        "output_tokens": null,
+        "status": "response_received"
+      },
+      {
+        "stage": "binding",
+        "execution": "native",
+        "input_tokens": null,
+        "output_tokens": null,
+        "status": "response_received"
+      }
+    ]
+  },
+  "error": {
+    "stage": "synthesis",
+    "message": "Synthesis failed: Cross-participant scope requires explicit semantics\nManaged synthesis failed: synthesis runner failed with exit 1"
+  }
+}
