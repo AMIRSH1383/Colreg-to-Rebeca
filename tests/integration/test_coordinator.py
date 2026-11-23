@@ -6,8 +6,7 @@ import pytest
 
 from scripts.coordinator import pipeline
 from scripts.utilities.experiment_store import ROOT, Experiment
-
-SAVED = ROOT / 'experiments/Rule22a'
+from tests.fixtures import RULE22A_HANDOFF, rule22a_synthesis_response
 
 
 def invoke(capsys, *args):
@@ -51,10 +50,12 @@ def run_setup(tmp_path, monkeypatch):
 
     def gate(**kwargs):
         calls.append(kwargs)
-        result = pipeline.read(SAVED / 'verification/result.json')
         status = outcome['gate']
-        result.update(verified=status == 'satisfied', passes_gate=status == 'satisfied',
-                      verification_status=status, verification_outcome=status)
+        result = {'verified': status == 'satisfied', 'passes_gate': status == 'satisfied',
+                  'verification_status': status, 'verification_outcome': status,
+                  'rmc_exit_code': 0, 'vacuity_status': None, 'mutation_score': None,
+                  'mutation_details': None, 'optional_checks': {'vacuity': 'disabled', 'mutation': 'disabled'},
+                  'rmc_details': {'result_artifact': {}, 'model_out': {}}}
         folder = Path(kwargs['output_dir']) / 'rmc'
         folder.mkdir(parents=True)
         xml = folder / 'model_result.xml'
@@ -78,13 +79,13 @@ def to_synthesis(capsys, common):
     assert request['agent'] == 'colreg_extractor'
     assert Path(request['instructions']) == ROOT / 'agents/colreg_extractor.md'
     assert Path(request['input']['colreg_input']).name == 'Rule22_baseline_colreg.txt'
-    code, second = resume(capsys, common, first, SAVED / 'colreg_extraction.json')
+    code, second = resume(capsys, common, first, RULE22A_HANDOFF / 'colreg_extraction.json')
     assert code == 0 and second['stage'] == 'binding'
     request = pipeline.read(second['request'])
     assert request['agent'] == 'semantic_binding_agent'
     assert Path(request['schema']).name == 'semantic-binding.schema.json'
     assert 'message_servers' not in request['input']['rebeca_extraction']['reactive_classes'][0]
-    code, third = resume(capsys, common, second, SAVED / 'semantic_binding.json')
+    code, third = resume(capsys, common, second, RULE22A_HANDOFF / 'semantic_binding.json')
     assert code == 0 and third['stage'] == 'synthesis'
     request = pipeline.read(third['request'])
     assert request['agent'] == 'synthesis_agent'
@@ -93,12 +94,25 @@ def to_synthesis(capsys, common):
     return third
 
 
+def mock_synthesis_response(checkpoint, *, with_property=True):
+    request = pipeline.read(checkpoint['request'])['input']
+    response = rule22a_synthesis_response(request)
+    if not with_property:
+        response['property_content'] = ''
+        for requirement in response['requirements']:
+            requirement['disposition'] = 'unresolved'
+    path = Path(checkpoint['response_path'])
+    path.write_text(json.dumps(response))
+    return path, response['property_content']
+
+
 def test_order_full_rerun_reuse_and_failed_verification(capsys, run_setup):
     common, exp, calls, outcome, jar = run_setup
     full = [*common, '--full-rerun']
     third = to_synthesis(capsys, full)
     assert not calls
-    code, result = resume(capsys, full, third, SAVED / 'synthesis/response.json', '--input-tokens', '10')
+    response, property_text = mock_synthesis_response(third)
+    code, result = resume(capsys, full, third, response, '--input-tokens', '10')
     assert code == 0 and result['status'] == 'completed'
     report = pipeline.read(result['report'])
     assert all(v['status'] == 'executed' for v in report['stages'].values())
@@ -111,7 +125,7 @@ def test_order_full_rerun_reuse_and_failed_verification(capsys, run_setup):
     assert Path(calls[0]['property_file']) == exp.folder / 'synthesis/model.property'
     assert report['verification']['outcome'] == 'satisfied'
     assert report['regulatory_compliance'] == 'not_established'
-    assert exp.folder.joinpath('synthesis/model.property').read_bytes() == (SAVED / 'synthesis/model.property').read_bytes()
+    assert property_text and exp.folder.joinpath('synthesis/model.property').read_text() == property_text
 
     code, result = invoke(capsys, *common, '--reuse')
     report = pipeline.read(result['report'])
@@ -122,7 +136,8 @@ def test_order_full_rerun_reuse_and_failed_verification(capsys, run_setup):
     previous = (exp.folder / 'verification/result.json').read_bytes()
     outcome.update(gate='execution_failed', xml='unknown')
     third = to_synthesis(capsys, full)
-    code, result = resume(capsys, full, third, SAVED / 'synthesis/response.json')
+    response, _ = mock_synthesis_response(third)
+    code, result = resume(capsys, full, third, response)
     assert code == 1 and result['error']['stage'] == 'verification'
     report = pipeline.read(result['report'])
     assert report['verification']['outcome'] == 'execution_failed'
@@ -138,15 +153,15 @@ def test_stale_source_blocks_resume_then_rejects_stale_reuse(capsys, run_setup, 
     common += ['--colreg', str(source)]
     _, pending = invoke(capsys, *common)
     source.write_bytes(source.read_bytes() + b'\n')
-    code, result = resume(capsys, common, pending, SAVED / 'colreg_extraction.json')
+    code, result = resume(capsys, common, pending, RULE22A_HANDOFF / 'colreg_extraction.json')
     assert code == 1 and result['error']['stage'] == 'colreg_extraction'
     assert 'changed' in result['error']['message']
     assert not (exp.folder / 'colreg_extraction.json').exists()
 
     _, pending = invoke(capsys, *common)
-    _, binding = resume(capsys, common, pending, SAVED / 'colreg_extraction.json')
+    _, binding = resume(capsys, common, pending, RULE22A_HANDOFF / 'colreg_extraction.json')
     source.write_bytes(source.read_bytes() + b'\n')
-    code, result = resume(capsys, common, binding, SAVED / 'semantic_binding.json')
+    code, result = resume(capsys, common, binding, RULE22A_HANDOFF / 'semantic_binding.json')
     assert code == 1 and 'colreg_extraction changed' in result['error']['message']
     _, pending = invoke(capsys, *common)
     assert pending['stage'] == 'colreg_extraction'
@@ -155,12 +170,7 @@ def test_stale_source_blocks_resume_then_rejects_stale_reuse(capsys, run_setup, 
 def test_valid_partial_without_property_skips_verification(capsys, run_setup):
     common, exp, calls, _, _ = run_setup
     checkpoint = to_synthesis(capsys, common)
-    response = pipeline.read(SAVED / 'synthesis/response.json')
-    response['property_content'] = ''
-    for requirement in response['requirements']:
-        requirement['disposition'] = 'unresolved'
-    path = Path(checkpoint['response_path'])
-    path.write_text(json.dumps(response))
+    path, _ = mock_synthesis_response(checkpoint, with_property=False)
     code, result = resume(capsys, common, checkpoint, path)
     assert code == 0 and result['status'] == 'partial'
     report = pipeline.read(result['report'])

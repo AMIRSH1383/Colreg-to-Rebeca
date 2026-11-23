@@ -5,47 +5,53 @@
     {
       "statement_id": "stmt01",
       "disposition": "unresolved",
-      "reason": "No supported scalar comparison or accepted intensity binding exists. Light presence and range cannot supply intensity. Section 8 Annex I remains external; no intensity assertion or new state is invented."
+      "reason": "No supported scalar comparison. Missing accepted concept or entity binding. Ship has no accepted binding for prescribed-light intensity, and the criteria in Section 8 of Annex I are outside the supplied extraction."
     },
     {
       "statement_id": "stmt02",
       "disposition": "context",
-      "reason": "Use ship_length >= 50 only as the same-actor antecedent for stmt03 through stmt07 on both s1 and s2, independent of initial lengths. This is conditional symbolic scope: model metres are not established; no conversion or regulatory equivalence is assumed."
+      "reason": "The accepted ship_length mapping supplies the antecedent ship_length >= 50 for each light-range candidate on s1 and s2. The comparison uses the untranslated threshold and model units remain unknown."
     },
     {
       "statement_id": "stmt03",
       "disposition": "generated",
-      "reason": "Conditional scalar-only candidate: for each mapped Ship actor, ship_length >= 50 implies masthead_light_range >= 6. The source threshold is untranslated; length/range units and physical visibility semantics remain unresolved. Direct state references need no model patch."
+      "reason": "The assertions for s1 and s2 are scalar-only candidates comparing masthead_light_range >= 6 under ship_length >= 50. The thresholds are untranslated and interpretation depends on resolving units, prescribed-light applicability, and visibility assessment."
     },
     {
       "statement_id": "stmt04",
       "disposition": "generated",
-      "reason": "Conditional scalar-only candidate: for each mapped Ship actor, ship_length >= 50 implies side_light_range >= 3. Length/range units and physical visibility semantics remain unresolved; no model-unit conversion is supplied."
+      "reason": "The assertions for s1 and s2 are scalar-only candidates comparing side_light_range >= 3 under ship_length >= 50. The thresholds are untranslated and interpretation depends on resolving units, prescribed-light applicability, and visibility assessment."
     },
     {
       "statement_id": "stmt05",
       "disposition": "generated",
-      "reason": "Conditional scalar-only candidate: for each mapped Ship actor, ship_length >= 50 implies stern_light_range >= 3. Length/range units and physical visibility semantics remain unresolved; no model-unit conversion is supplied."
+      "reason": "The assertions for s1 and s2 are scalar-only candidates comparing stern_light_range >= 3 under ship_length >= 50. The thresholds are untranslated and interpretation depends on resolving units, prescribed-light applicability, and visibility assessment."
     },
     {
       "statement_id": "stmt06",
       "disposition": "generated",
-      "reason": "Conditional scalar-only candidate: for each mapped Ship actor, ship_length >= 50 implies towing_light_range >= 3. Length/range units and physical visibility semantics remain unresolved; no model-unit conversion is supplied."
+      "reason": "The assertions for s1 and s2 are scalar-only candidates comparing towing_light_range >= 3 under ship_length >= 50. The thresholds are untranslated and interpretation depends on resolving units, prescribed-light applicability, and visibility assessment."
     },
     {
       "statement_id": "stmt07",
       "disposition": "generated",
-      "reason": "Conditional scalar-only range candidate: for each mapped Ship actor, ship_length >= 50 implies allround_light_range >= 3. This does not formalize the white/red/green/yellow qualifier: colors and separate colored lights are absent. Units and physical visibility remain unresolved. Preserve allround_light_range initialization at 2; no behavior or initializer change is necessary."
+      "reason": "The assertions for s1 and s2 are scalar-only candidates comparing allround_light_range >= 3 under ship_length >= 50. The thresholds are untranslated and interpretation depends on resolving units, prescribed-light applicability, visibility assessment, and the white, red, green, or yellow qualifier."
     }
   ],
   "unresolved": [
-    "stmt01: light_intensity is unmapped and has no supported scalar comparison; Section 8 Annex I is external and unavailable in these inputs.",
-    "stmt02 and dependent obligations: ship_length is not established to use metres. Regulatory interpretation requires evidence that the source 50-metre threshold is comparable to model values; no equality of units or conversion is asserted.",
-    "stmt03 through stmt07: light-range units and physical visibility semantics are unestablished. Source numbers 6 and 3 are untranslated symbolic thresholds, not demonstrated physical distances in the model.",
-    "stmt07: all-round light colors white, red, green and yellow are unrepresented; the range-only candidate does not establish color coverage or full statement formalization.",
-    "The vessel-to-Ship correspondence identifies modeled participants without establishing regulatory compliance. Both Ship instances are included irrespective of their initial length values.",
-    "Initializers do not establish regulatory minima. No initializer, scheduling, handler, or behavior is changed to manufacture compliance.",
-    "Required before regulatory interpretation: establish length/range comparability and physical visibility semantics, resolve Annex I intensity, and represent or justify the color qualifier. These prerequisites remain unverified, not accepted assumptions.",
-    "Extraction open_assumptions is empty. No reachability or vacuity analysis, compilation, or RMC verification has been run; guarded assertions may be vacuous."
+    "stmt01 \u2014 No supported scalar comparison.",
+    "stmt01 \u2014 Missing accepted concept or entity binding.",
+    "stmt01 \u2014 Unresolved binding concept prescribed_light_intensity. The supplied Ship declarations provide light flags and range variables and leave intensity unrepresented. The intensity requirement refers to Section 8 of Annex I, whose criteria are outside the supplied extraction.",
+    "stmt02 \u2014 The Rebeca inventory leaves the unit of ship_length unspecified.",
+    "stmt02 \u2014 Regulatory interpretation requires established comparability with source unit 'metres'; model units are unknown and no conversion is applied.",
+    "stmt03, stmt04, stmt05, stmt06, stmt07 \u2014 The supplied evidence leaves the range unit, prescribed-light applicability, and visibility assessment criteria and conditions unspecified.",
+    "stmt03, stmt04, stmt05, stmt06, stmt07 \u2014 Regulatory interpretation requires established comparability with source unit 'miles'; model units are unknown and no conversion is applied.",
+    "stmt07 \u2014 The model declarations leave the white, red, green, and yellow color qualifier unspecified.",
+    "stmt01, stmt02, stmt03, stmt04, stmt05, stmt06, stmt07 \u2014 Unresolved extraction assumption: The text leaves which lights are prescribed for a given vessel unspecified.",
+    "stmt01, stmt02, stmt03, stmt04, stmt05, stmt06, stmt07 \u2014 Unresolved extraction assumption: The text leaves the criteria and conditions for assessing visibility at those ranges unspecified.",
+    "stmt03, stmt04, stmt05, stmt06, stmt07 \u2014 Prerequisite stmt02: The Rebeca inventory leaves the unit of ship_length unspecified.",
+    "stmt03, stmt04, stmt05, stmt06, stmt07 \u2014 Prerequisite stmt02: Regulatory interpretation requires established comparability with source unit 'metres'; model units are unknown and no conversion is applied.",
+    "stmt03, stmt04, stmt05, stmt06, stmt07 \u2014 Prerequisite stmt02: Unresolved extraction assumption: The text leaves which lights are prescribed for a given vessel unspecified.",
+    "stmt03, stmt04, stmt05, stmt06, stmt07 \u2014 Prerequisite stmt02: Unresolved extraction assumption: The text leaves the criteria and conditions for assessing visibility at those ranges unspecified."
   ]
 }

@@ -30,6 +30,14 @@ except ImportError:
 
 ROOT = Path(__file__).resolve().parents[2]
 ID = r'[A-Za-z_][A-Za-z_0-9]*'
+RULE22A_RANGE_FIELDS = {
+    'masthead_light_range', 'side_light_range', 'stern_light_range',
+    'towing_light_range', 'allround_light_range',
+}
+PRESCRIBED_LIGHT_ASSUMPTION = (
+    'These symbolic range checks assume the checked lights are prescribed for the vessel. '
+    'Legal applicability remains unresolved.'
+)
 
 
 def load(path):
@@ -136,7 +144,34 @@ def plan_requirements(colreg, binding, model):
                     reasons.append('Scalar comparison type mismatch')
         if reasons:
             blocked[sid] = list(dict.fromkeys(reasons))
+
+    assumed_prerequisites = {}
+    visited = set()
+
+    def mapped_to(statement, fields):
+        return all(accepted[subject, statement['concept']]['target']['class'] == 'Ship'
+                   and accepted[subject, statement['concept']]['target']['variable'] in fields
+                   for subject in statement['subjects'])
+
+    def can_assume_prescription(sid, qualifier):
+        statement, scope = statements[sid], statements[qualifier]
+        if (colreg['rule_id'] != 'Rule-22a' or statement['role'] != 'obligation'
+                or statement['operator'] != '>=' or statement['unit'] != 'miles'
+                or not mapped_to(statement, RULE22A_RANGE_FIELDS)
+                or ' '.join(scope['source_text'].casefold().split()).rstrip(' ,:;')
+                != 'the lights prescribed in these rules'
+                or scope['applies_when']
+                or any(scope[key] is not None for key in ('operator', 'value', 'unit'))):
+            return False
+        return any(parent not in blocked
+                   and (statements[parent]['operator'], statements[parent]['value'], statements[parent]['unit'])
+                   == ('>=', 50, 'metres')
+                   and mapped_to(statements[parent], {'ship_length'})
+                   for parent in statement['applies_when'])
+
     def visit(sid, stack):
+        if sid in visited:
+            return
         if sid in stack:
             raise ValueError('Cyclic statement scope')
         for parent in statements[sid]['applies_when']:
@@ -145,14 +180,20 @@ def plan_requirements(colreg, binding, model):
             if statements[parent]['subjects'] != statements[sid]['subjects']:
                 raise ValueError('Cross-participant scope requires explicit semantics')
             visit(parent, stack | {sid})
-            if parent in blocked:
-                blocked.setdefault(sid, []).append(f'Unresolved prerequisite {parent}')
+        unresolved = [parent for parent in statements[sid]['applies_when'] if parent in blocked]
+        # Preserve the statutory qualifier as an explicit external assumption.
+        # This rule-specific projection still requires an executable length guard.
+        if sid not in blocked and len(unresolved) == 1 and can_assume_prescription(sid, unresolved[0]):
+            assumed_prerequisites[sid] = unresolved[0]
+        elif unresolved:
+            blocked.setdefault(sid, []).extend(f'Unresolved prerequisite {parent}' for parent in unresolved)
+        visited.add(sid)
     for sid in statements:
         visit(sid, set())
-    return statements, accepted, blocked
+    return statements, accepted, blocked, assumed_prerequisites
 
 
-def semantic_caveats(colreg, binding):
+def semantic_caveats(colreg, binding, assumed_prerequisites):
     """Record uncertainty without interpreting free-text limitations as vetoes.
 
     Accepted scalar mappings permit symbolic checks, not established regulatory
@@ -166,6 +207,8 @@ def semantic_caveats(colreg, binding):
             return notes[sid]
         statement = statements[sid]
         own = [limitation for b in records if sid in b['statement_ids'] for limitation in b['limitations']]
+        if sid in assumed_prerequisites:
+            own.append(PRESCRIBED_LIGHT_ASSUMPTION)
         if statement['unit'] is not None:
             own.append(f"Regulatory interpretation requires established comparability with source unit {statement['unit']!r}; model units are unknown and no conversion is applied.")
         for assumption in colreg['open_assumptions']:
@@ -181,8 +224,9 @@ def semantic_caveats(colreg, binding):
     return {sid: values for sid, values in notes.items() if values}
 
 
-def render_property(statements, bindings, generated, caveats=None):
+def render_property(statements, bindings, generated, caveats=None, assumed_prerequisites=None):
     """Canonical state invariants; a scope condition is never asserted alone."""
+    assumed_prerequisites = assumed_prerequisites or {}
     def comparison(sid, subject, actor):
         s = statements[sid]
         b = bindings[subject, s['concept']]['target']
@@ -196,6 +240,8 @@ def render_property(statements, bindings, generated, caveats=None):
     def guards(sid, subject, actor):
         parts = []
         for parent in statements[sid]['applies_when']:
+            if parent == assumed_prerequisites.get(sid):
+                continue
             parts += guards(parent, subject, actor) + [comparison(parent, subject, actor)]
         return list(dict.fromkeys(parts))
     assertions = []
@@ -213,12 +259,14 @@ def render_property(statements, bindings, generated, caveats=None):
     warning = ('// CONDITIONAL SYMBOLIC CHECKS ONLY: regulatory interpretation is unresolved.\n'
                '// Source thresholds are untranslated; model units and physical semantics are unestablished.\n'
                '// Qualifiers and assumptions require review in report.json; no compliance claim.\n') if any(sid in (caveats or {}) for sid in generated) else ''
+    if generated & assumed_prerequisites.keys():
+        warning += f'// {PRESCRIBED_LIGHT_ASSUMPTION}\n'
     return warning + 'property {\n  Assertion {\n' + '\n'.join(assertions) + '\n  }\n}\n'
 
 
 def prepare(colreg, binding, source):
     model = parse_model(source.decode('utf-8'), '<input>')
-    statements, accepted, blocked = plan_requirements(colreg, binding, model)
+    statements, accepted, blocked, assumed_prerequisites = plan_requirements(colreg, binding, model)
     text = source.decode('utf-8')
     lines = text.splitlines(keepends=True)
     selected = set()
@@ -242,20 +290,21 @@ def prepare(colreg, binding, source):
     for i in model['instances']:
         if i['class'] in classes:
             selected.add(i['line'])
-    caveats = semantic_caveats(colreg, binding)
+    caveats = semantic_caveats(colreg, binding, assumed_prerequisites)
     eligible = {sid for sid, s in statements.items() if sid not in blocked and s['role'] in ('obligation', 'prohibition')}
     request = {'colreg': colreg, 'binding': binding, 'source_sha256': digest(source),
                'source_lines': [{'line': n, 'text': lines[n - 1].rstrip('\r\n')} for n in sorted(selected)],
-               'sections': sections, 'blocked': blocked, 'semantic_uncertainties': caveats,
+               'sections': sections, 'blocked': blocked, 'assumed_prerequisites': assumed_prerequisites,
+               'semantic_uncertainties': caveats,
                'interpretation': 'symbolic candidates only where caveats are present; no inferred model units or behavior',
                'eligible_statements': sorted(eligible),
-               'canonical_supported_property': render_property(statements, accepted, eligible, caveats)}
+               'canonical_supported_property': render_property(statements, accepted, eligible, caveats, assumed_prerequisites)}
     return request, model
 
 
 def validate_response(response, request, model):
     jsonschema.validate(response, load(ROOT / 'schemas/synthesis.schema.json'))
-    statements, bindings, blocked = plan_requirements(request['colreg'], request['binding'], model)
+    statements, bindings, blocked, assumed_prerequisites = plan_requirements(request['colreg'], request['binding'], model)
     records = unique(response['requirements'], 'statement_id')
     if set(records) != set(statements):
         raise ValueError('Incomplete requirement dispositions')
@@ -272,6 +321,8 @@ def validate_response(response, request, model):
             raise ValueError('Invalid context disposition')
     def validate_guard_dispositions(sid):
         for parent in statements[sid]['applies_when']:
+            if parent == assumed_prerequisites.get(sid):
+                continue
             if records[parent]['disposition'] != 'context':
                 raise ValueError('Generated obligation requires context disposition for its guard')
             validate_guard_dispositions(parent)
@@ -280,7 +331,9 @@ def validate_response(response, request, model):
     unresolved = [r for r in records.values() if r['disposition'] == 'unresolved']
     if unresolved and not response['unresolved']:
         raise ValueError('Missing unresolved summary')
-    if response['property_content'] != render_property(statements, bindings, generated, request['semantic_uncertainties']):
+    if generated & assumed_prerequisites.keys() and PRESCRIBED_LIGHT_ASSUMPTION not in response['unresolved']:
+        raise ValueError('Missing prescribed-light applicability assumption')
+    if response['property_content'] != render_property(statements, bindings, generated, request['semantic_uncertainties'], assumed_prerequisites):
         raise ValueError('Property differs from validated comparisons, scopes, or actor coverage')
     sections = {s['id']: s for s in request['sections']}
     for patch in response['patches']:
@@ -309,7 +362,7 @@ def validate_response(response, request, model):
                 if statement['role'] == 'prohibition':
                     predicate = f'!({predicate})'
                 permitted.add(predicate)
-                canonical = render_property(statements, bindings, {sid})
+                canonical = render_property(statements, bindings, {sid}, assumed_prerequisites=assumed_prerequisites)
                 for line in canonical.splitlines():
                     if ': ' in line:
                         local = line.split(': ', 1)[1].rstrip(';')
@@ -449,6 +502,7 @@ def _main(argv=None):
                              'interpretation': request['interpretation'], 'semantic_uncertainties': request['semantic_uncertainties'],
                              'open_assumptions': colreg['open_assumptions'], 'references': colreg['extraction']['references'],
                              'requirements': response['requirements'], 'unresolved': response['unresolved'], 'blocked': request['blocked'],
+                             'assumed_prerequisites': request['assumed_prerequisites'],
                              'binding_unresolved': binding['unresolved_concepts'], 'source_sha256': digest(source), 'model_sha256': digest(result),
                              'byte_identical': result == source, 'property_generated': bool(response['property_content']), 'verification': 'not_run', 'usage': usage})
         if not (out / 'usage.json').exists():

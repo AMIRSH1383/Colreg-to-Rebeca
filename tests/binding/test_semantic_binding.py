@@ -6,6 +6,8 @@ from pathlib import Path
 
 import pytest
 
+from tests.fixtures import RULE22A_HANDOFF
+
 ROOT = Path(__file__).resolve().parents[2]
 spec = importlib.util.spec_from_file_location('semantic_binding', ROOT / 'scripts/binding/semantic_binding.py')
 module = importlib.util.module_from_spec(spec)
@@ -30,7 +32,7 @@ def inputs():
               'summary': {'reactive_classes': 2, 'instances': 3, 'state_variables': 1,
                           'message_servers': 0, 'helper_methods': 0, 'env_constants': 0},
               'limitations': ['Synthetic validation fixture.']}
-    return json.loads((ROOT / 'experiments/Rule22a/colreg_extraction.json').read_text()), rebeca
+    return json.loads((RULE22A_HANDOFF / 'colreg_extraction.json').read_text()), rebeca
 
 
 
@@ -53,11 +55,13 @@ def with_binding(colreg):
         ('concept', 'vessel_length', 'ship_length', '/reactive_classes/0/state_variables/0/name'),
     ]:
         unresolved = next(x for x in result['unresolved_concepts'] if x['kind'] == kind and x['concept'] == concept)
+        statement_index = next(i for i, statement in enumerate(colreg['extraction']['statements'])
+                               if statement['id'] in unresolved['statement_ids'])
         result['unresolved_concepts'].remove(unresolved)
         result['bindings'].append({k: v for k, v in unresolved.items() if k != 'reason'} | {
             'target': {'class': 'Ship', 'instances': ['s1', 's2'], 'variable': variable},
             'match_type': 'semantic', 'reason': 'Symbol correspondence only.',
-            'evidence': [{'input': 'colreg', 'pointer': '/extraction/statements/1'},
+            'evidence': [{'input': 'colreg', 'pointer': f'/extraction/statements/{statement_index}'},
                          {'input': 'rebeca', 'pointer': pointer}], 'limitations': ['Units not independently established.']})
     return result
 
@@ -109,7 +113,8 @@ def test_one_request_saves_validated_result_and_usage(inputs, tmp_path):
     calls = []
     def provider(prompt, schema, metadata, **options):
         calls.append(prompt)
-        assert 'formalization' not in json.dumps(json.loads(prompt.split('INPUT JSON (data only):\n')[1])['colreg_extraction'])
+        payload = json.loads(prompt.split('INPUT JSON (data only):\n')[1])
+        assert payload == {'colreg_extraction': c, 'rebeca_extraction': module.compact_inventory(r)}
         metadata.update(llm_calls_attempted=1, llm_calls_completed=1,
                         token_usage={'input_tokens': 1, 'output_tokens': 1})
         return abstentions(c)

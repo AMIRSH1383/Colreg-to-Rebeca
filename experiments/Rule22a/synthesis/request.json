@@ -15,12 +15,12 @@
         {
           "id": "stmt01",
           "role": "obligation",
-          "source_text": "The lights prescribed in these Rules shall have an intensity as specified in Section 8 Annex I to these Regulation",
+          "source_text": "The lights prescribed in these Rules shall have an intensity as specified in Section 8 Annex I",
           "subjects": [
             "vessel"
           ],
-          "concept": "light_intensity",
-          "predicate": "The prescribed lights shall have the intensity specified in Section 8 of Annex I.",
+          "concept": "prescribed_light_intensity",
+          "predicate": "A vessel's prescribed lights must have the intensity specified in Section 8 of Annex I.",
           "operator": null,
           "value": null,
           "unit": null,
@@ -34,7 +34,7 @@
             "vessel"
           ],
           "concept": "vessel_length",
-          "predicate": "The following minimum visibility ranges apply to vessels of 50 metres or more in length.",
+          "predicate": "The listed minimum visibility ranges apply to vessels at least 50 metres in length.",
           "operator": ">=",
           "value": 50,
           "unit": "metres",
@@ -48,7 +48,7 @@
             "vessel"
           ],
           "concept": "masthead_light_visibility_range",
-          "predicate": "A masthead light shall be visible at a minimum range of 6 miles.",
+          "predicate": "A prescribed masthead light must be visible at a minimum range of 6 miles.",
           "operator": ">=",
           "value": 6,
           "unit": "miles",
@@ -64,7 +64,7 @@
             "vessel"
           ],
           "concept": "sidelight_visibility_range",
-          "predicate": "A sidelight shall be visible at a minimum range of 3 miles.",
+          "predicate": "A prescribed sidelight must be visible at a minimum range of 3 miles.",
           "operator": ">=",
           "value": 3,
           "unit": "miles",
@@ -80,7 +80,7 @@
             "vessel"
           ],
           "concept": "sternlight_visibility_range",
-          "predicate": "A sternlight shall be visible at a minimum range of 3 miles.",
+          "predicate": "A prescribed sternlight must be visible at a minimum range of 3 miles.",
           "operator": ">=",
           "value": 3,
           "unit": "miles",
@@ -96,7 +96,7 @@
             "vessel"
           ],
           "concept": "towing_light_visibility_range",
-          "predicate": "A towing light shall be visible at a minimum range of 3 miles.",
+          "predicate": "A prescribed towing light must be visible at a minimum range of 3 miles.",
           "operator": ">=",
           "value": 3,
           "unit": "miles",
@@ -112,7 +112,7 @@
             "vessel"
           ],
           "concept": "all_round_light_visibility_range",
-          "predicate": "A white, red, green or yellow all-round light shall be visible at a minimum range of 3 miles.",
+          "predicate": "A prescribed white, red, green or yellow all-round light must be visible at a minimum range of 3 miles.",
           "operator": ">=",
           "value": 3,
           "unit": "miles",
@@ -125,7 +125,16 @@
         "Section 8 Annex I"
       ]
     },
-    "open_assumptions": []
+    "open_assumptions": [
+      {
+        "source_text": "The lights prescribed in these Rules",
+        "reason": "The text leaves which lights are prescribed for a given vessel unspecified."
+      },
+      {
+        "source_text": "visible at the following minimum ranges",
+        "reason": "The text leaves the criteria and conditions for assessing visibility at those ranges unspecified."
+      }
+    ]
   },
   "binding": {
     "status": "partial",
@@ -153,7 +162,7 @@
           "variable": null
         },
         "match_type": "semantic",
-        "reason": "Ship represents the vessel participant: its declared attributes include vessel dimensions and the light attributes addressed by the statements. Both represented Ship instances are included.",
+        "reason": "The Ship class contains vessel attributes such as length and navigation lights, and the inventory identifies s1 and s2 as its instances.",
         "evidence": [
           {
             "input": "colreg",
@@ -172,9 +181,7 @@
             "pointer": "/instances/1"
           }
         ],
-        "limitations": [
-          "The correspondence identifies the modeled participant without establishing regulatory compliance."
-        ]
+        "limitations": []
       },
       {
         "kind": "concept",
@@ -192,7 +199,7 @@
           "variable": "ship_length"
         },
         "match_type": "semantic",
-        "reason": "The declared ship_length attribute, initialized from the per-instance s_length argument, corresponds to the vessel length used by the scope statement.",
+        "reason": "The Ship inventory declares ship_length as a scalar ship dimension alongside width and draught.",
         "evidence": [
           {
             "input": "colreg",
@@ -200,20 +207,11 @@
           },
           {
             "input": "rebeca",
-            "pointer": "/reactive_classes/0/state_variables"
-          },
-          {
-            "input": "rebeca",
-            "pointer": "/instances/0/constructor_arguments/s_length"
-          },
-          {
-            "input": "rebeca",
-            "pointer": "/instances/1/constructor_arguments/s_length"
+            "pointer": "/reactive_classes/0/state_variables/22"
           }
         ],
         "limitations": [
-          "The supplied inventory does not establish that ship_length uses metres.",
-          "Both Ship instances are included irrespective of their initial length values."
+          "The Rebeca inventory leaves the unit of ship_length unspecified."
         ]
       },
       {
@@ -232,7 +230,7 @@
           "variable": "masthead_light_range"
         },
         "match_type": "semantic",
-        "reason": "The declared masthead_light_range attribute represents the range associated with the masthead light, corresponding to the extracted visibility-range concept.",
+        "reason": "Ship declares a masthead light flag and a scalar range attribute for that light.",
         "evidence": [
           {
             "input": "colreg",
@@ -240,12 +238,15 @@
           },
           {
             "input": "rebeca",
-            "pointer": "/reactive_classes/0/state_variables"
+            "pointer": "/reactive_classes/0/state_variables/32"
+          },
+          {
+            "input": "rebeca",
+            "pointer": "/reactive_classes/0/state_variables/33"
           }
         ],
         "limitations": [
-          "The supplied declaration does not establish range units or physical visibility semantics.",
-          "The initializer does not establish a regulatory minimum."
+          "The supplied evidence leaves the range unit, prescribed-light applicability, and visibility assessment criteria and conditions unspecified."
         ]
       },
       {
@@ -264,7 +265,7 @@
           "variable": "side_light_range"
         },
         "match_type": "semantic",
-        "reason": "The declared side_light_range attribute associates a range with the side light, corresponding to the sidelight visibility-range concept.",
+        "reason": "Ship declares sidelight flags and a scalar range attribute for the sidelight.",
         "evidence": [
           {
             "input": "colreg",
@@ -272,12 +273,15 @@
           },
           {
             "input": "rebeca",
-            "pointer": "/reactive_classes/0/state_variables"
+            "pointer": "/reactive_classes/0/state_variables/34"
+          },
+          {
+            "input": "rebeca",
+            "pointer": "/reactive_classes/0/state_variables/36"
           }
         ],
         "limitations": [
-          "The supplied declaration does not establish range units or physical visibility semantics.",
-          "The initializer does not establish a regulatory minimum."
+          "The supplied evidence leaves the range unit, prescribed-light applicability, and visibility assessment criteria and conditions unspecified."
         ]
       },
       {
@@ -296,7 +300,7 @@
           "variable": "stern_light_range"
         },
         "match_type": "semantic",
-        "reason": "The declared stern_light_range attribute associates a range with the stern light, corresponding to the sternlight visibility-range concept.",
+        "reason": "Ship declares a sternlight flag and a scalar range attribute for the sternlight.",
         "evidence": [
           {
             "input": "colreg",
@@ -304,12 +308,15 @@
           },
           {
             "input": "rebeca",
-            "pointer": "/reactive_classes/0/state_variables"
+            "pointer": "/reactive_classes/0/state_variables/37"
+          },
+          {
+            "input": "rebeca",
+            "pointer": "/reactive_classes/0/state_variables/38"
           }
         ],
         "limitations": [
-          "The supplied declaration does not establish range units or physical visibility semantics.",
-          "The initializer does not establish a regulatory minimum."
+          "The supplied evidence leaves the range unit, prescribed-light applicability, and visibility assessment criteria and conditions unspecified."
         ]
       },
       {
@@ -328,7 +335,7 @@
           "variable": "towing_light_range"
         },
         "match_type": "semantic",
-        "reason": "The declared towing_light_range attribute associates a range with the towing light, corresponding to the towing-light visibility-range concept.",
+        "reason": "Ship declares a towing light flag and a scalar range attribute for that light.",
         "evidence": [
           {
             "input": "colreg",
@@ -336,12 +343,15 @@
           },
           {
             "input": "rebeca",
-            "pointer": "/reactive_classes/0/state_variables"
+            "pointer": "/reactive_classes/0/state_variables/39"
+          },
+          {
+            "input": "rebeca",
+            "pointer": "/reactive_classes/0/state_variables/40"
           }
         ],
         "limitations": [
-          "The supplied declaration does not establish range units or physical visibility semantics.",
-          "The initializer does not establish a regulatory minimum."
+          "The supplied evidence leaves the range unit, prescribed-light applicability, and visibility assessment criteria and conditions unspecified."
         ]
       },
       {
@@ -360,7 +370,7 @@
           "variable": "allround_light_range"
         },
         "match_type": "semantic",
-        "reason": "The declared allround_light_range attribute associates a range with the all-round light, corresponding to the extracted all-round-light visibility-range concept.",
+        "reason": "Ship declares all-round light flags and a scalar range attribute for the all-round light.",
         "evidence": [
           {
             "input": "colreg",
@@ -368,13 +378,16 @@
           },
           {
             "input": "rebeca",
-            "pointer": "/reactive_classes/0/state_variables"
+            "pointer": "/reactive_classes/0/state_variables/43"
+          },
+          {
+            "input": "rebeca",
+            "pointer": "/reactive_classes/0/state_variables/45"
           }
         ],
         "limitations": [
-          "The supplied declaration does not establish range units or physical visibility semantics.",
-          "The inventory does not identify the all-round light's color or separate white, red, green and yellow lights.",
-          "The initializer does not establish a regulatory minimum."
+          "The model declarations leave the white, red, green, and yellow color qualifier unspecified.",
+          "The supplied evidence leaves the range unit, prescribed-light applicability, and visibility assessment criteria and conditions unspecified."
         ]
       }
     ],
@@ -382,11 +395,11 @@
       {
         "kind": "concept",
         "entity": "vessel",
-        "concept": "light_intensity",
+        "concept": "prescribed_light_intensity",
         "statement_ids": [
           "stmt01"
         ],
-        "reason": "No supplied Ship state variable represents light intensity. Light presence flags and light-range attributes do not establish intensity, and the referenced Section 8 Annex I specification remains external to the supplied inputs."
+        "reason": "The supplied Ship declarations provide light flags and range variables and leave intensity unrepresented. The intensity requirement refers to Section 8 of Annex I, whose criteria are outside the supplied extraction."
       }
     ]
   },
@@ -466,66 +479,68 @@
       "Missing accepted concept or entity binding"
     ]
   },
+  "assumed_prerequisites": {},
   "semantic_uncertainties": {
     "stmt01": [
-      "The correspondence identifies the modeled participant without establishing regulatory compliance."
+      "Unresolved extraction assumption: The text leaves which lights are prescribed for a given vessel unspecified.",
+      "Unresolved extraction assumption: The text leaves the criteria and conditions for assessing visibility at those ranges unspecified."
     ],
     "stmt02": [
-      "The correspondence identifies the modeled participant without establishing regulatory compliance.",
-      "The supplied inventory does not establish that ship_length uses metres.",
-      "Both Ship instances are included irrespective of their initial length values.",
-      "Regulatory interpretation requires established comparability with source unit 'metres'; model units are unknown and no conversion is applied."
+      "The Rebeca inventory leaves the unit of ship_length unspecified.",
+      "Regulatory interpretation requires established comparability with source unit 'metres'; model units are unknown and no conversion is applied.",
+      "Unresolved extraction assumption: The text leaves which lights are prescribed for a given vessel unspecified.",
+      "Unresolved extraction assumption: The text leaves the criteria and conditions for assessing visibility at those ranges unspecified."
     ],
     "stmt03": [
-      "The correspondence identifies the modeled participant without establishing regulatory compliance.",
-      "The supplied declaration does not establish range units or physical visibility semantics.",
-      "The initializer does not establish a regulatory minimum.",
+      "The supplied evidence leaves the range unit, prescribed-light applicability, and visibility assessment criteria and conditions unspecified.",
       "Regulatory interpretation requires established comparability with source unit 'miles'; model units are unknown and no conversion is applied.",
-      "Prerequisite stmt02: The correspondence identifies the modeled participant without establishing regulatory compliance.",
-      "Prerequisite stmt02: The supplied inventory does not establish that ship_length uses metres.",
-      "Prerequisite stmt02: Both Ship instances are included irrespective of their initial length values.",
-      "Prerequisite stmt02: Regulatory interpretation requires established comparability with source unit 'metres'; model units are unknown and no conversion is applied."
+      "Unresolved extraction assumption: The text leaves which lights are prescribed for a given vessel unspecified.",
+      "Unresolved extraction assumption: The text leaves the criteria and conditions for assessing visibility at those ranges unspecified.",
+      "Prerequisite stmt02: The Rebeca inventory leaves the unit of ship_length unspecified.",
+      "Prerequisite stmt02: Regulatory interpretation requires established comparability with source unit 'metres'; model units are unknown and no conversion is applied.",
+      "Prerequisite stmt02: Unresolved extraction assumption: The text leaves which lights are prescribed for a given vessel unspecified.",
+      "Prerequisite stmt02: Unresolved extraction assumption: The text leaves the criteria and conditions for assessing visibility at those ranges unspecified."
     ],
     "stmt04": [
-      "The correspondence identifies the modeled participant without establishing regulatory compliance.",
-      "The supplied declaration does not establish range units or physical visibility semantics.",
-      "The initializer does not establish a regulatory minimum.",
+      "The supplied evidence leaves the range unit, prescribed-light applicability, and visibility assessment criteria and conditions unspecified.",
       "Regulatory interpretation requires established comparability with source unit 'miles'; model units are unknown and no conversion is applied.",
-      "Prerequisite stmt02: The correspondence identifies the modeled participant without establishing regulatory compliance.",
-      "Prerequisite stmt02: The supplied inventory does not establish that ship_length uses metres.",
-      "Prerequisite stmt02: Both Ship instances are included irrespective of their initial length values.",
-      "Prerequisite stmt02: Regulatory interpretation requires established comparability with source unit 'metres'; model units are unknown and no conversion is applied."
+      "Unresolved extraction assumption: The text leaves which lights are prescribed for a given vessel unspecified.",
+      "Unresolved extraction assumption: The text leaves the criteria and conditions for assessing visibility at those ranges unspecified.",
+      "Prerequisite stmt02: The Rebeca inventory leaves the unit of ship_length unspecified.",
+      "Prerequisite stmt02: Regulatory interpretation requires established comparability with source unit 'metres'; model units are unknown and no conversion is applied.",
+      "Prerequisite stmt02: Unresolved extraction assumption: The text leaves which lights are prescribed for a given vessel unspecified.",
+      "Prerequisite stmt02: Unresolved extraction assumption: The text leaves the criteria and conditions for assessing visibility at those ranges unspecified."
     ],
     "stmt05": [
-      "The correspondence identifies the modeled participant without establishing regulatory compliance.",
-      "The supplied declaration does not establish range units or physical visibility semantics.",
-      "The initializer does not establish a regulatory minimum.",
+      "The supplied evidence leaves the range unit, prescribed-light applicability, and visibility assessment criteria and conditions unspecified.",
       "Regulatory interpretation requires established comparability with source unit 'miles'; model units are unknown and no conversion is applied.",
-      "Prerequisite stmt02: The correspondence identifies the modeled participant without establishing regulatory compliance.",
-      "Prerequisite stmt02: The supplied inventory does not establish that ship_length uses metres.",
-      "Prerequisite stmt02: Both Ship instances are included irrespective of their initial length values.",
-      "Prerequisite stmt02: Regulatory interpretation requires established comparability with source unit 'metres'; model units are unknown and no conversion is applied."
+      "Unresolved extraction assumption: The text leaves which lights are prescribed for a given vessel unspecified.",
+      "Unresolved extraction assumption: The text leaves the criteria and conditions for assessing visibility at those ranges unspecified.",
+      "Prerequisite stmt02: The Rebeca inventory leaves the unit of ship_length unspecified.",
+      "Prerequisite stmt02: Regulatory interpretation requires established comparability with source unit 'metres'; model units are unknown and no conversion is applied.",
+      "Prerequisite stmt02: Unresolved extraction assumption: The text leaves which lights are prescribed for a given vessel unspecified.",
+      "Prerequisite stmt02: Unresolved extraction assumption: The text leaves the criteria and conditions for assessing visibility at those ranges unspecified."
     ],
     "stmt06": [
-      "The correspondence identifies the modeled participant without establishing regulatory compliance.",
-      "The supplied declaration does not establish range units or physical visibility semantics.",
-      "The initializer does not establish a regulatory minimum.",
+      "The supplied evidence leaves the range unit, prescribed-light applicability, and visibility assessment criteria and conditions unspecified.",
       "Regulatory interpretation requires established comparability with source unit 'miles'; model units are unknown and no conversion is applied.",
-      "Prerequisite stmt02: The correspondence identifies the modeled participant without establishing regulatory compliance.",
-      "Prerequisite stmt02: The supplied inventory does not establish that ship_length uses metres.",
-      "Prerequisite stmt02: Both Ship instances are included irrespective of their initial length values.",
-      "Prerequisite stmt02: Regulatory interpretation requires established comparability with source unit 'metres'; model units are unknown and no conversion is applied."
+      "Unresolved extraction assumption: The text leaves which lights are prescribed for a given vessel unspecified.",
+      "Unresolved extraction assumption: The text leaves the criteria and conditions for assessing visibility at those ranges unspecified.",
+      "Prerequisite stmt02: The Rebeca inventory leaves the unit of ship_length unspecified.",
+      "Prerequisite stmt02: Regulatory interpretation requires established comparability with source unit 'metres'; model units are unknown and no conversion is applied.",
+      "Prerequisite stmt02: Unresolved extraction assumption: The text leaves which lights are prescribed for a given vessel unspecified.",
+      "Prerequisite stmt02: Unresolved extraction assumption: The text leaves the criteria and conditions for assessing visibility at those ranges unspecified."
     ],
     "stmt07": [
-      "The correspondence identifies the modeled participant without establishing regulatory compliance.",
-      "The supplied declaration does not establish range units or physical visibility semantics.",
-      "The inventory does not identify the all-round light's color or separate white, red, green and yellow lights.",
-      "The initializer does not establish a regulatory minimum.",
+      "The model declarations leave the white, red, green, and yellow color qualifier unspecified.",
+      "The supplied evidence leaves the range unit, prescribed-light applicability, and visibility assessment criteria and conditions unspecified.",
       "Regulatory interpretation requires established comparability with source unit 'miles'; model units are unknown and no conversion is applied.",
-      "Prerequisite stmt02: The correspondence identifies the modeled participant without establishing regulatory compliance.",
-      "Prerequisite stmt02: The supplied inventory does not establish that ship_length uses metres.",
-      "Prerequisite stmt02: Both Ship instances are included irrespective of their initial length values.",
-      "Prerequisite stmt02: Regulatory interpretation requires established comparability with source unit 'metres'; model units are unknown and no conversion is applied."
+      "Unresolved extraction assumption: The text leaves which lights are prescribed for a given vessel unspecified.",
+      "Unresolved extraction assumption: The text leaves the criteria and conditions for assessing visibility at those ranges unspecified.",
+      "Prerequisite stmt02: The Rebeca inventory leaves the unit of ship_length unspecified.",
+      "Prerequisite stmt02: Regulatory interpretation requires established comparability with source unit 'metres'; model units are unknown and no conversion is applied.",
+      "Prerequisite stmt02: Unresolved extraction assumption: The text leaves which lights are prescribed for a given vessel unspecified.",
+      "Prerequisite stmt02: Unresolved extraction assumption: The text leaves the criteria and conditions for assessing visibility at those ranges unspecified."
     ]
   },
   "interpretation": "symbolic candidates only where caveats are present; no inferred model units or behavior",
@@ -538,9 +553,9 @@
   ],
   "canonical_supported_property": "// CONDITIONAL SYMBOLIC CHECKS ONLY: regulatory interpretation is unresolved.\n// Source thresholds are untranslated; model units and physical semantics are unestablished.\n// Qualifiers and assumptions require review in report.json; no compliance claim.\nproperty {\n  Assertion {\n    stmt03_vessel_s1: !((s1.ship_length >= 50)) || (s1.masthead_light_range >= 6);\n    stmt03_vessel_s2: !((s2.ship_length >= 50)) || (s2.masthead_light_range >= 6);\n    stmt04_vessel_s1: !((s1.ship_length >= 50)) || (s1.side_light_range >= 3);\n    stmt04_vessel_s2: !((s2.ship_length >= 50)) || (s2.side_light_range >= 3);\n    stmt05_vessel_s1: !((s1.ship_length >= 50)) || (s1.stern_light_range >= 3);\n    stmt05_vessel_s2: !((s2.ship_length >= 50)) || (s2.stern_light_range >= 3);\n    stmt06_vessel_s1: !((s1.ship_length >= 50)) || (s1.towing_light_range >= 3);\n    stmt06_vessel_s2: !((s2.ship_length >= 50)) || (s2.towing_light_range >= 3);\n    stmt07_vessel_s1: !((s1.ship_length >= 50)) || (s1.allround_light_range >= 3);\n    stmt07_vessel_s2: !((s2.ship_length >= 50)) || (s2.allround_light_range >= 3);\n  }\n}\n",
   "input_provenance": {
-    "experiments/rule22a-run01/extraction.json": "2a22be3b620891133ea8e47994c442c7f1c71465f4b43c791df3aa3bebc9f549",
-    "output/Rule22/semantic_binding.json": "8e782d58ef8bf1c304291c43ad52e17a74257cdf9fe4f3b8efbbf1864001b7fb",
-    "inputs/rebeca/original_model.rebeca": "cb1bd2ae7a1c9637785c9d7f55d5bc6224299ea3d8d1795b77a6197580a8bc66",
-    "output/rebeca_extraction.json": "7fd0f730be770a96813f9438a11d3a946c057b942ba85a57160044cc65044760"
+    "/workspace/Colreg-to-Rebeca/experiments/Rule22a/colreg_extraction.json": "511e5f3d61c767d8359c314b8f0489c533c71c6bf43d98c96039006145b68619",
+    "/workspace/Colreg-to-Rebeca/experiments/Rule22a/semantic_binding.json": "95a7a427fc8289b07c51502a5b4471283cba1a4df42381c34f815cb7778afccb",
+    "/workspace/Colreg-to-Rebeca/inputs/rebeca/original_model.rebeca": "cb1bd2ae7a1c9637785c9d7f55d5bc6224299ea3d8d1795b77a6197580a8bc66",
+    "/workspace/Colreg-to-Rebeca/experiments/Rule22a/rebeca_extraction.json": "12a8d2e36d3132fe4ae66531684a6077a579684298b7a3cd63a9dd3640274d7a"
   }
 }

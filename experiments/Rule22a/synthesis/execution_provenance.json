@@ -1,21 +1,41 @@
 {
-  "execution": "current_codex_cloud_session",
-  "llm_synthesis_passes": 1,
-  "automatic_repairs": 0,
-  "nested_cli_invocations": 0,
-  "runner_provider": "external_response",
-  "runner_invocations": 0,
-  "input_tokens": null,
-  "output_tokens": null,
-  "token_usage_reason": "Hosted session does not expose per-synthesis-pass token counts or underlying inference-request count.",
-  "request_sha256": "b4f88d4fd1be314e331bddd7c20bfea7313329bcd063649a73b43c3f91d3e6d3",
-  "response_sha256": "92589440fae88b03f4ff0c3ba3ba33789bf65af936607a50846c7b1958ec435c",
-  "model_patches": 0,
-  "property_assertions": 10,
-  "tests": {
-    "passed": 100,
-    "failed": 0,
-    "skipped": 0
+  "record_type": "publication_metadata",
+  "derived_from": [
+    "../run.json",
+    "../coordinator_report.json",
+    "request.json",
+    "response.json",
+    "usage.json"
+  ],
+  "mode": "full_rerun",
+  "import_attempt_started_at": "2026-11-23T10:13:27.097796+00:00",
+  "specialist_handoff": {
+    "stage": "synthesis",
+    "execution": "native",
+    "input_tokens": null,
+    "output_tokens": null,
+    "status": "response_received"
   },
-  "verification": "not_run"
+  "runner_usage": {
+    "provider": "external_response",
+    "invocations": 0,
+    "input_tokens": null,
+    "output_tokens": null
+  },
+  "request_sha256": "66553b301f2f4cf123564bb97d585da37151cfd265d796ba9942e1aae5c93e68",
+  "raw_specialist_response_sha256": "328e1b3284ca3faf6fa587d7c26bb1793c2a7bd6c3ab3476abfc6ece60e82e28",
+  "imported_response_sha256": "c00a1c2d5fac71e286ab7b96252d6f6f9283644547d94db9f58bf261c541197b",
+  "model_patches": 0,
+  "property_assertions": [
+    "stmt03_vessel_s1",
+    "stmt03_vessel_s2",
+    "stmt04_vessel_s1",
+    "stmt04_vessel_s2",
+    "stmt05_vessel_s1",
+    "stmt05_vessel_s2",
+    "stmt06_vessel_s1",
+    "stmt06_vessel_s2",
+    "stmt07_vessel_s1",
+    "stmt07_vessel_s2"
+  ]
 }

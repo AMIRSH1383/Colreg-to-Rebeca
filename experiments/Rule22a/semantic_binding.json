@@ -17,11 +17,14 @@
       ],
       "target": {
         "class": "Ship",
-        "instances": ["s1", "s2"],
+        "instances": [
+          "s1",
+          "s2"
+        ],
         "variable": null
       },
       "match_type": "semantic",
-      "reason": "Ship represents the vessel participant: its declared attributes include vessel dimensions and the light attributes addressed by the statements. Both represented Ship instances are included.",
+      "reason": "The Ship class contains vessel attributes such as length and navigation lights, and the inventory identifies s1 and s2 as its instances.",
       "evidence": [
         {
           "input": "colreg",
@@ -40,22 +43,25 @@
           "pointer": "/instances/1"
         }
       ],
-      "limitations": [
-        "The correspondence identifies the modeled participant without establishing regulatory compliance."
-      ]
+      "limitations": []
     },
     {
       "kind": "concept",
       "entity": "vessel",
       "concept": "vessel_length",
-      "statement_ids": ["stmt02"],
+      "statement_ids": [
+        "stmt02"
+      ],
       "target": {
         "class": "Ship",
-        "instances": ["s1", "s2"],
+        "instances": [
+          "s1",
+          "s2"
+        ],
         "variable": "ship_length"
       },
       "match_type": "semantic",
-      "reason": "The declared ship_length attribute, initialized from the per-instance s_length argument, corresponds to the vessel length used by the scope statement.",
+      "reason": "The Ship inventory declares ship_length as a scalar ship dimension alongside width and draught.",
       "evidence": [
         {
           "input": "colreg",
@@ -63,34 +69,30 @@
         },
         {
           "input": "rebeca",
-          "pointer": "/reactive_classes/0/state_variables"
-        },
-        {
-          "input": "rebeca",
-          "pointer": "/instances/0/constructor_arguments/s_length"
-        },
-        {
-          "input": "rebeca",
-          "pointer": "/instances/1/constructor_arguments/s_length"
+          "pointer": "/reactive_classes/0/state_variables/22"
         }
       ],
       "limitations": [
-        "The supplied inventory does not establish that ship_length uses metres.",
-        "Both Ship instances are included irrespective of their initial length values."
+        "The Rebeca inventory leaves the unit of ship_length unspecified."
       ]
     },
     {
       "kind": "concept",
       "entity": "vessel",
       "concept": "masthead_light_visibility_range",
-      "statement_ids": ["stmt03"],
+      "statement_ids": [
+        "stmt03"
+      ],
       "target": {
         "class": "Ship",
-        "instances": ["s1", "s2"],
+        "instances": [
+          "s1",
+          "s2"
+        ],
         "variable": "masthead_light_range"
       },
       "match_type": "semantic",
-      "reason": "The declared masthead_light_range attribute represents the range associated with the masthead light, corresponding to the extracted visibility-range concept.",
+      "reason": "Ship declares a masthead light flag and a scalar range attribute for that light.",
       "evidence": [
         {
           "input": "colreg",
@@ -98,26 +100,34 @@
         },
         {
           "input": "rebeca",
-          "pointer": "/reactive_classes/0/state_variables"
+          "pointer": "/reactive_classes/0/state_variables/32"
+        },
+        {
+          "input": "rebeca",
+          "pointer": "/reactive_classes/0/state_variables/33"
         }
       ],
       "limitations": [
-        "The supplied declaration does not establish range units or physical visibility semantics.",
-        "The initializer does not establish a regulatory minimum."
+        "The supplied evidence leaves the range unit, prescribed-light applicability, and visibility assessment criteria and conditions unspecified."
       ]
     },
     {
       "kind": "concept",
       "entity": "vessel",
       "concept": "sidelight_visibility_range",
-      "statement_ids": ["stmt04"],
+      "statement_ids": [
+        "stmt04"
+      ],
       "target": {
         "class": "Ship",
-        "instances": ["s1", "s2"],
+        "instances": [
+          "s1",
+          "s2"
+        ],
         "variable": "side_light_range"
       },
       "match_type": "semantic",
-      "reason": "The declared side_light_range attribute associates a range with the side light, corresponding to the sidelight visibility-range concept.",
+      "reason": "Ship declares sidelight flags and a scalar range attribute for the sidelight.",
       "evidence": [
         {
           "input": "colreg",
@@ -125,26 +135,34 @@
         },
         {
           "input": "rebeca",
-          "pointer": "/reactive_classes/0/state_variables"
+          "pointer": "/reactive_classes/0/state_variables/34"
+        },
+        {
+          "input": "rebeca",
+          "pointer": "/reactive_classes/0/state_variables/36"
         }
       ],
       "limitations": [
-        "The supplied declaration does not establish range units or physical visibility semantics.",
-        "The initializer does not establish a regulatory minimum."
+        "The supplied evidence leaves the range unit, prescribed-light applicability, and visibility assessment criteria and conditions unspecified."
       ]
     },
     {
       "kind": "concept",
       "entity": "vessel",
       "concept": "sternlight_visibility_range",
-      "statement_ids": ["stmt05"],
+      "statement_ids": [
+        "stmt05"
+      ],
       "target": {
         "class": "Ship",
-        "instances": ["s1", "s2"],
+        "instances": [
+          "s1",
+          "s2"
+        ],
         "variable": "stern_light_range"
       },
       "match_type": "semantic",
-      "reason": "The declared stern_light_range attribute associates a range with the stern light, corresponding to the sternlight visibility-range concept.",
+      "reason": "Ship declares a sternlight flag and a scalar range attribute for the sternlight.",
       "evidence": [
         {
           "input": "colreg",
@@ -152,26 +170,34 @@
         },
         {
           "input": "rebeca",
-          "pointer": "/reactive_classes/0/state_variables"
+          "pointer": "/reactive_classes/0/state_variables/37"
+        },
+        {
+          "input": "rebeca",
+          "pointer": "/reactive_classes/0/state_variables/38"
         }
       ],
       "limitations": [
-        "The supplied declaration does not establish range units or physical visibility semantics.",
-        "The initializer does not establish a regulatory minimum."
+        "The supplied evidence leaves the range unit, prescribed-light applicability, and visibility assessment criteria and conditions unspecified."
       ]
     },
     {
       "kind": "concept",
       "entity": "vessel",
       "concept": "towing_light_visibility_range",
-      "statement_ids": ["stmt06"],
+      "statement_ids": [
+        "stmt06"
+      ],
       "target": {
         "class": "Ship",
-        "instances": ["s1", "s2"],
+        "instances": [
+          "s1",
+          "s2"
+        ],
         "variable": "towing_light_range"
       },
       "match_type": "semantic",
-      "reason": "The declared towing_light_range attribute associates a range with the towing light, corresponding to the towing-light visibility-range concept.",
+      "reason": "Ship declares a towing light flag and a scalar range attribute for that light.",
       "evidence": [
         {
           "input": "colreg",
@@ -179,26 +205,34 @@
         },
         {
           "input": "rebeca",
-          "pointer": "/reactive_classes/0/state_variables"
+          "pointer": "/reactive_classes/0/state_variables/39"
+        },
+        {
+          "input": "rebeca",
+          "pointer": "/reactive_classes/0/state_variables/40"
         }
       ],
       "limitations": [
-        "The supplied declaration does not establish range units or physical visibility semantics.",
-        "The initializer does not establish a regulatory minimum."
+        "The supplied evidence leaves the range unit, prescribed-light applicability, and visibility assessment criteria and conditions unspecified."
       ]
     },
     {
       "kind": "concept",
       "entity": "vessel",
       "concept": "all_round_light_visibility_range",
-      "statement_ids": ["stmt07"],
+      "statement_ids": [
+        "stmt07"
+      ],
       "target": {
         "class": "Ship",
-        "instances": ["s1", "s2"],
+        "instances": [
+          "s1",
+          "s2"
+        ],
         "variable": "allround_light_range"
       },
       "match_type": "semantic",
-      "reason": "The declared allround_light_range attribute associates a range with the all-round light, corresponding to the extracted all-round-light visibility-range concept.",
+      "reason": "Ship declares all-round light flags and a scalar range attribute for the all-round light.",
       "evidence": [
         {
           "input": "colreg",
@@ -206,13 +240,16 @@
         },
         {
           "input": "rebeca",
-          "pointer": "/reactive_classes/0/state_variables"
+          "pointer": "/reactive_classes/0/state_variables/43"
+        },
+        {
+          "input": "rebeca",
+          "pointer": "/reactive_classes/0/state_variables/45"
         }
       ],
       "limitations": [
-        "The supplied declaration does not establish range units or physical visibility semantics.",
-        "The inventory does not identify the all-round light's color or separate white, red, green and yellow lights.",
-        "The initializer does not establish a regulatory minimum."
+        "The model declarations leave the white, red, green, and yellow color qualifier unspecified.",
+        "The supplied evidence leaves the range unit, prescribed-light applicability, and visibility assessment criteria and conditions unspecified."
       ]
     }
   ],
@@ -220,9 +257,11 @@
     {
       "kind": "concept",
       "entity": "vessel",
-      "concept": "light_intensity",
-      "statement_ids": ["stmt01"],
-      "reason": "No supplied Ship state variable represents light intensity. Light presence flags and light-range attributes do not establish intensity, and the referenced Section 8 Annex I specification remains external to the supplied inputs."
+      "concept": "prescribed_light_intensity",
+      "statement_ids": [
+        "stmt01"
+      ],
+      "reason": "The supplied Ship declarations provide light flags and range variables and leave intensity unrepresented. The intensity requirement refers to Section 8 of Annex I, whose criteria are outside the supplied extraction."
     }
   ]
 }

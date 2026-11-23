@@ -1,6 +1,27 @@
 """
 Shared sample content for verification tests.
 """
+from pathlib import Path
+
+RULE22A_HANDOFF = Path(__file__).parent / 'data/rule22a'
+
+
+def rule22a_synthesis_response(request):
+    """Mock specialist response for deterministic runner tests."""
+    eligible = request['eligible_statements']
+    return {
+        'property_content': request['canonical_supported_property'],
+        'patches': [],
+        'requirements': [
+            {'statement_id': statement['id'], 'reason': 'Test disposition',
+             'disposition': ('generated' if statement['id'] in eligible else
+                             'unresolved' if statement['id'] in request['blocked'] else 'context')}
+            for statement in request['colreg']['extraction']['statements']
+        ],
+        'unresolved': list(dict.fromkeys(
+            caveat for notes in request['semantic_uncertainties'].values() for caveat in notes
+        )),
+    }
 
 RULE_ID = "Rule-22"
 

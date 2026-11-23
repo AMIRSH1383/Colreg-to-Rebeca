@@ -1,0 +1,257 @@
+{
+  "status": "partial",
+  "rule_id": "Rule-22a",
+  "bindings": [
+    {
+      "kind": "entity",
+      "entity": "vessel",
+      "concept": null,
+      "statement_ids": [
+        "stmt01",
+        "stmt02",
+        "stmt03",
+        "stmt04",
+        "stmt05",
+        "stmt06",
+        "stmt07",
+        "stmt08"
+      ],
+      "target": {
+        "class": "Ship",
+        "instances": [
+          "s1",
+          "s2"
+        ],
+        "variable": null
+      },
+      "match_type": "semantic",
+      "reason": "The Ship class represents the vessel participant through its vessel dimensions and light attributes. Both s1 and s2 are declared Ship instances.",
+      "evidence": [
+        {
+          "input": "colreg",
+          "pointer": "/extraction/entities/0"
+        },
+        {
+          "input": "rebeca",
+          "pointer": "/reactive_classes/0"
+        },
+        {
+          "input": "rebeca",
+          "pointer": "/instances/0"
+        },
+        {
+          "input": "rebeca",
+          "pointer": "/instances/1"
+        }
+      ],
+      "limitations": []
+    },
+    {
+      "kind": "concept",
+      "entity": "vessel",
+      "concept": "vessel_length",
+      "statement_ids": [
+        "stmt03"
+      ],
+      "target": {
+        "class": "Ship",
+        "instances": [
+          "s1",
+          "s2"
+        ],
+        "variable": "ship_length"
+      },
+      "match_type": "semantic",
+      "reason": "Ship.ship_length is the vessel length attribute and is initialized from the length argument s_length.",
+      "evidence": [
+        {
+          "input": "colreg",
+          "pointer": "/extraction/statements/2"
+        },
+        {
+          "input": "rebeca",
+          "pointer": "/reactive_classes/0/state_variables/22"
+        }
+      ],
+      "limitations": [
+        "The declaration leaves the model length unit unspecified, so its correspondence to metres is unestablished."
+      ]
+    },
+    {
+      "kind": "concept",
+      "entity": "vessel",
+      "concept": "masthead_light_visibility_range",
+      "statement_ids": [
+        "stmt04"
+      ],
+      "target": {
+        "class": "Ship",
+        "instances": [
+          "s1",
+          "s2"
+        ],
+        "variable": "masthead_light_range"
+      },
+      "match_type": "semantic",
+      "reason": "Ship.masthead_light_range is the numeric range attribute for the masthead light.",
+      "evidence": [
+        {
+          "input": "colreg",
+          "pointer": "/extraction/statements/3"
+        },
+        {
+          "input": "rebeca",
+          "pointer": "/reactive_classes/0/state_variables/33"
+        }
+      ],
+      "limitations": [
+        "The model range unit and conditions for determining visibility at a given distance are unspecified."
+      ]
+    },
+    {
+      "kind": "concept",
+      "entity": "vessel",
+      "concept": "sidelight_visibility_range",
+      "statement_ids": [
+        "stmt05"
+      ],
+      "target": {
+        "class": "Ship",
+        "instances": [
+          "s1",
+          "s2"
+        ],
+        "variable": "side_light_range"
+      },
+      "match_type": "semantic",
+      "reason": "Ship.side_light_range is the numeric range attribute for the sidelight.",
+      "evidence": [
+        {
+          "input": "colreg",
+          "pointer": "/extraction/statements/4"
+        },
+        {
+          "input": "rebeca",
+          "pointer": "/reactive_classes/0/state_variables/36"
+        }
+      ],
+      "limitations": [
+        "The model range unit and conditions for determining visibility at a given distance are unspecified."
+      ]
+    },
+    {
+      "kind": "concept",
+      "entity": "vessel",
+      "concept": "sternlight_visibility_range",
+      "statement_ids": [
+        "stmt06"
+      ],
+      "target": {
+        "class": "Ship",
+        "instances": [
+          "s1",
+          "s2"
+        ],
+        "variable": "stern_light_range"
+      },
+      "match_type": "semantic",
+      "reason": "Ship.stern_light_range is the numeric range attribute for the sternlight.",
+      "evidence": [
+        {
+          "input": "colreg",
+          "pointer": "/extraction/statements/5"
+        },
+        {
+          "input": "rebeca",
+          "pointer": "/reactive_classes/0/state_variables/38"
+        }
+      ],
+      "limitations": [
+        "The model range unit and conditions for determining visibility at a given distance are unspecified."
+      ]
+    },
+    {
+      "kind": "concept",
+      "entity": "vessel",
+      "concept": "towing_light_visibility_range",
+      "statement_ids": [
+        "stmt07"
+      ],
+      "target": {
+        "class": "Ship",
+        "instances": [
+          "s1",
+          "s2"
+        ],
+        "variable": "towing_light_range"
+      },
+      "match_type": "semantic",
+      "reason": "Ship.towing_light_range is the numeric range attribute for the towing light.",
+      "evidence": [
+        {
+          "input": "colreg",
+          "pointer": "/extraction/statements/6"
+        },
+        {
+          "input": "rebeca",
+          "pointer": "/reactive_classes/0/state_variables/40"
+        }
+      ],
+      "limitations": [
+        "The model range unit and conditions for determining visibility at a given distance are unspecified."
+      ]
+    },
+    {
+      "kind": "concept",
+      "entity": "vessel",
+      "concept": "all_round_light_visibility_range",
+      "statement_ids": [
+        "stmt08"
+      ],
+      "target": {
+        "class": "Ship",
+        "instances": [
+          "s1",
+          "s2"
+        ],
+        "variable": "allround_light_range"
+      },
+      "match_type": "semantic",
+      "reason": "Ship.allround_light_range is the numeric range attribute for the all-round light.",
+      "evidence": [
+        {
+          "input": "colreg",
+          "pointer": "/extraction/statements/7"
+        },
+        {
+          "input": "rebeca",
+          "pointer": "/reactive_classes/0/state_variables/45"
+        }
+      ],
+      "limitations": [
+        "The model inventory does not distinguish white, red, green, or yellow all-round lights.",
+        "The model range unit and conditions for determining visibility at a given distance are unspecified."
+      ]
+    }
+  ],
+  "unresolved_concepts": [
+    {
+      "kind": "concept",
+      "entity": "vessel",
+      "concept": "prescribed_light",
+      "statement_ids": [
+        "stmt01"
+      ],
+      "reason": "The excerpt leaves the applicable light prescriptions to other provisions. The Ship light flags do not establish whether a particular light is prescribed for the vessel."
+    },
+    {
+      "kind": "concept",
+      "entity": "vessel",
+      "concept": "light_intensity",
+      "statement_ids": [
+        "stmt02"
+      ],
+      "reason": "The Ship inventory contains no light intensity attribute. Section 8 Annex I supplies the referenced intensity requirement outside the excerpt."
+    }
+  ]
+}

@@ -7,6 +7,7 @@ import pytest
 
 from scripts.synthesis.synthesis import ROOT, main, prepare, validate_response
 from scripts.synthesis.apply_model_patches import apply_patches, digest
+from tests.fixtures import RULE22A_HANDOFF, rule22a_synthesis_response
 
 SOURCE = b'''reactiveclass Ship(5) {
 statevars { int length; int range; }
@@ -45,6 +46,56 @@ def test_supported_scoped_property_and_actors():
         '    stmt02_vessel_s1: !((s1.length >= 50)) || (s1.range >= 6);\n'
         '    stmt02_vessel_s2: !((s2.length >= 50)) || (s2.range >= 6);\n  }\n}\n')
     assert 'self.tick' not in json.dumps(request)
+
+
+@pytest.fixture
+def rule22a_inputs():
+    colreg = json.loads((RULE22A_HANDOFF / 'colreg_extraction.json').read_text())
+    binding = json.loads((RULE22A_HANDOFF / 'semantic_binding.json').read_text())
+    return colreg, binding, (ROOT / 'inputs/rebeca/original_model.rebeca').read_bytes()
+
+
+def test_prescribed_light_assumption_preserves_ten_scoped_checks(rule22a_inputs):
+    request, model = prepare(*rule22a_inputs)
+    result = rule22a_synthesis_response(request)
+    assumed = request['assumed_prerequisites']
+    assert set(request['blocked']) == {'stmt01', 'stmt02'}
+    assert assumed == {f'stmt{i:02}': 'stmt01' for i in range(4, 9)}
+    assert validate_response(result, request, model) == set(assumed)
+    note = ('These symbolic range checks assume the checked lights are prescribed for the vessel. '
+            'Legal applicability remains unresolved.')
+    text = result['property_content']
+    assert '// ' + note in text
+    assertions = [line.strip() for line in text.splitlines() if line.startswith('    ')]
+    ranges = (('masthead_light_range', 6), ('side_light_range', 3), ('stern_light_range', 3),
+              ('towing_light_range', 3), ('allround_light_range', 3))
+    assert assertions == [
+        f'stmt{i:02}_vessel_{actor}: !(({actor}.ship_length >= 50)) || ({actor}.{field} >= {threshold});'
+        for i, (field, threshold) in enumerate(ranges, start=4) for actor in ('s1', 's2')
+    ]
+    result['unresolved'].remove(note)
+    with pytest.raises(ValueError, match='Missing prescribed-light applicability assumption'):
+        validate_response(result, request, model)
+
+
+@pytest.mark.parametrize('case', ['different_rule', 'unknown_qualifier', 'missing_length', 'nested_qualifier'])
+def test_prescribed_light_exception_cannot_erase_other_guards(rule22a_inputs, case):
+    colreg, binding, source = rule22a_inputs
+    qualifier, _, length, *ranges = colreg['extraction']['statements']
+    if case == 'different_rule':
+        colreg['rule_id'] = binding['rule_id'] = 'OtherRule'
+    elif case == 'unknown_qualifier':
+        qualifier['source_text'] = 'A different unmodeled condition'
+    elif case == 'nested_qualifier':
+        qualifier['applies_when'] = [length['id']]
+    else:
+        for statement in ranges:
+            statement['applies_when'].remove(length['id'])
+    request, _ = prepare(colreg, binding, source)
+    assert not request['assumed_prerequisites']
+    assert not request['eligible_statements']
+    assert all('Unresolved prerequisite stmt01' in request['blocked'][s['id']] for s in ranges)
+    assert request['canonical_supported_property'] == ''
 
 
 @pytest.mark.parametrize('mutation', ['threshold', 'actor', 'scope', 'tautology'])
@@ -138,7 +189,7 @@ def test_cli_external_response_and_preservation(tmp_path):
 def test_missing_binding_fails_before_provider_or_outputs(tmp_path, monkeypatch):
     monkeypatch.setattr('scripts.synthesis.synthesis.invoke_codex', lambda *a: pytest.fail('Provider must not run'))
     output = tmp_path / 'result'
-    assert main(['--colreg', str(ROOT / 'experiments/Rule22a/colreg_extraction.json'), '--binding', str(tmp_path / 'missing.json'), '--model', str(ROOT / 'inputs/rebeca/original_model.rebeca'), '--output-dir', str(output), '--prepare-only']) == 1
+    assert main(['--colreg', str(RULE22A_HANDOFF / 'colreg_extraction.json'), '--binding', str(tmp_path / 'missing.json'), '--model', str(ROOT / 'inputs/rebeca/original_model.rebeca'), '--output-dir', str(output), '--prepare-only']) == 1
     assert not output.exists()
 
 

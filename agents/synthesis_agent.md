@@ -31,6 +31,13 @@ as scalar-only candidates in requirement reasons and retain all caveats in the
 unresolved list. Do not claim an unrepresented qualifier has been formalized.
 An unresolved intensity requirement does not block unrelated light-range
 candidates. A vessel-length guard must remain attached to each range obligation.
+The runner may declare a Rule 22(a) prerequisite in `assumed_prerequisites`
+(obligation ID to qualifier ID). Leave the qualifier `unresolved`. Use the
+canonical Property, which retains the scalar length guard and states the
+prescribed-light assumption. For each generated check with this prerequisite,
+explain that applicability is assumed and copy the assumption from
+`semantic_uncertainties` verbatim into `unresolved`. Treat all other blocked
+prerequisites as before. A light-presence flag cannot establish legal prescription.
 
 The request's blocked map is authoritative. Include its reasons in your report.
 Preserve unresolved binding concepts, assumptions, and external references in

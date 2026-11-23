@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0",
   "source": {
-    "path": "inputs/rebeca/original_model.rebeca",
+    "path": "/workspace/Colreg-to-Rebeca/inputs/rebeca/original_model.rebeca",
     "line_count": 1557
   },
   "environment_constants": [

@@ -20,15 +20,15 @@
     },
     "verification_outcome": "satisfied",
     "result_artifact": {
-      "path": "/workspace/Colreg-to-Rebeca/output/Rule22/verification-timing-fixed/rmc/model_result.xml",
+      "path": "/workspace/Colreg-to-Rebeca/output/work/Rule22a/verification/latest/result/rmc/model_result.xml",
       "exists": true,
       "parsed": true,
       "format": "xml",
       "outcome": "satisfied",
       "error": null
     },
-    "output_dir": "/workspace/Colreg-to-Rebeca/output/Rule22/verification-timing-fixed/rmc",
-    "executable_path": "/workspace/Colreg-to-Rebeca/output/Rule22/verification-timing-fixed/rmc/model.out"
+    "output_dir": "/workspace/Colreg-to-Rebeca/output/work/Rule22a/verification/latest/result/rmc",
+    "executable_path": "/workspace/Colreg-to-Rebeca/output/work/Rule22a/verification/latest/result/rmc/model.out"
   },
   "vacuity_status": null,
   "mutation_score": null,

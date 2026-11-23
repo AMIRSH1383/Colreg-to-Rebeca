@@ -7,6 +7,7 @@ from scripts.utilities.experiments import main as colreg_main
 from scripts.extraction.rebeca_extractor import main as extract_main
 from scripts.binding import semantic_binding as binding
 from scripts.synthesis import synthesis
+from tests.fixtures import RULE22A_HANDOFF, rule22a_synthesis_response
 
 
 def test_managed_stages_overwrite_and_fail_safely_without_llm(tmp_path, monkeypatch):
@@ -14,18 +15,23 @@ def test_managed_stages_overwrite_and_fail_safely_without_llm(tmp_path, monkeypa
     common = ['--rule', 'Rule22a', '--experiments-dir', str(base)]
     monkeypatch.setattr(binding, 'call_codex', lambda *a, **kw: pytest.fail('No LLM invocation'))
     monkeypatch.setattr(synthesis, 'invoke_codex', lambda *a, **kw: pytest.fail('No nested CLI'))
-    source = ROOT / 'experiments/Rule22a'
+    source = RULE22A_HANDOFF
     assert colreg_main(['publish-colreg'] + common + ['--source', str(source / 'colreg_extraction.json')]) == 0
     assert extract_main(common) == 0
     assert binding.main(common + ['--response', str(source / 'semantic_binding.json')]) == 0
-    response = source / 'synthesis/response.json'
+    request, _ = synthesis.prepare(
+        synthesis.load(source / 'colreg_extraction.json'), synthesis.load(source / 'semantic_binding.json'),
+        (ROOT / 'inputs/rebeca/original_model.rebeca').read_bytes(),
+    )
+    response = tmp_path / 'synthesis_response.json'
+    response.write_text(json.dumps(rule22a_synthesis_response(request)))
     assert synthesis.main(common + ['--response', str(response)]) == 0
     exp = Experiment('Rule22a', base)
     model = exp.folder / 'synthesis/model.rebeca'
     prop = exp.folder / 'synthesis/model.property'
     expected = prop.read_bytes()
     assert model.read_bytes() == (ROOT / 'inputs/rebeca/original_model.rebeca').read_bytes()
-    assert prop.read_bytes() == (source / 'synthesis/model.property').read_bytes()
+    assert prop.read_text() == request['canonical_supported_property']
     # Each existing per-rule stage is updated, without new run directories.
     assert extract_main(common) == 0
     assert binding.main(common + ['--response', str(source / 'semantic_binding.json')]) == 0
@@ -44,7 +50,7 @@ def test_managed_stages_overwrite_and_fail_safely_without_llm(tmp_path, monkeypa
     assert exp.inspect()['stages']['synthesis']['last_attempt']['status'] == 'prepared'
     # Editing an upstream input invalidates consumers, without deleting evidence.
     value = json.loads((exp.folder / 'colreg_extraction.json').read_text())
-    value['extraction']['statements'][1]['value'] = 51
+    value['extraction']['statements'][2]['value'] = 51
     (exp.folder / 'colreg_extraction.json').write_text(json.dumps(value))
     assert exp.inspect()['stages']['binding']['status'] == 'stale'
     assert synthesis.main(common + ['--response', str(response)]) == 1
